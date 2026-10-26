@@ -1,0 +1,352 @@
+{
+    "generated_at": "2026-10-24 18:06:21",
+    "global": [
+        "WARNING: currency TJS is inactive in 6Valley, customers cannot select it yet.",
+        "Images are NOT imported: re-use rights are unconfirmed, products get the default placeholder image.",
+        "Delivery is NOT included in any price and no delivery cost is written (no source data); it is calculated separately."
+    ],
+    "settings": {
+        "rate_source_to_usd": 0.27100271,
+        "rate_usd_to_display": 9.25,
+        "service_fee_percent": 10,
+        "source_currency": "AED",
+        "display_currency": "TJS",
+        "base_currency": "USD"
+    },
+    "formula": {
+        "converted_usd": "source_price x rate_source_to_usd",
+        "service_fee_usd": "converted_usd x service_fee_percent / 100",
+        "selling_usd (stored as unit_price)": "converted_usd + service_fee_usd",
+        "final_display": "selling_usd x rate_usd_to_display",
+        "delivery": "separate, not part of the price"
+    },
+    "new_categories": [
+        "T-Shirts"
+    ],
+    "database_changes": {
+        "categories_insert": 1,
+        "products_insert": 5,
+        "product_seos_insert": 5,
+        "product_import_sources_insert": 5
+    },
+    "products": [
+        {
+            "observed": {
+                "source_id": "1132708993",
+                "title": "Paris Vertical Stripes Unisex Tee Shirt",
+                "brand": "DAXİS Sportwear Company",
+                "category": "T-Shirts",
+                "source_price": 10.09,
+                "source_list_price": 10.18,
+                "source_currency": "AED",
+                "rating": 3.7,
+                "review_count": 3,
+                "product_url": "https://www.trendyol.ae/daxis-sportwear-company/paris-vertical-stripes-unisex-tee-shirt-p-1132708993",
+                "image_urls": [
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1854/prod/QC_PREP/20260413/17/c9b72930-7c22-3407-848e-8136fd8b9813/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1856/prod/QC_PREP/20260413/17/bc1c6c61-2836-3aae-9d4c-afebfde3081f/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1854/prod/QC_PREP/20260413/17/432a8e35-dbcd-3a5d-a619-a904dcf1a329/1_org_zoom.jpg"
+                ]
+            },
+            "calculated": {
+                "rate_source_to_usd": 0.27100271,
+                "converted_price_usd": 2.7344,
+                "service_fee_percent": 10,
+                "service_fee_usd": 0.2734,
+                "selling_price_usd": 3.0078,
+                "rate_usd_to_display": 9.25,
+                "display_currency": "TJS",
+                "converted_price_display": 25.29,
+                "service_fee_display": 2.53,
+                "final_price_display": 27.82,
+                "delivery": "not included, calculated separately"
+            },
+            "missing_fields": [
+                "description",
+                "stock",
+                "sizes",
+                "variants (not in source)",
+                "delivery_cost (calculated separately)"
+            ],
+            "errors": [],
+            "product_row": {
+                "added_by": "admin",
+                "user_id": 1,
+                "shop_id": 1,
+                "name": "Paris Vertical Stripes Unisex Tee Shirt",
+                "code": "TY-1132708993",
+                "slug": "paris-vertical-stripes-unisex-tee-shirt-2ac36b",
+                "product_type": "physical",
+                "category": "NEW 'T-Shirts'",
+                "unit_price": 3.0078,
+                "purchase_price": 0,
+                "discount": 0,
+                "discount_type": "flat",
+                "tax": 0,
+                "tax_type": "percent",
+                "tax_model": "exclude",
+                "current_stock": 0,
+                "minimum_order_qty": 1,
+                "details": null,
+                "images": [],
+                "thumbnail": "def.png",
+                "status": 0,
+                "request_status": 1
+            }
+        },
+        {
+            "observed": {
+                "source_id": "1076065758",
+                "title": "BROOKLYN Printed Unisex T-Shirt 3Q2",
+                "brand": "BENROMA",
+                "category": "T-Shirts",
+                "source_price": 13.34,
+                "source_list_price": 38.11,
+                "source_currency": "AED",
+                "rating": 4.2,
+                "review_count": 6,
+                "product_url": "https://www.trendyol.ae/benroma/brooklyn-printed-unisex-t-shirt-3q2-p-1076065758",
+                "image_urls": [
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1804/prod/QC_PREP/20251226/04/8bdb1e62-c874-382d-b1aa-13996dae5337/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1856/prod/QC_ENRICHMENT/20260411/20/fc4b16bd-8309-374a-8952-f4db18651d00/1_org_zoom.jpg"
+                ]
+            },
+            "calculated": {
+                "rate_source_to_usd": 0.27100271,
+                "converted_price_usd": 3.6152,
+                "service_fee_percent": 10,
+                "service_fee_usd": 0.3615,
+                "selling_price_usd": 3.9767,
+                "rate_usd_to_display": 9.25,
+                "display_currency": "TJS",
+                "converted_price_display": 33.44,
+                "service_fee_display": 3.34,
+                "final_price_display": 36.78,
+                "delivery": "not included, calculated separately"
+            },
+            "missing_fields": [
+                "description",
+                "stock",
+                "sizes",
+                "variants (not in source)",
+                "delivery_cost (calculated separately)"
+            ],
+            "errors": [],
+            "product_row": {
+                "added_by": "admin",
+                "user_id": 1,
+                "shop_id": 1,
+                "name": "BROOKLYN Printed Unisex T-Shirt 3Q2",
+                "code": "TY-1076065758",
+                "slug": "brooklyn-printed-unisex-t-shirt-3q2-009d60",
+                "product_type": "physical",
+                "category": "NEW 'T-Shirts'",
+                "unit_price": 3.9767,
+                "purchase_price": 0,
+                "discount": 0,
+                "discount_type": "flat",
+                "tax": 0,
+                "tax_type": "percent",
+                "tax_model": "exclude",
+                "current_stock": 0,
+                "minimum_order_qty": 1,
+                "details": null,
+                "images": [],
+                "thumbnail": "def.png",
+                "status": 0,
+                "request_status": 1
+            }
+        },
+        {
+            "observed": {
+                "source_id": "1076064037",
+                "title": "3 Line Printed Unisex T-Shirt Q6",
+                "brand": "BENROMA",
+                "category": "T-Shirts",
+                "source_price": 13.24,
+                "source_list_price": 37.84,
+                "source_currency": "AED",
+                "rating": 5,
+                "review_count": 2,
+                "product_url": "https://www.trendyol.ae/benroma/3-line-printed-unisex-t-shirt-q6-p-1076064037",
+                "image_urls": [
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1804/prod/QC_PREP/20251226/04/77309dbe-b9a8-32ac-82b4-3bbb4229a2c9/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1854/prod/QC_ENRICHMENT/20260411/20/fc4b16bd-8309-374a-8952-f4db18651d00/1_org_zoom.jpg"
+                ]
+            },
+            "calculated": {
+                "rate_source_to_usd": 0.27100271,
+                "converted_price_usd": 3.5881,
+                "service_fee_percent": 10,
+                "service_fee_usd": 0.3588,
+                "selling_price_usd": 3.9469,
+                "rate_usd_to_display": 9.25,
+                "display_currency": "TJS",
+                "converted_price_display": 33.19,
+                "service_fee_display": 3.32,
+                "final_price_display": 36.51,
+                "delivery": "not included, calculated separately"
+            },
+            "missing_fields": [
+                "description",
+                "stock",
+                "sizes",
+                "variants (not in source)",
+                "delivery_cost (calculated separately)"
+            ],
+            "errors": [],
+            "product_row": {
+                "added_by": "admin",
+                "user_id": 1,
+                "shop_id": 1,
+                "name": "3 Line Printed Unisex T-Shirt Q6",
+                "code": "TY-1076064037",
+                "slug": "3-line-printed-unisex-t-shirt-q6-8f0891",
+                "product_type": "physical",
+                "category": "NEW 'T-Shirts'",
+                "unit_price": 3.9469,
+                "purchase_price": 0,
+                "discount": 0,
+                "discount_type": "flat",
+                "tax": 0,
+                "tax_type": "percent",
+                "tax_model": "exclude",
+                "current_stock": 0,
+                "minimum_order_qty": 1,
+                "details": null,
+                "images": [],
+                "thumbnail": "def.png",
+                "status": 0,
+                "request_status": 1
+            }
+        },
+        {
+            "observed": {
+                "source_id": "1198535061",
+                "title": "Oriental Heritage Anatolian Kilim Motif Helmet Back Printed Oversize Unisex Premium Graphic T-Shirt",
+                "brand": "SB BİANCO",
+                "category": "T-Shirts",
+                "source_price": 25.54,
+                "source_list_price": 70.94,
+                "source_currency": "AED",
+                "rating": 4,
+                "review_count": 1,
+                "product_url": "https://www.trendyol.ae/sb-bianco/oriental-heritage-anatolian-kilim-motif-helmet-back-printed-oversize-unisex-premium-graphic-t-shirt-p-1198535061",
+                "image_urls": [
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1954/prod/QC_PREP/20260911/00/e8211b17-42a7-3120-a169-6e4485fa9daa/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1954/prod/QC_PREP/20260911/00/0aa263d4-4baa-3461-9724-5c10dc3afbf3/1_org_zoom.jpg"
+                ]
+            },
+            "calculated": {
+                "rate_source_to_usd": 0.27100271,
+                "converted_price_usd": 6.9214,
+                "service_fee_percent": 10,
+                "service_fee_usd": 0.6921,
+                "selling_price_usd": 7.6135,
+                "rate_usd_to_display": 9.25,
+                "display_currency": "TJS",
+                "converted_price_display": 64.02,
+                "service_fee_display": 6.4,
+                "final_price_display": 70.42,
+                "delivery": "not included, calculated separately"
+            },
+            "missing_fields": [
+                "description",
+                "stock",
+                "sizes",
+                "variants (not in source)",
+                "delivery_cost (calculated separately)"
+            ],
+            "errors": [],
+            "product_row": {
+                "added_by": "admin",
+                "user_id": 1,
+                "shop_id": 1,
+                "name": "Oriental Heritage Anatolian Kilim Motif Helmet Back Printed Oversize Unisex Premium Graphic T-Shirt",
+                "code": "TY-1198535061",
+                "slug": "oriental-heritage-anatolian-kilim-motif-helmet-back-printed-oversize-unisex-premium-graphic-t-shirt-ee4296",
+                "product_type": "physical",
+                "category": "NEW 'T-Shirts'",
+                "unit_price": 7.6135,
+                "purchase_price": 0,
+                "discount": 0,
+                "discount_type": "flat",
+                "tax": 0,
+                "tax_type": "percent",
+                "tax_model": "exclude",
+                "current_stock": 0,
+                "minimum_order_qty": 1,
+                "details": null,
+                "images": [],
+                "thumbnail": "def.png",
+                "status": 0,
+                "request_status": 1
+            }
+        },
+        {
+            "observed": {
+                "source_id": "1161963564",
+                "title": "Men's Black Oversize T-Shirt Dont Quit Basketball",
+                "brand": "DEEPSENCE",
+                "category": "T-Shirts",
+                "source_price": 21.35,
+                "source_list_price": 42.7,
+                "source_currency": "AED",
+                "rating": 3.7,
+                "review_count": 11,
+                "product_url": "https://www.trendyol.ae/deepsence/men-s-black-oversize-t-shirt-dont-quit-basketball-p-1161963564",
+                "image_urls": [
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1943/prod/QC_PREP/20260628/14/b1e09eae-a9d0-3257-9103-a6b989891df6/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1837/prod/QC_PREP/20260312/18/f3923b39-357c-3519-b87e-22fff0de4d92/1_org_zoom.jpg",
+                    "https://cdn.dsmcdn.com/mnresize/400/-/ty1629/prod/QC/20250129/18/27ede002-517c-382e-a415-7c749a1156bb/1_org_zoom.jpg"
+                ]
+            },
+            "calculated": {
+                "rate_source_to_usd": 0.27100271,
+                "converted_price_usd": 5.7859,
+                "service_fee_percent": 10,
+                "service_fee_usd": 0.5786,
+                "selling_price_usd": 6.3645,
+                "rate_usd_to_display": 9.25,
+                "display_currency": "TJS",
+                "converted_price_display": 53.52,
+                "service_fee_display": 5.35,
+                "final_price_display": 58.87,
+                "delivery": "not included, calculated separately"
+            },
+            "missing_fields": [
+                "description",
+                "stock",
+                "sizes",
+                "variants (not in source)",
+                "delivery_cost (calculated separately)"
+            ],
+            "errors": [],
+            "product_row": {
+                "added_by": "admin",
+                "user_id": 1,
+                "shop_id": 1,
+                "name": "Men's Black Oversize T-Shirt Dont Quit Basketball",
+                "code": "TY-1161963564",
+                "slug": "mens-black-oversize-t-shirt-dont-quit-basketball-f1ddee",
+                "product_type": "physical",
+                "category": "NEW 'T-Shirts'",
+                "unit_price": 6.3645,
+                "purchase_price": 0,
+                "discount": 0,
+                "discount_type": "flat",
+                "tax": 0,
+                "tax_type": "percent",
+                "tax_model": "exclude",
+                "current_stock": 0,
+                "minimum_order_qty": 1,
+                "details": null,
+                "images": [],
+                "thumbnail": "def.png",
+                "status": 0,
+                "request_status": 1
+            }
+        }
+    ],
+    "plan_hash": "c63e9f2361ae18670197badf0821c8d3266ec050bfd304a584a3f8d6b521bffa"
+}

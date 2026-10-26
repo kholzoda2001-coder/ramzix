@@ -1,0 +1,101 @@
+{
+  "source": "noon.com/uae-en",
+  "retrieved": "2026-10-24",
+  "method": "schema.org Product JSON-LD embedded in each public product page, read in a normal browser tab (1 page view per product, spaced out)",
+  "eligible": [
+    {
+      "source_id": "Z614CB32855727963EA2BZ",
+      "title": "Men half sleeve cotton black T shirt",
+      "brand": "Generic",
+      "seller": "AL SHARAF INTERNATIONAL LLC",
+      "sale_price": 60,
+      "currency": "AED",
+      "availability": "InStock",
+      "image_urls": [
+        "https://f.nooncdn.com/p/pzsku/Z614CB32855727963EA2BZ/45/1754742028/198deb7a-1e1b-4735-8369-f7bc1d93a94c.jpg?width=1200"
+      ],
+      "product_url": "https://www.noon.com/uae-en/men-half-sleeve-cotton-black-t-shirt/Z614CB32855727963EA2BZ/p/",
+      "description": "Half sleeve. Light weight",
+      "rating": null,
+      "review_count": null,
+      "stock_quantity": null,
+      "sizes": null
+    },
+    {
+      "source_id": "Z25CFA4B224A6E65C3961Z",
+      "title": "Cotton Polo T Shirt - Black",
+      "brand": "Generic",
+      "seller": "Moonstone Galleria UAE",
+      "sale_price": 52,
+      "currency": "AED",
+      "availability": "InStock",
+      "image_urls": [
+        "https://f.nooncdn.com/p/pzsku/Z25CFA4B224A6E65C3961Z/45/1766942614/e5aa5097-593a-4578-acc2-5386bf3c959c.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/Z25CFA4B224A6E65C3961Z/45/1766942614/1fa74f33-6b4e-4321-b042-9b96d189ea3e.jpg?width=1200"
+      ],
+      "product_url": "https://www.noon.com/uae-en/custom-uniform-polo-t-shirt/Z25CFA4B224A6E65C3961Z/p/",
+      "description": null,
+      "description_note": "page only has noon's generic marketing boilerplate, not a product description",
+      "rating": null,
+      "review_count": null,
+      "stock_quantity": null,
+      "sizes": null
+    },
+    {
+      "source_id": "ZE474782B495613189FEBZ",
+      "title": "Run Dubai Men's Cotton T-Shirt: Embrace the Spirit of the City in Comfort",
+      "brand": "MERCH",
+      "seller": "Marketlist",
+      "sale_price": 129,
+      "currency": "AED",
+      "availability": "InStock",
+      "image_urls": [
+        "https://f.nooncdn.com/p/pzsku/ZE474782B495613189FEBZ/45/_/1692127896/89fd7f61-b64a-422e-b1d6-2a3dc13d5037.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE474782B495613189FEBZ/45/_/1692127896/51a64e51-9ab8-452a-b291-3cc3156a0f65.jpg?width=1200"
+      ],
+      "product_url": "https://www.noon.com/uae-en/run-dubai-men-s-cotton-t-shirt-embrace-the-spirit-of-the-city-in-comfort/ZE474782B495613189FEBZ/p/",
+      "description": "Step into the vibrant spirit of Dubai with our exclusive \"Run Dubai\" Men's Cotton T-Shirt. Crafted for both comfort and style, this shirt embodies the essence of the city's dynamic energy. Whether you're a resident, a frequent visitor, or simply captivated by Dubai's allure, this t-shirt lets you wear your connection to the city with pride. Made from premium quality cotton, our t-shirt ensures a soft and breathable feel, perfect for everyday wear. The sleek design showcases the iconic skyline, capturing Dubai's modernity and ambition. This t-shirt is not just an article of clothing; it's a statement of your connection to a global hub of innovation and progress. Join the ranks of those who embrace Dubai's lifestyle – fast-paced, forward-looking, and unapologetically bold. Whether you're hitting the city streets, exploring its landmarks, or simply want to showcase your admiration for Dubai, our \"Run Dubai\" t-shirt is the ideal choice.",
+      "rating": null,
+      "review_count": null,
+      "stock_quantity": null,
+      "sizes": null
+    },
+    {
+      "source_id": "ZE6D0BA515F9048DD8326Z",
+      "title": "Pakistan Men's T-Shirt, Scarf & Large Flag (90cm x 150cm) - Half Sleeve Tshirt | Cotton Ideal Combo For Sports Fans, Matches, Events.",
+      "brand": "PRINTSHOP4ME",
+      "seller": "PrintShop4Me FZE",
+      "sale_price": 107,
+      "currency": "AED",
+      "availability": "InStock",
+      "image_urls": [
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/d21e0fc1-3d2f-479a-8848-2b599ab20280.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/e3c1286e-8114-42aa-a8a5-6483696b29c1.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/df50969f-bd8c-407f-bcac-36900cd1f0b8.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/3577b787-2ac8-4ac0-968e-f4ab2df0e9c0.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/4f59c96a-6677-49fe-ab6c-4ee0e5669f53.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/e6e17256-9137-4b93-b771-a6300eb4b111.jpg?width=1200",
+        "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/564caee8-ad6e-4658-879e-383359ff9f5b.jpg?width=1200"
+      ],
+      "product_url": "https://www.noon.com/uae-en/pakistan-men-s-t-shirt-scarf-large-flag-90cm-x-150cm-half-sleeve-tshirt-cotton-ideal-combo-for-sports-fans-matches-events/ZE6D0BA515F9048DD8326Z/p/",
+      "description": "Pakistan Cotton Men’s T-Shirt: This comfortable T-shirt, made from breathable fabric, lets you cheer for Pakistan in style.. Lightweight Scarf: A stylish accessory for any sports fan, this scarf adds a bold statement, ideal for waving or wearing while Pakistan.. Large Flag (90cm x 150cm): Show with a durable, large flag that’s perfect for waving at cricket matches, celebrations, and any event where you want to display your enthusiasm.. Comfort & Style Combined: Featuring a lightweight scarf, breathable T-shirt, and large flag, this set keeps you stylish and comfortable. Ideal for Matches & Events: This combo is great for cricket matches, sports events, and celebrations, ensuring you stand out while expressing Pakistan.",
+      "note": "bundle: t-shirt + scarf + flag",
+      "rating": null,
+      "review_count": null,
+      "stock_quantity": null,
+      "sizes": null
+    }
+  ],
+  "excluded": [
+    {
+      "source_id": "Z3B7D7A2B4218F2F3B5F4Z",
+      "title": "Cotton Fine-Knit T-Shirt (Mango Man)",
+      "reason": "page shows OutOfStock and price 0, not a valid sellable offer"
+    },
+    {
+      "source_id": "Z9619DD126923F5086766Z",
+      "title": "Round Neck Cotton T-Shirt unisex (Generic)",
+      "reason": "page has no readable Product data (no JSON-LD); price and details not retrievable"
+    }
+  ]
+}

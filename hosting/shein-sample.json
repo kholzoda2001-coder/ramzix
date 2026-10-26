@@ -1,0 +1,204 @@
+{
+  "source": "ar.shein.com (Saudi store, prices in SAR)",
+  "retrieved": "2026-10-24",
+  "method": "schema.org ProductGroup JSON-LD of each public product page, read one page at a time in the in-app browser (30+ s pause between pages), cookie banner declined, no login",
+  "notes": [
+    "Title (English) is taken from the English product URL slug; SHEIN pages on this store show Arabic titles.",
+    "The page description is SHEIN's generic Arabic marketing text, not a product description, so description is null.",
+    "Price is the price of the first variant; for products 4 and 5 variants differ in price (see prices_by_variant).",
+    "Prices below are the LOWEST variant price (user decision). For product 472224770 the lowest price could not be verified (captcha)."
+  ],
+  "eligible": [
+    {
+      "source_id": "441595653",
+      "sku": "m2606021830088728",
+      "title": "STYNVO Men's Casual Streetwear Washed Short Sleeve T-Shirt Summer Vintage Gray Tee Textured Fabric Minimalist Design Loose Fit Street Style Basic Fashion",
+      "brand": "Manfinity",
+      "sale_price": 52,
+      "currency": "SAR",
+      "availability": "InStock",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "rating": 4.66,
+      "review_count": 500,
+      "image_urls": [
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/1c/17760574929795b926872ec79e60ce724b7e529dbc_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/a0/17760574949b1d73d3cb6fee74754c1298b0447d88_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/34/17760574965914ee3dea92ed24e5048c79987bfc2e_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/d1/177605749756103bfd13c29bca3ac7bab2a6531fc6_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/e6/17760574991b55314caa9b88054c268d47bb8f0644_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/b8/177605750143d08728e110313e572eab88efc132db_thumbnail_900x.webp"
+      ],
+      "product_url": "https://ar.shein.com/STYNVO-Men-s-Casual-Streetwear-Washed-Short-Sleeve-T-Shirt-Summer-Vintage-Gray-Tee-Textured-Fabric-Minimalist-Design-Loose-Fit-Street-Style-Basic-Fashion-p-441595653.html",
+      "description": null,
+      "stock_quantity": null,
+      "composition": null,
+      "first_variant_price": 52,
+      "price_basis": "lowest variant price"
+    },
+    {
+      "source_id": "547636039",
+      "sku": "m2607311510909899",
+      "title": "Core Aspect Men's Knitted Jacquard Short Sleeve Polo Shirt And Solid Color Long Pants Set, Jacquard Pattern Short Sleeve Polo Shirt Set, Casual Daily Commute Style",
+      "brand": "Manfinity",
+      "sale_price": 98.3,
+      "currency": "SAR",
+      "availability": "InStock",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL"
+      ],
+      "rating": 4.7,
+      "review_count": 100,
+      "image_urls": [
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/25/1785746355cffbb0e48e8d89436b9a2a5fb9c5619b_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/c6/17857463579711456ec1e2332efe9b2dc76fa9b652_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/ac/1785746359aebd9b480200fa43a0cb0a3a5984ac92_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/ce/1785746362a3094099c534aa27ce6ce05b9abc57a3_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/72/1785746365fb8a5b76a92a5b08318daa59acc5c687_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/f7/1785746369539333f66e4db3e64e2d855b9b521856_thumbnail_900x.webp"
+      ],
+      "product_url": "https://ar.shein.com/Core-Aspect-Men-s-Knitted-Jacquard-Short-Sleeve-Polo-Shirt-And-Solid-Color-Long-Pants-Set-Jacquard-Pattern-Short-Sleeve-Polo-Shirt-Set-Casual-Daily-Commute-Style-p-547636039.html",
+      "description": null,
+      "stock_quantity": null,
+      "composition": null,
+      "note": "set: polo shirt + long pants",
+      "first_variant_price": 102.3,
+      "price_basis": "lowest variant price"
+    },
+    {
+      "source_id": "472224770",
+      "sku": "m2605121509468626",
+      "title": "Men's New Long Pants Loose Straight Leg Design Adjustable Drawstring Waist Side Pockets Perfect For Vacation And Outdoor Activities",
+      "brand": "SHEIN",
+      "sale_price": 58.62,
+      "currency": "SAR",
+      "availability": "InStock",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "XXXL"
+      ],
+      "rating": 4.5,
+      "review_count": 28,
+      "image_urls": [
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/07/43/17887624320ddfc56e5baa763f90887cd1ec714b56_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/08/24/a1/17875632573dbacaf0f53bc7806b3f5520ce9bbbbd_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/08/24/a4/17875632416006587cfce2559c4580feacba19ef4f_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/08/24/e7/178756326988a113db1c2b6cba4b199fb2f8fc7a3f_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/p/spmp/2026/08/26/4e/1787729844209aad4e371f238c5824ea48fdbf35e8_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/08/26/d3/17877298331af26cb1b07f6e83efc060eb5e4a699d_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/08/24/fd/1787563269e17b73e0e4ce589644a341245a693153_thumbnail_900x.webp"
+      ],
+      "product_url": "https://ar.shein.com/Men-s-New-Long-Pants-Loose-Straight-Leg-Design-Adjustable-Drawstring-Waist-Side-Pockets-Perfect-For-Vacation-And-Outdoor-Activities-p-472224770.html",
+      "description": null,
+      "stock_quantity": null,
+      "composition": null,
+      "first_variant_price": 58.62,
+      "price_basis": "lowest variant price",
+      "price_unverified": "only the first variant price (58.62 SAR) was read before SHEIN showed a captcha; the real lowest price may be lower"
+    },
+    {
+      "source_id": "510681934",
+      "sku": "m2606161948289752",
+      "title": "Men's Casual Sweatpants, Loose Straight Fit, Side Pleats, Drawstring Waistband",
+      "brand": "SHEIN",
+      "sale_price": 32.98,
+      "prices_by_variant": [
+        53.09,
+        32.98,
+        56.09,
+        52.09,
+        60.09,
+        48.09
+      ],
+      "currency": "SAR",
+      "availability": "InStock",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "XXXL"
+      ],
+      "rating": 4.45,
+      "review_count": 20,
+      "image_urls": [
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/78/1788964936fdf9c7db7a93f7cd1428fc0584e4c08a_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/21/1788964936c275bfcb394c6d51e32107504365880b_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/ce/1788964937c08a142ff4460ef90efe3a6a2ba768af_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/27/178896493650627b67edfcecd9cbc474d3a5fa7b67_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/37/17889649371968e02dfee6787ed40621ef07e44456_thumbnail_900x.webp"
+      ],
+      "product_url": "https://ar.shein.com/1pc-Men-s-Casual-Sweatpants-Loose-Straight-Fit-Side-Pleats-Comfortable-Drape-Suitable-For-Home-And-Outdoor-Activities-Can-Be-Used-As-Couple-Gift-With-Drawstring-Waistband-For-Easy-Adjustment-Can-Be-Used-As-Men-s-Gift-p-510681934.html",
+      "description": null,
+      "stock_quantity": null,
+      "composition": null,
+      "first_variant_price": 53.09,
+      "price_basis": "lowest variant price",
+      "title_original": "1pc Men's Casual Sweatpants Loose Straight Fit Side Pleats Comfortable Drape Suitable For Home And Outdoor Activities Can Be Used As Couple Gift With Drawstring Waistband For Easy Adjustment Can Be Used As Men's Gift",
+      "title_note": "shortened (original is keyword-stuffed and, for cargo pants, longer than the 255-character product name limit)"
+    },
+    {
+      "source_id": "345683022",
+      "sku": "m2511197827226",
+      "title": "Men's Casual Sports Cargo Pants, Vintage Style, Loose Straight Fit, 100% Polyester, Drawstring Waistband",
+      "brand": "SHEIN",
+      "sale_price": 35,
+      "prices_by_variant": [
+        54,
+        56,
+        53,
+        55,
+        35,
+        57
+      ],
+      "currency": "SAR",
+      "availability": "InStock",
+      "sizes": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL",
+        "XXL",
+        "XXXL"
+      ],
+      "rating": 4.53,
+      "review_count": 1000,
+      "image_urls": [
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/06/23/68/17821985433008e915eb6d3bd4773acb74129db9d6_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2025/12/24/90/17665658836b2c10288ce70497c1608b79c920da7c_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/04/08/73/1775648884e3898dc275b21320364ab8491e7d7e8c_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2026/04/26/d8/1777197376fd661fcb5cd6aa551718ebd69ac7b3b2_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/j/spmp/2025/12/24/43/176656588360faef9627bdd267e22cedf5795f5c55_thumbnail_900x.webp",
+        "https://img.ltwebstatic.com/v4/p/spmp/2026/07/15/b4/1784104865e348209ebf7076df4cd508db61b96232_thumbnail_900x.webp"
+      ],
+      "product_url": "https://ar.shein.com/1pc-Men-s-Casual-Sports-Cargo-Pants-Vintage-Style-Loose-Straight-Fit-With-Wrinkled-Texture-Suitable-For-Home-And-Outdoor-Activities-Also-As-A-Couple-Gift-Made-Of-100-Polyester-Fiber-With-Drawstring-Waistband-For-Easy-Adjustment-Winter-Autumn-Halloween-Christmas-Beer-Festival-p-345683022.html",
+      "description": null,
+      "stock_quantity": null,
+      "composition": "100% Polyester (stated in the title)",
+      "first_variant_price": 54,
+      "price_basis": "lowest variant price",
+      "title_original": "1pc Men's Casual Sports Cargo Pants Vintage Style Loose Straight Fit With Wrinkled Texture Suitable For Home And Outdoor Activities Also As A Couple Gift Made Of 100% Polyester Fiber With Drawstring Waistband For Easy Adjustment Winter Autumn Halloween Christmas Beer Festival",
+      "title_note": "shortened (original is keyword-stuffed and, for cargo pants, longer than the 255-character product name limit)"
+    }
+  ],
+  "excluded": []
+}
