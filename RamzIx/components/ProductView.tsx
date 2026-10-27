@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
-import { defaultMode, feeFor, feePctFor, modesFor, priceTiers, shippingCost, unitCost, volumeOf, weightOf } from "@/lib/pricing";
-import { FEE_TIERS, MIN_FEE, QUOTE_VALID_HOURS, SHIPPING } from "@/lib/pricing-config";
+import { defaultMode, listUnitPrice, modesFor, rfqFromOf, shippingCost, volumeOf, weightOf } from "@/lib/pricing";
+import { QUOTE_VALID_HOURS, SHIPPING } from "@/lib/pricing-config";
 import { CartBadge, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -22,7 +22,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const unit = unitOf(p);
   const step = sale?.step ?? 1;
   const minQty = sale?.min ?? 1;
-  const tiers = useMemo(() => priceTiers(p), [p]);
   const [qty, setQty] = useState(minQty);
   const [img, setImg] = useState(0);
   const [size, setSize] = useState<string | null>(p.sizes?.[2] ?? p.sizes?.[0] ?? null);
@@ -45,17 +44,14 @@ export default function ProductView({ p, related, other }: { p: Product; related
     if (ready && saved) setModeId(saved);
   }, [ready, modes, p.country]);
 
-  const tier = tiers.find((t) => qty >= t.min && qty <= t.max) ?? tiers[tiers.length - 1];
-  const next = tiers[tiers.indexOf(tier) + 1];
-  const rfq = tier.unit === null;
-  const unitPrice = rfq ? null : unitCost(p, qty);
-  const goods = unitPrice ? unitPrice * qty : 0;
+  const unitPrice = listUnitPrice(p);
+  const goods = unitPrice * qty;
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
-  const feePct = feePctFor(goods);
-  const fee = feeFor(goods);
   const ship = shippingCost(p.country, modeId, weight, volumeOf(p, qty));
-  const estTotal = goods + fee + ship.tjs;
+  const shipPerUnit = ship.tjs / qty;
+  const total = goods + ship.tjs;
+  const bigOrder = qty >= rfqFromOf(p);
   const country = COUNTRIES[p.country];
   const modeList = modesFor(p.country);
   const points = useMemo(() => splitDescription(p.description), [p.description]);
@@ -64,9 +60,9 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const goImg = (k: number) => track.current?.scrollTo({ left: k * track.current.clientWidth, behavior: "smooth" });
 
   const waText = `Салом! Маҳсулот: ${p.name}${size ? `, андоза ${size}` : ""}. Миқдор: ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${sale?.perLabel})` : ""}. Нархи оптовиро гуфта метавонед?`;
+  const wholesaleLink = waLink(waText);
 
   const addToCart = () => {
-    if (rfq) { window.location.href = waLink(waText); return; }
     setMode(p.country, modeId);
     add({ slug: p.slug, qty }, `${fmtQty(qty)} ${unit} ба сабад илова шуд`);
   };
@@ -136,26 +132,16 @@ export default function ProductView({ p, related, other }: { p: Product; related
           {/* Нарх */}
           <div className="price-box">
             <div className="pb-main">
-              {unitPrice ? <><b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span></> : <b className="rfq">Нарх бо дархост</b>}
-              {tier.off > 0 && <span className="pill pill-green">−{tier.off}%</span>}
+              <b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span>
             </div>
-            <div className="pb-hint">
-              {next?.unit
-                ? <><Icon name="bolt" size={14} /> Боз {fmtQty(round2(next.min - qty))} {unit} илова кунед: <b>{fmtPrice(next.unit)} смн</b> / {unit}</>
-                : next ? <><Icon name="bolt" size={14} /> Аз {fmtQty(next.min)} {unit} нархи махсус</> : "Барои ин миқдор менеҷер нарх медиҳад"}
+            <div className="pb-note">
+              Нархи мол{ship.tjs > 0 && <> · расонидан: <b>{fmtPrice(shipPerUnit)} смн</b> / {unit}</>}
             </div>
-            <div className="pb-note">Нархи мол. Ҳаққи хизмат ва расонидан ҷудо ҳисоб мешаванд.</div>
-          </div>
-
-          <div className="tiers">
-            <div className="tiers-head"><span>Нархи мол аз рӯи миқдор</span><span>барои 1 {unit}</span></div>
-            {tiers.map((t) => (
-              <button key={t.label} className={`tier ${t === tier ? "on" : ""}`} onClick={() => setQ(t.min)}>
-                <span className="t-q">{t.label}</span>
-                <span className="t-p">{t.unit !== null ? `${fmtPrice(t.unit)} смн` : "Бо дархост"}</span>
-                <span className="t-o">{t.unit !== null ? (t.off ? <em>−{t.off}%</em> : "") : <em className="o">RFQ</em>}</span>
-              </button>
-            ))}
+            <a className="wh-btn" href={wholesaleLink} target="_blank" rel="noreferrer">
+              <Icon name="wa" size={18} />
+              <span><b>Нархи оптовӣ</b><small>Барои миқдори калон дар WhatsApp пурсед</small></span>
+              <Icon name="chevron" size={16} stroke={2.4} />
+            </a>
           </div>
 
           {/* Андоза */}
@@ -195,7 +181,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
               </div>
               <div className="sum">
                 <span>Нархи мол</span>
-                <b>{goods ? `${fmt(goods)} смн` : "—"}</b>
+                <b>{fmt(goods)} смн</b>
               </div>
             </div>
             <div className="quick">
@@ -207,50 +193,42 @@ export default function ProductView({ p, related, other }: { p: Product; related
               <div className="pack-info">
                 {pieces && <span>Ҳамагӣ: <b>{fmt(pieces)} {sale?.perLabel}</b></span>}
                 <span>Вазн: <b>{fmtQty(weight)} кг</b></span>
-                {unitPrice && pieces && <span>1 {sale?.perLabel}: <b>{fmtPrice(unitPrice / sale!.per!)} смн</b></span>}
+                {pieces && <span>1 {sale?.perLabel}: <b>{fmtPrice(unitPrice / sale!.per!)} смн</b></span>}
               </div>
             )}
           </div>
 
-          {/* Ҳисоби тахминӣ */}
-          {goods > 0 && (
-            <div className="est">
-              <div className="est-head"><b>Ҳисоби тахминӣ</b><span>барои {fmtQty(qty)} {unit}</span></div>
-              {modeList.length > 1 && (
-                <div className="modes">
-                  {modeList.map((m) => (
-                    <button key={m.id} className={m.id === ship.mode.id ? "on" : ""} onClick={() => setModeId(m.id)}>
-                      <b>{m.label}</b>
-                      <small>{m.daysMin}–{m.daysMax} рӯз</small>
-                    </button>
-                  ))}
-                </div>
-              )}
-              <div className="est-row"><span>Нархи мол</span><b>{fmt(goods)} смн</b></div>
-              <div className="est-row">
-                <span>Ҳаққи хизмат ({feePct}%){fee > (goods * feePct) / 100 && <small>Ҳадди ақал {MIN_FEE} смн барои фармоиш</small>}</span>
-                <b>{fmt(fee)} смн</b>
-              </div>
-              <div className="est-row">
-                <span>
-                  Расонидан · {fmtQty(weight)} кг
-                  <small>{ship.mode.label}, {ship.mode.daysMin}–{ship.mode.daysMax} рӯз{ship.basis === "m3" ? ", аз рӯи ҳаҷм" : ""}</small>
-                </span>
-                <b>{ship.tjs > 0 ? `${fmt(ship.tjs)} смн` : "бо тасдиқ"}</b>
-              </div>
-              <div className="est-total"><span>Ҷамъ (тахминӣ)</span><b>{fmt(estTotal)} смн</b></div>
-              <p className="est-note">
-                Ҳаққи хизмат ҳангоми зиёд шудани маблағи сабад кам мешавад (то {FEE_TIERS[FEE_TIERS.length - 1].pct}%).
-                {ship.mode.assumed && " Нархи расонидан ҳанӯз тасдиқ нашудааст."} Нарх {QUOTE_VALID_HOURS} соат дуруст аст.
-              </p>
-            </div>
+          {bigOrder && (
+            <div className="big-note">Миқдори калон: нархи оптовиро дархост кунед, менеҷер нархи беҳтарро мегӯяд.</div>
           )}
 
-          <a className="rfq-btn" href={waLink(waText)} target="_blank" rel="noreferrer">
-            <span className="rfq-ic"><Icon name="doc" size={20} /></span>
-            <span><b>Дархости нархи оптовӣ</b><small>Ҷавоби менеҷер то 1 соат</small></span>
-            <Icon name="chevron" size={18} stroke={2.2} />
-          </a>
+          {/* Расонидан */}
+          <div className="est">
+            <div className="est-head"><b>Расонидан аз {country.short}</b><span>барои {fmtQty(qty)} {unit}</span></div>
+            {modeList.length > 1 && (
+              <div className="modes">
+                {modeList.map((m) => (
+                  <button key={m.id} className={m.id === ship.mode.id ? "on" : ""} onClick={() => setModeId(m.id)}>
+                    <b>{m.label}</b>
+                    <small>{m.daysMin}–{m.daysMax} рӯз</small>
+                  </button>
+                ))}
+              </div>
+            )}
+            <div className="est-row"><span>Нархи мол</span><b>{fmt(goods)} смн</b></div>
+            <div className="est-row">
+              <span>
+                Расонидан · вазн {fmtQty(weight)} кг
+                <small>{ship.mode.label}, {ship.mode.daysMin}–{ship.mode.daysMax} рӯз{ship.basis === "m3" ? ", аз рӯи ҳаҷм" : ""}</small>
+              </span>
+              <b>{ship.tjs > 0 ? `${fmt(ship.tjs)} смн` : "бо тасдиқ"}</b>
+            </div>
+            <div className="est-total"><span>Ҷамъ</span><b>{fmt(total)} смн</b></div>
+            <p className="est-note">
+              Дар сабад бо харид зиёд нархи мол арзонтар мешавад.
+              {ship.mode.assumed && " Нархи расонидан ҳанӯз тасдиқ нашудааст."} Нарх {QUOTE_VALID_HOURS} соат дуруст аст.
+            </p>
+          </div>
 
           <div className="card-list">
             <div className="cl-row">
@@ -311,8 +289,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
               <div><Icon name="box" size={20} /><span><b>Ҳадди ақал</b>{sale ? `Аз ${fmtQty(minQty)} ${unit}. Нарх бо ${unit} ҳисоб мешавад` : "Чакана аз 1 дона, нархи оптовӣ аз 10 дона"}</span></div>
               <div><Icon name="doc" size={20} /><span><b>Фактура ва ҳуҷҷат</b>Барои ҳисоби бизнес: фактура, шартнома, ҳуҷҷатҳои гумрукӣ</span></div>
               <div><Icon name="card" size={20} /><span><b>Пардохт бо мӯҳлат</b>Барои мизоҷони доимӣ: 30% пешпардохт, боқимонда то 14 рӯз</span></div>
-              <div><Icon name="tag" size={20} /><span><b>Ҳаққи хизмат</b>{FEE_TIERS.map((t) => `${t.pct}% аз ${fmt(t.from)}`).join(" · ")} смн. Ҳадди ақал {MIN_FEE} смн</span></div>
-              <div><Icon name="doc" size={20} /><span><b>Нархи махсус</b>Аз {fmtQty(tiers[tiers.length - 1].min)} {unit} ё омехта: ҷавоб то 2 соат</span></div>
+              <div><Icon name="tag" size={20} /><span><b>Нархи оптовӣ</b>Барои миқдори калон нархи махсус: дар WhatsApp пурсед, ҷавоб то 2 соат</span></div>
             </div>
           )}
 
@@ -366,8 +343,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
       <div className="buy-bar">
         <a href={waLink(waText)} className="bb-wa" aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} /></a>
         <button className="bb-add" onClick={addToCart}>
-          <span className="bb-l"><Icon name="cart" size={20} /> {rfq ? "Дархости нарх" : "Ба сабад"}</span>
-          <span className="bb-r">{goods ? `${fmt(goods)} смн` : `${fmtQty(qty)} ${unit}`}</span>
+          <span className="bb-l"><Icon name="cart" size={20} /> Ба сабад</span>
+          <span className="bb-r">{fmt(goods)} смн</span>
         </button>
       </div>
     </>

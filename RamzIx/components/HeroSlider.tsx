@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { FEE_TIERS } from "@/lib/pricing-config";
+import { waLink } from "@/lib/catalog";
 import Icon from "./Icon";
 
 const SLIDES = [
@@ -53,15 +53,10 @@ export default function HeroSlider() {
         </div>
 
         <div className="slide slide-tiers">
-          <span className="chip-sm light"><Icon name="tag" size={13} /> Ҳаққи хизмат</span>
-          <h2>Бештар харед, <em>камтар</em> хизмат пардохт кунед</h2>
-          <div className="mini-tiers">
-            {FEE_TIERS.map((t, i) => (
-              <span key={t.from} className={i === 1 ? "on" : ""}>
-                <b>{t.pct}%</b>{i === 0 ? "оддӣ" : `${t.from / 1000}k+`}
-              </span>
-            ))}
-          </div>
+          <span className="chip-sm light"><Icon name="tag" size={13} /> Нархи оптовӣ</span>
+          <h2>Бештар харед, <em>арзонтар</em> пардохт кунед</h2>
+          <p>Барои фармоиши калон нархи махсус</p>
+          <a href={waLink("Салом! Барои фармоиши калон нархи оптовӣ лозим аст.")} className="btn btn-sm btn-orange"><Icon name="wa" size={16} /> Дар WhatsApp пурсед</a>
         </div>
       </div>
       <div className="hero-dots">

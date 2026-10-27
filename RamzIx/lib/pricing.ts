@@ -1,7 +1,6 @@
 import type { CountryCode, Product } from "./catalog";
 import {
-  FEE_TIERS,
-  MIN_FEE,
+  MARKUP_TIERS,
   RFQ_FROM_DEFAULT,
   SHIPPING,
   TO_USD,
@@ -11,55 +10,19 @@ import {
 
 /* ---------- нархи мол ---------- */
 
-const minQtyOf = (p: Product) => p.sale?.min ?? 1;
-const stepOf = (p: Product) => p.sale?.step ?? 1;
 export const rfqFromOf = (p: Product) => p.sale?.rfqFrom ?? RFQ_FROM_DEFAULT;
 
-const toTjs = (amount: number, p: Product) => amount * TO_USD[p.costCurrency] * USD_TO_TJS;
+/** Нархи харид барои 1 воҳид (смн) */
+export const costPerUnit = (p: Product) => p.cost * TO_USD[p.costCurrency] * USD_TO_TJS;
 
-const costSteps = (p: Product) => p.costTiers ?? [{ min: minQtyOf(p), cost: p.cost }];
-
-/** Нархи харид барои 1 воҳид (смн) барои миқдори qty */
-export function unitCost(p: Product, qty: number): number {
-  const steps = costSteps(p);
-  let cost = steps[0].cost;
-  for (const t of steps) if (qty >= t.min) cost = t.cost;
-  return toTjs(cost, p);
-}
-
-export type PriceTier = {
-  min: number;
-  max: number;
-  label: string;
-  /** нархи 1 воҳид (смн); null — бо дархост */
-  unit: number | null;
-  /** арзонӣ нисбат ба зинаи аввал, фоиз */
-  off: number;
+/** Фоидаи шумо барои маблағи умумии харид (смн, бо нархи харид) */
+export const markupPct = (goodsCost: number) => {
+  for (const t of MARKUP_TIERS) if (goodsCost <= t.upTo) return t.pct;
+  return MARKUP_TIERS[MARKUP_TIERS.length - 1].pct;
 };
 
-const qtyText = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, ""));
-
-/** Зинаҳои нарх барои намоиш дар саҳифаи маҳсулот */
-export function priceTiers(p: Product): PriceTier[] {
-  const unit = p.sale?.unit ?? "дона";
-  const step = stepOf(p);
-  const steps = costSteps(p).filter((t) => t.min < rfqFromOf(p));
-  const first = toTjs(steps[0].cost, p);
-  const rfq = rfqFromOf(p);
-  const tiers: PriceTier[] = steps.map((t, i) => {
-    const max = +((i + 1 < steps.length ? steps[i + 1].min : rfq) - step).toFixed(2);
-    const u = toTjs(t.cost, p);
-    return {
-      min: t.min,
-      max,
-      label: max > t.min ? `${qtyText(t.min)}–${qtyText(max)} ${unit}` : `${qtyText(t.min)} ${unit}`,
-      unit: u,
-      off: Math.round((1 - u / first) * 100),
-    };
-  });
-  tiers.push({ min: rfq, max: Infinity, label: `${qtyText(rfq)}+ ${unit}`, unit: null, off: 0 });
-  return tiers;
-}
+/** Нархи асосии нишондодашаванда барои 1 воҳид: нархи харид + фоида барои фармоиши хурд */
+export const listUnitPrice = (p: Product) => costPerUnit(p) * (1 + MARKUP_TIERS[0].pct / 100);
 
 /* ---------- вазн, ҳаҷм, расонидан ---------- */
 
@@ -85,22 +48,6 @@ export function shippingCost(country: CountryCode, modeId: string | undefined, k
   };
 }
 
-/* ---------- ҳаққи хизмат ---------- */
-
-export const feePctFor = (goods: number) => {
-  let pct = FEE_TIERS[0].pct;
-  for (const t of FEE_TIERS) if (goods >= t.from) pct = t.pct;
-  return pct;
-};
-
-/** Зинаи навбатии ҳаққи хизмат: чӣ қадар боқӣ мондааст */
-export function nextFeeTier(goods: number) {
-  const next = FEE_TIERS.find((t) => t.from > goods);
-  return next ? { need: next.from - goods, pct: next.pct, from: next.from } : null;
-}
-
-export const feeFor = (goods: number) => (goods > 0 ? Math.max((goods * feePctFor(goods)) / 100, MIN_FEE) : 0);
-
 /* ---------- ҳисоби фармоиш ---------- */
 
 export type CartLine = { slug: string; qty: number };
@@ -108,6 +55,7 @@ export type CartLine = { slug: string; qty: number };
 export type PricedLine = {
   p: Product;
   qty: number;
+  /** нархи 1 воҳид барои харидор (бо фоида), смн */
   unit: number;
   goods: number;
 };
@@ -124,12 +72,10 @@ export type PricedGroup = {
 export type PricedOrder = {
   groups: PricedGroup[];
   goods: number;
-  feePct: number;
-  fee: number;
-  minFeeApplied: boolean;
   shipping: number;
   total: number;
-  next: ReturnType<typeof nextFeeTier>;
+  /** Агар боз харад, нарх арзонтар мешавад: тақрибан чӣ қадар ва чанд фоиз */
+  next: { need: number; drop: number } | null;
 };
 
 export function priceOrder(
@@ -137,13 +83,20 @@ export function priceOrder(
   modes: Partial<Record<CountryCode, string>>,
   lookup: (slug: string) => Product | undefined,
 ): PricedOrder {
-  const byCountry = new Map<CountryCode, PricedLine[]>();
-  for (const l of lines) {
+  const found = lines.flatMap((l) => {
     const p = lookup(l.slug);
-    if (!p) continue;
-    const unit = unitCost(p, l.qty);
-    const row: PricedLine = { p, qty: l.qty, unit, goods: unit * l.qty };
-    byCountry.set(p.country, [...(byCountry.get(p.country) ?? []), row]);
+    return p ? [{ p, qty: l.qty, cost: costPerUnit(p) }] : [];
+  });
+
+  // Фоида аз маблағи умумии нархи харид муайян мешавад
+  const costTotal = found.reduce((s, l) => s + l.cost * l.qty, 0);
+  const pct = markupPct(costTotal);
+
+  const byCountry = new Map<CountryCode, PricedLine[]>();
+  for (const l of found) {
+    const unit = l.cost * (1 + pct / 100);
+    const row: PricedLine = { p: l.p, qty: l.qty, unit, goods: Math.round(unit * l.qty) };
+    byCountry.set(l.p.country, [...(byCountry.get(l.p.country) ?? []), row]);
   }
 
   const groups: PricedGroup[] = [...byCountry.entries()].map(([country, rows]) => {
@@ -159,20 +112,19 @@ export function priceOrder(
     };
   });
 
-  const goods = Math.round(groups.reduce((s, g) => s + g.goods, 0));
-  const feePct = feePctFor(goods);
-  const rawFee = (goods * feePct) / 100;
-  const fee = goods > 0 ? Math.round(Math.max(rawFee, MIN_FEE)) : 0;
+  const goods = groups.reduce((s, g) => s + g.goods, 0);
   const shipping = Math.round(groups.reduce((s, g) => s + g.shipping.tjs, 0));
 
-  return {
-    groups,
-    goods,
-    feePct,
-    fee,
-    minFeeApplied: goods > 0 && rawFee < MIN_FEE,
-    shipping,
-    total: goods + fee + shipping,
-    next: nextFeeTier(goods),
-  };
+  // Зинаи навбатӣ (фоидаи камтар)
+  let next: PricedOrder["next"] = null;
+  const idx = MARKUP_TIERS.findIndex((t) => costTotal <= t.upTo);
+  const nextTier = idx >= 0 ? MARKUP_TIERS[idx + 1] : undefined;
+  if (costTotal > 0 && nextTier && nextTier.pct < pct) {
+    next = {
+      need: Math.ceil(((MARKUP_TIERS[idx].upTo - costTotal) * (1 + pct / 100)) / 50) * 50,
+      drop: Math.round((1 - (1 + nextTier.pct / 100) / (1 + pct / 100)) * 1000) / 10,
+    };
+  }
+
+  return { groups, goods, shipping, total: goods + shipping, next };
 }

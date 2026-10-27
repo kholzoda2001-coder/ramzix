@@ -8,12 +8,11 @@ import ProductCard from "@/components/ProductCard";
 import ProductFeed from "@/components/ProductFeed";
 import { CATEGORIES, COUNTRIES, fmt, products, waLink, type CountryCode } from "@/lib/catalog";
 import { categoryCount, getBrands } from "@/lib/filters";
-import { FEE_TIERS } from "@/lib/pricing-config";
 
 const TRUST = [
   { icon: "shield", title: "Маҳсулоти аслӣ", text: "Аз таъминкунандагони санҷидашуда" },
   { icon: "truck", title: "Расонидан", text: "Ба тамоми Тоҷикистон" },
-  { icon: "tag", title: "Ҳаққи хизмат 10% → 5%", text: "Ҳар қадар зиёд, камтар" },
+  { icon: "tag", title: "Нархи оптовӣ", text: "Бештар харед, арзонтар" },
   { icon: "headset", title: "Менеҷери шахсӣ", text: "Тоҷикӣ, русӣ, англисӣ" },
 ];
 
@@ -25,11 +24,6 @@ const STEPS = [
 ];
 
 export default function Home() {
-  // Маҳсулоте, ки бо миқдор бештар арзон мешавад
-  const deals = products
-    .filter((p) => p.costTiers && p.costTiers.length > 1)
-    .sort((a, b) => b.costTiers![b.costTiers!.length - 1].cost / b.cost - a.costTiers![a.costTiers!.length - 1].cost / a.cost)
-    .slice(0, 6);
   const popular = interleave([...products].sort((a, b) => b.reviews - a.reviews)).slice(0, 4);
   const food = products.filter((p) => p.sale);
   const brands = getBrands().slice(0, 10);
@@ -97,17 +91,6 @@ export default function Home() {
           </div>
         </section>
 
-        {deals.length > 0 && (
-          <section className="block deals">
-            <div className="sec-head">
-              <div><h2><Icon name="bolt" size={20} className="bolt" /> Бо миқдор арзонтар</h2><p className="sec-sub">Нархи мол аз таъминкунанда</p></div>
-            </div>
-            <div className="hscroll">
-              {deals.map((p) => <ProductCard key={p.slug} p={p} compact />)}
-            </div>
-          </section>
-        )}
-
         {food.length > 0 && (
           <section className="block" id="food">
             <div className="sec-head">
@@ -119,23 +102,14 @@ export default function Home() {
           </section>
         )}
 
-        <section className="tiers-card">
+        <section className="tiers-card" id="rfq">
           <div className="tc-head">
-            <span className="chip-sm light"><Icon name="tag" size={13} /> Чӣ тавр нарх ҳисоб мешавад</span>
-            <h2>Нархи мол + хизмат + расонидан</h2>
-            <p>Ҳар қадар зиёд харед, ҳаққи хизмат камтар мешавад.</p>
+            <span className="chip-sm light"><Icon name="tag" size={13} /> Нархи оптовӣ</span>
+            <h2>Бештар харед, арзонтар мешавад</h2>
+            <p>Дар сабад ҳар қадар зиёд харед, нархи молҳо камтар мешавад. Барои фармоиши калон нархи махсусро дар WhatsApp пурсед.</p>
           </div>
-          <div className="tc-steps">
-            {FEE_TIERS.map((t, i) => (
-              <div key={t.from} className={i === 1 ? "best" : ""}>
-                <small>{i === 0 ? "то" : "аз"} {fmt(i === 0 ? FEE_TIERS[1].from : t.from)}</small>
-                <b>{t.pct}%</b>
-                <span>хизмат</span>
-              </div>
-            ))}
-          </div>
-          <a href={waLink("Салом! Барои фармоиши калон нархи махсус лозим аст.")} className="tc-rfq" id="rfq">
-            <Icon name="doc" size={18} /> Фармоиши хеле калон? Нархи махсусро дархост кунед
+          <a href={waLink("Салом! Барои фармоиши калон нархи оптовӣ лозим аст.")} className="tc-rfq">
+            <Icon name="wa" size={18} /> Нархи оптовиро дар WhatsApp пурсед
             <Icon name="chevron" size={16} stroke={2.4} />
           </a>
         </section>
