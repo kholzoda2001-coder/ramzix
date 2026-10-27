@@ -1,0 +1,126 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { CATEGORIES, COUNTRIES, products, type CountryCode } from "@/lib/catalog";
+import { EMPTY_FILTERS, UNITS, filterProducts, getBrands, type Filters } from "@/lib/filters";
+import Flag from "./Flag";
+import Icon from "./Icon";
+
+const toggle = <T,>(arr: T[], v: T) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
+
+export default function FilterSheet({
+  open,
+  initial,
+  onClose,
+  onApply,
+}: {
+  open: boolean;
+  initial: Filters;
+  onClose: () => void;
+  onApply: (f: Filters) => void;
+}) {
+  const [draft, setDraft] = useState<Filters>(initial);
+  const [minTxt, setMinTxt] = useState("");
+  const [maxTxt, setMaxTxt] = useState("");
+  const brands = useMemo(() => getBrands(), []);
+  const cats = CATEGORIES.filter((c) => c.id !== "all");
+
+  // Ҳар дафъаи кушодан аз филтрҳои ҷорӣ оғоз мекунем
+  useEffect(() => {
+    if (!open) return;
+    setDraft(initial);
+    setMinTxt(initial.min !== undefined ? String(initial.min) : "");
+    setMaxTxt(initial.max !== undefined ? String(initial.max) : "");
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, [open, initial]);
+
+  const withPrice: Filters = {
+    ...draft,
+    min: minTxt.trim() === "" ? undefined : Number(minTxt),
+    max: maxTxt.trim() === "" ? undefined : Number(maxTxt),
+  };
+  const count = useMemo(() => filterProducts(products, withPrice).length, [withPrice.q, withPrice.category, withPrice.brand, withPrice.country, withPrice.unit, withPrice.min, withPrice.max]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const counts = {
+    country: (c: CountryCode) => products.filter((p) => p.country === c).length,
+    category: (id: string) => products.filter((p) => p.category === id).length,
+  };
+
+  return (
+    <div className={`sheet-wrap ${open ? "open" : ""}`} aria-hidden={!open}>
+      <div className="sheet-bg" onClick={onClose} />
+      <div className="sheet" role="dialog" aria-label="Филтрҳо">
+        <div className="sheet-head">
+          <b>Филтрҳо</b>
+          <button className="sheet-x" onClick={onClose} aria-label="Пӯшидан"><Icon name="close" size={20} /></button>
+        </div>
+
+        <div className="sheet-body">
+          <section>
+            <h3>Кишвар</h3>
+            <div className="fchips">
+              {(Object.keys(COUNTRIES) as CountryCode[]).map((c) => (
+                <button key={c} className={draft.country.includes(c) ? "on" : ""} onClick={() => setDraft({ ...draft, country: toggle(draft.country, c) })}>
+                  <Flag code={c} className="fc-flag" />{COUNTRIES[c].short}<em>{counts.country(c)}</em>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <h3>Категория</h3>
+            <div className="fchips">
+              {cats.map((c) => {
+                const n = counts.category(c.id);
+                return (
+                  <button key={c.id} disabled={n === 0} className={draft.category.includes(c.id) ? "on" : ""} onClick={() => setDraft({ ...draft, category: toggle(draft.category, c.id) })}>
+                    {c.name}<em>{n}</em>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
+          <section>
+            <h3>Бренд</h3>
+            <div className="fchips">
+              {brands.map((b) => (
+                <button key={b.slug} className={draft.brand.includes(b.slug) ? "on" : ""} onClick={() => setDraft({ ...draft, brand: toggle(draft.brand, b.slug) })}>
+                  {b.name}<em>{b.count}</em>
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <h3>Воҳиди фурӯш</h3>
+            <div className="fchips">
+              {UNITS.map((u) => (
+                <button key={u} className={draft.unit.includes(u) ? "on" : ""} onClick={() => setDraft({ ...draft, unit: toggle(draft.unit, u) })}>
+                  {u === "дона" ? "Бо дона" : u === "картон" ? "Бо картон" : "Бо кило"}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <h3>Нарх <small>смн барои 1 воҳид</small></h3>
+            <div className="price-inputs">
+              <input inputMode="numeric" placeholder="Аз" value={minTxt} onChange={(e) => setMinTxt(e.target.value.replace(/[^\d]/g, ""))} aria-label="Нархи ҳадди ақал" />
+              <span>—</span>
+              <input inputMode="numeric" placeholder="То" value={maxTxt} onChange={(e) => setMaxTxt(e.target.value.replace(/[^\d]/g, ""))} aria-label="Нархи ҳадди аксар" />
+            </div>
+          </section>
+        </div>
+
+        <div className="sheet-foot">
+          <button className="sf-reset" onClick={() => { setDraft({ ...EMPTY_FILTERS, q: draft.q, sort: draft.sort }); setMinTxt(""); setMaxTxt(""); }}>Тоза кардан</button>
+          <button className="sf-apply" onClick={() => onApply(withPrice)}>
+            {count > 0 ? <>Нишон додан <b>{count}</b></> : "Ҳеҷ чиз ёфт нашуд"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

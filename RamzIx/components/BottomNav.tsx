@@ -7,7 +7,7 @@ import { CartBadge } from "./Cart";
 
 const ITEMS = [
   { href: "/", icon: "home", label: "Асосӣ" },
-  { href: "/#catalog", icon: "grid", label: "Каталог" },
+  { href: "/catalog", icon: "grid", label: "Каталог" },
   { href: "/#rfq", icon: "doc", label: "Дархостҳо" },
   { href: "/cart", icon: "cart", label: "Сабад", badge: true },
   { href: "/#profile", icon: "user", label: "Профил" },
@@ -18,7 +18,7 @@ export default function BottomNav() {
   return (
     <nav className="bottom-nav" aria-label="Менюи асосӣ">
       {ITEMS.map((it) => (
-        <Link key={it.label} href={it.href} className={path === it.href ? "on" : ""}>
+        <Link key={it.label} href={it.href} className={it.href === "/" ? (path === "/" ? "on" : "") : path.startsWith(it.href.split("#")[0]) && it.href.split("#")[0] !== "/" ? "on" : ""}>
           <span className="bn-ic">
             <Icon name={it.icon} size={23} />
             {it.badge && <CartBadge />}

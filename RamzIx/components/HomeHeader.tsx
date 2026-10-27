@@ -14,10 +14,10 @@ export default function HomeHeader() {
           <Link href="/cart" className="ic-btn" aria-label="Сабад"><Icon name="cart" /><CartBadge /></Link>
         </div>
       </div>
-      <form className="search" role="search" action="/">
+      <form className="search" role="search" action="/catalog">
         <Icon name="search" size={20} />
         <input name="q" placeholder="Ҷустуҷӯи маҳсулот, бренд ё артикул" aria-label="Ҷустуҷӯ" />
-        <button type="button" className="search-scan" aria-label="Филтр"><Icon name="grid" size={18} /></button>
+        <Link href="/catalog" className="search-scan" aria-label="Филтр"><Icon name="filter" size={18} /></Link>
       </form>
       <div className="hh-meta">
         <span><Icon name="pin" size={15} /> Расонидан ба <b>Душанбе</b> <Icon name="down" size={14} /></span>
