@@ -48,8 +48,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
   const unitPrice = listUnitPrice(p);
   const wholesale = wholesalePrices(p);
-  const whLow = Math.min(...wholesale.map((w) => w.unit));
-  const whHigh = Math.max(...wholesale.map((w) => w.unit));
   const goods = unitPrice * qty;
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
@@ -155,14 +153,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Нарх */}
           <div className="price-box">
-            <div className="pb-label">Нархи асосӣ</div>
-            <div className="pb-main">
-              <b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span>
-            </div>
-
-            <div className="wh-range">
-              <span className="wh-tag"><Icon name="tag" size={14} /> Оптом</span>
-              <span className="wh-val"><b>{fmtPrice(whLow)}–{fmtPrice(whHigh)}</b> смн / {unit}</span>
+            <div className="price-line">
+              <span className="pl"><b>{fmtPrice(unitPrice)}</b> смн</span>
+              {wholesale.map((w) => (
+                <span className="pl" key={w.pct}><b>{fmtPrice(w.unit)}</b> смн</span>
+              ))}
+              <small>/ {unit}</small>
             </div>
 
             <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
