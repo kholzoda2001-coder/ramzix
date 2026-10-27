@@ -137,21 +137,6 @@ export default function Home() {
           <ProductFeed items={feed} />
         </section>
 
-        <section className="partner" id="profile">
-          <span className="partner-ic"><Icon name="store" size={26} /></span>
-          <h2>Мағоза ё ширкат доред?</h2>
-          <p>Ҳисоби бизнес кушоед: нархҳои махсус, фактураи расмӣ ва пардохт бо мӯҳлат.</p>
-          <ul>
-            <li><Icon name="check" size={16} stroke={2.6} /> Менеҷери шахсӣ ва пайгирии бор</li>
-            <li><Icon name="check" size={16} stroke={2.6} /> Фармоиш аз рӯи талаботи шумо</li>
-            <li><Icon name="check" size={16} stroke={2.6} /> Ҳуҷҷатҳои гумрукӣ ва сертификат</li>
-          </ul>
-          <div className="partner-actions">
-            <a href="#" className="btn btn-orange">Бақайдгирии бизнес</a>
-            <a href={waLink("Салом! Мехоҳам ҳисоби бизнес кушоям.")} className="btn btn-wa" aria-label="WhatsApp"><Icon name="wa" /></a>
-          </div>
-        </section>
-
         <footer className="foot">
           <div className="pay">
             {["Алиф", "DC Pay", "Эсхата", "Visa / MC", "Интиқоли бонкӣ", "Нақд"].map((x) => <span key={x}>{x}</span>)}
