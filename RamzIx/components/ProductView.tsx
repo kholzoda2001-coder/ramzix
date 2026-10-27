@@ -147,16 +147,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
           {p.brand && <div className="pd-brand">{p.brand}</div>}
           <h1 className="pd-title">{p.name}</h1>
           {p.subtitle && <p className="pd-sub">{p.subtitle}</p>}
-          <div className="pd-rating">
-            {p.rating ? (
-              <>
-                <span className="stars">{[1, 2, 3, 4, 5].map((s) => <Icon key={s} name="star" size={14} className={s <= Math.round(p.rating!) ? "" : "dim"} />)}</span>
-                <b>{p.rating}</b><span>({p.reviews} баррасӣ)</span>
-              </>
-            ) : (
-              <span className="pill pill-orange">Маҳсулоти нав</span>
-            )}
-          </div>
+          {p.rating && (
+            <div className="pd-rating">
+              <span className="stars">{[1, 2, 3, 4, 5].map((s) => <Icon key={s} name="star" size={14} className={s <= Math.round(p.rating!) ? "" : "dim"} />)}</span>
+              <b>{p.rating}</b><span>({p.reviews} баррасӣ)</span>
+            </div>
+          )}
 
           {/* Нарх */}
           <div className="price-box">
