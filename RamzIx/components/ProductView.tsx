@@ -97,7 +97,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             onScroll={(e) => setImg(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
           >
             {p.images.map((src, k) => (
-              <div className="g-slide" key={src}><ProductImage src={src} alt={`${p.name} — ${k + 1}`} eager={k === 0} /></div>
+              <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src}><ProductImage src={src} alt={`${p.name} — ${k + 1}`} eager={k === 0} /></div>
             ))}
           </div>
           <span className="g-count">{img + 1} / {p.images.length}</span>
