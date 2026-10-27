@@ -153,12 +153,17 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Нарх */}
           <div className="price-box">
-            <div className="price-line">
-              <span className="pl"><b>{fmtPrice(unitPrice)}</b> смн</span>
-              {wholesale.map((w) => (
-                <span className="pl" key={w.pct}><b>{fmtPrice(w.unit)}</b> смн</span>
-              ))}
-              <small>/ {unit}</small>
+            <div className="pb-main">
+              <b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span>
+            </div>
+
+            <div className="wh-range">
+              <span className="wh-tag"><Icon name="tag" size={14} /> Оптом</span>
+              <span className="wh-vals">
+                {wholesale.map((w) => (
+                  <span key={w.pct}><b>{fmtPrice(w.unit)}</b> смн</span>
+                ))}
+              </span>
             </div>
 
             <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
