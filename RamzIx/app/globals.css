@@ -602,3 +602,11 @@ h1, h2, h3, p { margin: 0; }
 .cl-old { text-decoration: line-through; color: #94a3b8; margin-right: 5px; font-size: 12.5px; }
 .est-row.disc b { color: var(--green); }
 .est-row.struck b { color: var(--muted); }
+
+/* ---------- Нархи оптовӣ: диапазон ---------- */
+.wh-range { margin-top: 14px; display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 14px; background: #fff; border: 1px solid #fde7bf; }
+.wh-tag { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; background: var(--orange); color: var(--navy); font-size: 12px; font-weight: 800; }
+.wh-val { margin-left: auto; font-size: 13px; color: var(--muted); }
+.wh-val b { font-size: 21px; font-weight: 800; color: var(--navy); letter-spacing: -.4px; }
+.wh-sub { margin-top: 7px; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
+.pcard-whole span { white-space: nowrap; }

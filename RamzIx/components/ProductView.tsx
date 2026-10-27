@@ -46,6 +46,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
   const unitPrice = listUnitPrice(p);
   const wholesale = wholesalePrices(p);
+  const whLow = Math.min(...wholesale.map((w) => w.unit));
+  const whHigh = Math.max(...wholesale.map((w) => w.unit));
   const goods = unitPrice * qty;
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
@@ -140,17 +142,13 @@ export default function ProductView({ p, related, other }: { p: Product; related
               Барои як {unit}{ship.tjs > 0 && <> · расонидан: <b>{fmtPrice(shipPerUnit)} смн</b> / {unit}</>}
             </div>
 
-            <div className="wh">
-              <div className="wh-head"><Icon name="tag" size={15} /> Нархи оптовӣ <small>бо маблағи фармоиш</small></div>
-              {wholesale.map((w) => (
-                <div className="wh-row" key={w.pct}>
-                  <span className="wh-from">аз <b>{fmt(w.from)}</b> смн</span>
-                  <span className="wh-price"><b>{fmtPrice(w.unit)}</b> смн / {unit}</span>
-                  <em>−{w.off}%</em>
-                </div>
-              ))}
-              <p className="wh-note">Маблағи ҳамаи молҳои сабад ҳисоб мешавад. Нарх дар сабад худкор арзон мешавад.</p>
+            <div className="wh-range">
+              <span className="wh-tag"><Icon name="tag" size={14} /> Оптом</span>
+              <span className="wh-val"><b>{fmtPrice(whLow)}–{fmtPrice(whHigh)}</b> смн / {unit}</span>
             </div>
+            <p className="wh-sub">
+              Аз {fmt(wholesale[0].from)} то {fmt(wholesale[wholesale.length - 1].from)}+ смн фармоиш. Нарх дар сабад худкор арзон мешавад.
+            </p>
 
             <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
               <span className="wa-ic"><Icon name="wa" size={24} /></span>

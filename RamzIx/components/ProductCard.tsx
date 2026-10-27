@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { fmtPrice, fmtQty, unitOf, type Product } from "@/lib/catalog";
-import { listUnitPrice } from "@/lib/pricing";
+import { listUnitPrice, wholesalePrices } from "@/lib/pricing";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductImage from "./ProductImage";
 
 export default function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
   const unit = unitOf(p);
+  const wh = wholesalePrices(p).map((w) => w.unit);
 
   return (
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
@@ -23,6 +24,12 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         {p.sale && (
           <div className="pcard-pack">
             {p.sale.per ? `${p.sale.per} ${p.sale.perLabel} / ${unit}` : `Аз ${fmtQty(p.sale.min)} ${unit}`}
+          </div>
+        )}
+        {wh.length > 0 && (
+          <div className="pcard-whole">
+            <span>оптом</span>
+            <b>{fmtPrice(Math.min(...wh))}–{fmtPrice(Math.max(...wh))} смн</b>
           </div>
         )}
         {!compact && (
