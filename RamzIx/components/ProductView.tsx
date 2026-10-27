@@ -54,7 +54,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
   const ship = shippingCost(p.country, modeId, weight, volumeOf(p, qty));
-  const shipPerUnit = ship.tjs / qty;
   const total = goods + ship.tjs;
   const bigOrder = qty >= rfqFromOf(p);
   const country = COUNTRIES[p.country];
@@ -159,9 +158,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pb-label">Нархи асосӣ</div>
             <div className="pb-main">
               <b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span>
-            </div>
-            <div className="pb-note">
-              Барои як {unit}{ship.tjs > 0 && <> · расонидан: <b>{fmtPrice(shipPerUnit)} смн</b> / {unit}</>}
             </div>
 
             <div className="wh-range">
