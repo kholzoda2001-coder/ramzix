@@ -24,6 +24,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const minQty = sale?.min ?? 1;
   const [qty, setQty] = useState(minQty);
   const [img, setImg] = useState(0);
+  const [colorName, setColorName] = useState<string | null>(p.colors?.[0]?.name ?? null);
   const [size, setSize] = useState<string | null>(p.sizes?.[2] ?? p.sizes?.[0] ?? null);
   const [modeId, setModeId] = useState(defaultMode(p.country));
   const [tab, setTab] = useState<"desc" | "terms" | "ship">("desc");
@@ -63,12 +64,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const setQ = (v: number) => setQty(Math.min(99999, Math.max(minQty, round2(Math.round((v || minQty) / step) * step))));
   const goImg = (k: number) => track.current?.scrollTo({ left: k * track.current.clientWidth, behavior: "smooth" });
 
-  const waText = `Салом! Маҳсулот: ${p.name}${size ? `, андоза ${size}` : ""}. Миқдор: ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${sale?.perLabel})` : ""}. Нархи оптовиро гуфта метавонед?`;
+  const waText = `Салом! Маҳсулот: ${p.name}${colorName ? `, ранг ${colorName}` : ""}${size ? `, андоза ${size}` : ""}. Миқдор: ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${sale?.perLabel})` : ""}. Нархи оптовиро гуфта метавонед?`;
   const wholesaleLink = waLink(waText);
 
   const addToCart = () => {
     setMode(p.country, modeId);
-    add({ slug: p.slug, qty }, `${fmtQty(qty)} ${unit} ба сабад илова шуд`);
+    add({ slug: p.slug, qty, size: size ?? undefined, color: colorName ?? undefined }, `${fmtQty(qty)} ${unit} ба сабад илова шуд`);
   };
 
   const share = async () => {
@@ -96,23 +97,47 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <div
             className="g-track"
             ref={track}
-            onScroll={(e) => setImg(Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth))}
+            onScroll={(e) => {
+              const k = Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth);
+              setImg(k);
+              // Агар акс ба ранг тааллуқ дорад, ранг ҳам иваз мешавад
+              const c = p.colors?.find((x, i) => (x.image ?? i) === k);
+              if (c) setColorName(c.name);
+            }}
           >
             {p.images.map((src, k) => (
               <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src}><ProductImage src={src} alt={`${p.name} — ${k + 1}`} eager={k === 0} /></div>
             ))}
           </div>
-          <span className="g-count">{img + 1} / {p.images.length}</span>
-        </div>
-        <div className="thumbs">
-          {p.images.map((src, k) => (
-            <button key={src} className={k === img ? "on" : ""} onClick={() => goImg(k)} aria-label={`Сурати ${k + 1}`}>
-              <ProductImage src={src} alt="" />
-            </button>
-          ))}
+          {p.images.length > 1 && (
+            <div className="g-dots" role="tablist" aria-label="Расмҳо">
+              {p.images.map((src, k) => (
+                <button key={src} role="tab" aria-selected={k === img} className={k === img ? "on" : ""} onClick={() => goImg(k)} aria-label={`Сурати ${k + 1}`} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="pd-body">
+          {/* Рангҳо (вариатсия) */}
+          {p.colors && p.colors.length > 0 && (
+            <div className="colors">
+              <span className="colors-label">Ранг: <b>{colorName}</b></span>
+              <div className="swatches">
+                {p.colors.map((c, k) => (
+                  <button
+                    key={c.name}
+                    className={`swatch ${c.name === colorName ? "on" : ""}`}
+                    style={{ ["--c" as string]: c.hex }}
+                    onClick={() => { setColorName(c.name); goImg(c.image ?? k); }}
+                    aria-label={c.name}
+                    title={c.name}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Номи маҳсулот */}
           {p.brand && <div className="pd-brand">{p.brand}</div>}
           <h1 className="pd-title">{p.name}</h1>

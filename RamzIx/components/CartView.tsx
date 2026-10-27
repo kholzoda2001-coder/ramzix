@@ -51,7 +51,7 @@ export default function CartView() {
     for (const g of order.groups) {
       rows.push(`📦 ${COUNTRIES[g.country].name}:`);
       for (const l of g.lines) {
-        rows.push(`${n++}) ${l.p.name} — ${fmtQty(l.qty)} ${unitOf(l.p)} × ${fmtPrice(l.unit)} = ${fmt(l.goods)} смн`);
+        rows.push(`${n++}) ${l.p.name}${l.color ? `, ${l.color}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${unitOf(l.p)} × ${fmtPrice(l.unit)} = ${fmt(l.goods)} смн`);
       }
       rows.push(`   Расонидан (${g.shipping.mode.label}, ${fmtQty(round2(g.kg))} кг): ${g.shipping.tjs > 0 ? fmt(g.shipping.tjs) + " смн" : "бо тасдиқ"}`, "");
     }
@@ -81,13 +81,14 @@ export default function CartView() {
               const step = l.p.sale?.step ?? 1;
               const min = l.p.sale?.min ?? 1;
               const unit = unitOf(l.p);
-              const set = (v: number) => setQty(l.p.slug, Math.max(min, round2(Math.round(v / step) * step)));
+              const set = (v: number) => setQty(l.key, Math.max(min, round2(Math.round(v / step) * step)));
               const rfq = l.qty >= rfqFromOf(l.p);
               return (
-                <div className="cl" key={l.p.slug}>
+                <div className="cl" key={l.key}>
                   <Link href={`/product/${l.p.slug}`} className="cl-img"><ProductImage src={l.p.images[0]} alt={l.p.name} /></Link>
                   <div className="cl-body">
                     <Link href={`/product/${l.p.slug}`} className="cl-name">{l.p.name}</Link>
+                    {(l.size || l.color) && <div className="cl-var">{[l.color && `Ранг: ${l.color}`, l.size && `Андоза: ${l.size}`].filter(Boolean).join(" · ")}</div>}
                     <div className="cl-price">
                       {l.unit < l.listUnit - 0.05 && <span className="cl-old">{fmtPrice(l.listUnit)}</span>}<b>{fmtPrice(l.unit)}</b> смн / {unit}
                       {l.p.sale?.per && <small> · {l.p.sale.per} {l.p.sale.perLabel}</small>}
@@ -102,7 +103,7 @@ export default function CartView() {
                     </div>
                     {rfq && <div className="cl-warn">Миқдори калон: менеҷер нархи махсус медиҳад</div>}
                   </div>
-                  <button className="cl-del" onClick={() => remove(l.p.slug)} aria-label="Хориҷ кардан"><Icon name="close" size={18} /></button>
+                  <button className="cl-del" onClick={() => remove(l.key)} aria-label="Хориҷ кардан"><Icon name="close" size={18} /></button>
                 </div>
               );
             })}
