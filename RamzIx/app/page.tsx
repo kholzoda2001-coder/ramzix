@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import ProductCard from "@/components/ProductCard";
 import ProductFeed from "@/components/ProductFeed";
 import { CATEGORIES, COUNTRIES, fmt, products, waLink, type CountryCode } from "@/lib/catalog";
+import { categoryCount, getBrands } from "@/lib/filters";
 import { FEE_TIERS } from "@/lib/pricing-config";
 
 const TRUST = [
@@ -31,6 +32,7 @@ export default function Home() {
     .slice(0, 6);
   const popular = interleave([...products].sort((a, b) => b.reviews - a.reviews)).slice(0, 4);
   const food = products.filter((p) => p.sale);
+  const brands = getBrands().slice(0, 10);
   const feed = interleave(products.filter((p) => !popular.includes(p)));
 
   return (
@@ -39,13 +41,12 @@ export default function Home() {
 
       <main className="home">
         <nav className="cat-pills" aria-label="Категорияҳо">
-          <a className="on">Ҳама</a>
-          <a href="#catalog">Наушник</a>
-          <a href="#catalog">Либос</a>
-          <a href="#catalog">Телефон</a>
-          <a href="#catalog">Хона</a>
-          <a href="#catalog">Зебоӣ</a>
-          <a href="#food">Озуқа</a>
+          <Link href="/catalog" className="on">Ҳама</Link>
+          <Link href="/catalog?category=audio">Наушник</Link>
+          <Link href="/catalog?category=men">Либос</Link>
+          <Link href="/catalog?category=food">Озуқа</Link>
+          <Link href="/brands">Брендҳо</Link>
+          <Link href="/categories">Категорияҳо</Link>
         </nav>
 
         <HeroSlider />
@@ -63,7 +64,7 @@ export default function Home() {
           <div className="sec-head"><h2>Харид аз рӯи кишвар</h2></div>
           <div className="countries">
             {(Object.keys(COUNTRIES) as CountryCode[]).map((c) => (
-              <Link key={c} href="/#catalog" className="country">
+              <Link key={c} href={`/catalog?country=${c}`} className="country">
                 <Flag code={c} className="country-flag" />
                 <b>{COUNTRIES[c].short}</b>
                 <span>{products.filter((p) => p.country === c).length || "Ба наздикӣ"}{products.some((p) => p.country === c) ? " мол" : ""}</span>
@@ -73,12 +74,24 @@ export default function Home() {
         </section>
 
         <section className="block" id="catalog">
-          <div className="sec-head"><h2>Категорияҳо</h2><Link href="/#catalog">Ҳама <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
+          <div className="sec-head"><h2>Категорияҳо</h2><Link href="/categories">Ҳама <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
           <div className="cats">
             {CATEGORIES.map((c) => (
-              <Link key={c.id} href="/#popular" className="cat">
+              <Link key={c.id} href={c.id === "all" ? "/categories" : categoryCount(c.id) > 0 ? `/catalog?category=${c.id}` : "/categories"} className="cat">
                 <span className="cat-ic" style={{ background: c.tint }}><Icon name={c.icon} size={26} stroke={1.6} /></span>
                 <span>{c.name}</span>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        <section className="block">
+          <div className="sec-head"><h2>Брендҳо</h2><Link href="/brands">Ҳама <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
+          <div className="brand-row">
+            {brands.map((b) => (
+              <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-chip">
+                <span className="bc-logo sm">{b.name.slice(0, 2).toUpperCase()}</span>
+                <span><b>{b.name}</b><small>{b.count} мол</small></span>
               </Link>
             ))}
           </div>
@@ -146,7 +159,7 @@ export default function Home() {
         </section>
 
         <section className="block" id="popular">
-          <div className="sec-head"><h2>Барои шумо</h2></div>
+          <div className="sec-head"><h2>Барои шумо</h2><Link href="/catalog">Ҳама <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
           <ProductFeed items={feed} />
         </section>
 
