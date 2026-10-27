@@ -1,12 +1,12 @@
-"""Каталоги намунавиро аз hosting/*-sample.json месозад -> data/catalog.json.
+"""Каталоги намунавиро аз data/sources/*-sample.json месозад -> data/catalog.json.
 
-Нарх бо формулаи hosting/anker-plan.json ҳисоб мешавад:
+Нарх бо формулаи нархгузорӣ ҳисоб мешавад:
   usd = нархи манбаъ × қурб + вазн × 1.2 (интиқол), баъд +10% хизмат, × 9.25 = TJS
 """
 import json, re, pathlib
 
-ROOT = pathlib.Path(__file__).resolve().parents[2]
-OUT = pathlib.Path(__file__).resolve().parents[1] / "data" / "catalog.json"
+DATA = pathlib.Path(__file__).resolve().parents[1] / "data"
+OUT = DATA / "catalog.json"
 
 TO_USD = {"AED": 0.27100271, "SAR": 0.26666667, "USD": 1.0}
 USD_TO_TJS = 9.25
@@ -40,7 +40,7 @@ def clean_title(t):
 
 products = []
 for fname, country, cat, wdef in SOURCES:
-    raw = json.loads((ROOT / "hosting" / fname).read_text())
+    raw = json.loads((DATA / "sources" / fname).read_text())
     items = raw["eligible"] if isinstance(raw, dict) else raw
     src = fname.split("-")[0]
     for p in items:

@@ -10,7 +10,7 @@
 - `app/product/[slug]/page.tsx` — саҳифаи маҳсулот (нархи зинагӣ, миқдор, сабад, WhatsApp)
 - `components/` — қисмҳои UI
 - `lib/catalog.ts` — маълумот, кишварҳо, категорияҳо, ҳисоби нархи зинагӣ
-- `data/catalog.json` — каталоги намунавӣ, аз `../hosting/*-sample.json` сохта мешавад
+- `data/catalog.json` — каталоги намунавӣ, аз `data/sources/*-sample.json` сохта мешавад
 - `design/` — прототипи аввалини HTML
 - `PLAN.md` — нақша ва саволҳо
 
@@ -20,7 +20,7 @@
 npm install
 npm run dev        # http://localhost:3000
 npm run build      # санҷиши сохтан
-npm run catalog    # аз нав сохтани data/catalog.json аз hosting/*-sample.json
+npm run catalog    # аз нав сохтани data/catalog.json аз data/sources/*-sample.json
 ```
 
 ## Нашр дар Vercel
