@@ -4,7 +4,9 @@ import { createContext, useCallback, useContext, useEffect, useRef, useState } f
 import type { CountryCode } from "@/lib/catalog";
 import Icon from "./Icon";
 
-export type Line = { slug: string; qty: number };
+export type Line = { slug: string; qty: number; size?: string; color?: string };
+/** Як маҳсулот бо андоза ва рангҳои гуногун — сатрҳои гуногуни сабад */
+export const lineKey = (l: { slug: string; size?: string; color?: string }) => `${l.slug}|${l.size ?? ""}|${l.color ?? ""}`;
 type Modes = Partial<Record<CountryCode, string>>;
 
 type CartCtx = {
@@ -13,8 +15,8 @@ type CartCtx = {
   ready: boolean;
   count: number;
   add: (line: Line, label: string) => void;
-  setQty: (slug: string, qty: number) => void;
-  remove: (slug: string) => void;
+  setQty: (key: string, qty: number) => void;
+  remove: (key: string) => void;
   setMode: (country: CountryCode, mode: string) => void;
   clear: () => void;
 };
@@ -53,18 +55,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const add = useCallback((line: Line, label: string) => {
     setLines((prev) => {
-      const old = prev.find((l) => l.slug === line.slug);
-      return [...prev.filter((l) => l.slug !== line.slug), { slug: line.slug, qty: +((old?.qty ?? 0) + line.qty).toFixed(2) }];
+      const key = lineKey(line);
+      const old = prev.find((l) => lineKey(l) === key);
+      return [...prev.filter((l) => lineKey(l) !== key), { ...line, qty: +((old?.qty ?? 0) + line.qty).toFixed(2) }];
     });
     setToast(label);
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setToast(null), 2200);
   }, []);
 
-  const setQty = useCallback((slug: string, qty: number) => {
-    setLines((prev) => prev.map((l) => (l.slug === slug ? { ...l, qty } : l)));
+  const setQty = useCallback((key: string, qty: number) => {
+    setLines((prev) => prev.map((l) => (lineKey(l) === key ? { ...l, qty } : l)));
   }, []);
-  const remove = useCallback((slug: string) => setLines((prev) => prev.filter((l) => l.slug !== slug)), []);
+  const remove = useCallback((key: string) => setLines((prev) => prev.filter((l) => lineKey(l) !== key)), []);
   const setMode = useCallback((country: CountryCode, mode: string) => setModes((m) => ({ ...m, [country]: mode })), []);
   const clear = useCallback(() => setLines([]), []);
 

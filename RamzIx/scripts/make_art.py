@@ -56,7 +56,14 @@ def box(c, accent, name, sub):
 <text x="0" y="110" text-anchor="middle" font-family="Arial,sans-serif" font-size="14" fill="#fff" opacity=".85">100 пакет · 200 г</text>'''
 
 
-SHAPES = dict(can=can, jar=jar, sack=sack, bottle=bottle, box=box)
+def tee(c, accent, name, sub):
+    return f'''<path d="M-70-150 -25-165Q0-135 25-165L70-150 150-90 118-30 80-52V150Q80 165 65 165H-65Q-80 165-80 150V-52L-118-30-150-90z" fill="{c}"/>
+<path d="M-25-165Q0-135 25-165" stroke="#000" stroke-opacity=".18" stroke-width="6" fill="none"/>
+<path d="M-80-52V150M80-52V150" stroke="#000" stroke-opacity=".06" stroke-width="3"/>
+<text x="0" y="40" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="22" fill="{accent}">{name}</text>'''
+
+
+SHAPES = dict(can=can, jar=jar, sack=sack, bottle=bottle, box=box, tee=tee)
 
 ITEMS = {
     "monster": ("can", "#111827", "#7ee03a", "MONSTER", "ENERGY 500 мл"),
@@ -67,6 +74,11 @@ ITEMS = {
     "water": ("bottle", "#bae6fd", "#0284c7", "ОБИ", "МИНЕРАЛӢ 1.5 л"),
     "oil": ("bottle", "#fcd34d", "#a16207", "РАВҒАН", "офтобпараст 1 л"),
     "tea": ("box", "#166534", "#14532d", "ЧОЙ", "СИЁҲ"),
+    # Футболка бо чор ранг (барои намоиши вариатсияҳо)
+    "tee-black": ("tee", "#1f2937", "#f3f4f6", "RAMZIX", ""),
+    "tee-white": ("tee", "#f8fafc", "#1f2937", "RAMZIX", ""),
+    "tee-blue": ("tee", "#2563eb", "#eff6ff", "RAMZIX", ""),
+    "tee-red": ("tee", "#dc2626", "#fef2f2", "RAMZIX", ""),
 }
 
 
@@ -82,5 +94,6 @@ def svg(inner, group):
 for slug, (shape, c, accent, name, sub) in ITEMS.items():
     inner = SHAPES[shape](c, accent, name, sub)
     (OUT / f"{slug}.svg").write_text(svg(inner, False))
-    (OUT / f"{slug}-group.svg").write_text(svg(inner, True))
-print(len(ITEMS) * 2, "SVG ->", OUT)
+    if not slug.startswith("tee-"):
+        (OUT / f"{slug}-group.svg").write_text(svg(inner, True))
+print(len(ITEMS), "items ->", OUT)

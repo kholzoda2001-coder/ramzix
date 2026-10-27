@@ -69,9 +69,12 @@ export function shippingCost(country: CountryCode, modeId: string | undefined, k
 
 /* ---------- ҳисоби фармоиш ---------- */
 
-export type CartLine = { slug: string; qty: number };
+export type CartLine = { slug: string; qty: number; size?: string; color?: string };
 
 export type PricedLine = {
+  key: string;
+  size?: string;
+  color?: string;
   p: Product;
   qty: number;
   /** нархи 1 воҳид бо нархи асосӣ ва бо тахфифи ҷорӣ, смн */
@@ -113,7 +116,7 @@ export function priceOrder(
 ): PricedOrder {
   const found = lines.flatMap((l) => {
     const p = lookup(l.slug);
-    return p ? [{ p, qty: l.qty, cost: costPerUnit(p) }] : [];
+    return p ? [{ p, qty: l.qty, size: l.size, color: l.color, cost: costPerUnit(p) }] : [];
   });
 
   // Тахфиф аз маблағи фармоиш бо нархи асосӣ муайян мешавад
@@ -124,7 +127,16 @@ export function priceOrder(
   for (const l of found) {
     const listUnit = l.cost * (1 + BASE_PCT / 100);
     const unit = l.cost * (1 + pct / 100);
-    const row: PricedLine = { p: l.p, qty: l.qty, listUnit, unit, goods: Math.round(unit * l.qty) };
+    const row: PricedLine = {
+      key: `${l.p.slug}|${l.size ?? ""}|${l.color ?? ""}`,
+      size: l.size,
+      color: l.color,
+      p: l.p,
+      qty: l.qty,
+      listUnit,
+      unit,
+      goods: Math.round(unit * l.qty),
+    };
     byCountry.set(l.p.country, [...(byCountry.get(l.p.country) ?? []), row]);
   }
 

@@ -305,5 +305,56 @@
    "storage": "Ҷои хушк",
    "note": "Фақат бо картон"
   }
+ },
+ {
+  "slug": "futbolka-pahta",
+  "name": "Футболкаи мардона, пахта 100%",
+  "subtitle": "Oversize, 4 ранг, 5 андоза",
+  "brand": "RamzIx",
+  "category": "men",
+  "country": "tr",
+  "source": "ramzix",
+  "cost": 3.2,
+  "costCurrency": "USD",
+  "weightKg": 0.25,
+  "volumeM3": 0.003,
+  "images": [
+   "/products/tee-black.svg",
+   "/products/tee-white.svg",
+   "/products/tee-blue.svg",
+   "/products/tee-red.svg"
+  ],
+  "rating": 4.6,
+  "reviews": 38,
+  "sizes": [
+   "S",
+   "M",
+   "L",
+   "XL",
+   "XXL"
+  ],
+  "description": "Футболкаи пахтагини мардона, шакли Oversize. Дар чор ранг: сиёҳ, сафед, кабуд, сурх. Андозаҳо S–XXL.",
+  "colors": [
+   {
+    "name": "Сиёҳ",
+    "hex": "#1f2937",
+    "image": 0
+   },
+   {
+    "name": "Сафед",
+    "hex": "#f8fafc",
+    "image": 1
+   },
+   {
+    "name": "Кабуд",
+    "hex": "#2563eb",
+    "image": 2
+   },
+   {
+    "name": "Сурх",
+    "hex": "#dc2626",
+    "image": 3
+   }
+  ]
  }
 ]

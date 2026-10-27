@@ -37,6 +37,8 @@ export type Product = {
   rating: number | null;
   reviews: number;
   sizes: string[] | null;
+  /** Рангҳо (вариатсия): image — индекси акс дар images */
+  colors?: { name: string; hex: string; image?: number }[];
   description: string | null;
   sale?: Sale;
 };
