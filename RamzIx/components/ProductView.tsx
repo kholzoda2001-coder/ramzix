@@ -12,7 +12,6 @@ import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
 import useDragScroll from "./useDragScroll";
 
-const QUICK = [4, 10, 20, 50, 100];
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export default function ProductView({ p, related, other }: { p: Product; related: Product[]; other: Product[] }) {
@@ -213,11 +212,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 <span>Нархи мол</span>
                 <b>{fmt(goods)} смн</b>
               </div>
-            </div>
-            <div className="quick">
-              {(sale?.quick ?? QUICK).map((q) => (
-                <button key={q} className={qty === q ? "on" : ""} onClick={() => setQ(q)}>{!sale && q === 100 ? "100+" : fmtQty(q)}</button>
-              ))}
             </div>
             {(pieces || sale) && (
               <div className="pack-info">
