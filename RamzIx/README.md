@@ -31,4 +31,4 @@ npm run catalog    # аз нав сохтани data/catalog.json аз data/sour
 
 Пас аз ин ҳар `git push` худкор нав нашр мешавад.
 
-Рақами WhatsApp дар `lib/catalog.ts` (`WHATSAPP`) ҷойнишин аст: онро бо рақами воқеӣ иваз кунед.
+Рақами WhatsApp дар `lib/catalog.ts` (`WHATSAPP`) навишта шудааст: +971 50 838 5259.

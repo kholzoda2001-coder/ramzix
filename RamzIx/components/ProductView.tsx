@@ -31,6 +31,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const [solid, setSolid] = useState(false);
   const track = useRef<HTMLDivElement>(null);
   useDragScroll(track);
+  // Ҳангоми кашидани галерея ба акси ранги интихобшуда, номи ранг аз рӯи аксҳои «роҳ» иваз нашавад
+  const colorLock = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 240);
@@ -102,6 +104,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
               const k = Math.round(e.currentTarget.scrollLeft / e.currentTarget.clientWidth);
               setImg(k);
               // Агар акс ба ранг тааллуқ дорад, ранг ҳам иваз мешавад
+              if (colorLock.current) {
+                // Гузариши худкор идома дорад: қуфл то 140 мс пас аз охирин ҳаракат
+                clearTimeout(colorLock.current);
+                colorLock.current = setTimeout(() => { colorLock.current = null; }, 140);
+                return;
+              }
               const c = p.colors?.find((x, i) => (x.image ?? i) === k);
               if (c) setColorName(c.name);
             }}
@@ -132,7 +140,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
                       key={c.name}
                       className={`swatch ${src ? "photo" : ""} ${c.name === colorName ? "on" : ""}`}
                       style={{ ["--c" as string]: c.hex }}
-                      onClick={() => { setColorName(c.name); goImg(c.image ?? k); }}
+                      onClick={() => {
+                        setColorName(c.name);
+                        if (colorLock.current) clearTimeout(colorLock.current);
+                        colorLock.current = setTimeout(() => { colorLock.current = null; }, 700);
+                        goImg(c.image ?? k);
+                      }}
                       aria-label={c.name}
                       title={c.name}
                     >
