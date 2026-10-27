@@ -1,11 +1,14 @@
 import Link from "next/link";
-import { fmt, wholesalePrice, WHOLESALE_MIN, type Product } from "@/lib/catalog";
+import { fmt, fmtQty, tiersFor, unitOf, wholesalePrice, WHOLESALE_MIN, type Product } from "@/lib/catalog";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductImage from "./ProductImage";
 
 export default function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
   const off = p.listPrice ? Math.round((1 - p.price / p.listPrice) * 100) : 0;
+  const unit = unitOf(p);
+  // Барои маҳсулоти картонӣ/вазнӣ: зинаи якуми тахфифдор
+  const bulk = p.sale ? tiersFor(p.price, p.sale).find((t) => t.off > 0 && t.price) : null;
   return (
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
       <div className="pcard-img">
@@ -17,12 +20,22 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
       <div className="pcard-body">
         <div className="pcard-name">{p.name}</div>
         <div className="pcard-price">
-          <b>{fmt(p.price)}</b> <span>смн</span>
+          <b>{fmt(p.price)}</b> <span>смн{p.sale ? ` / ${unit}` : ""}</span>
           {p.listPrice && <s>{fmt(p.listPrice)}</s>}
         </div>
+        {p.sale && <div className="pcard-pack">{p.sale.per ? `${p.sale.per} ${p.sale.perLabel} / ${unit}` : `Аз ${fmtQty(p.sale.min)} ${unit}`}</div>}
         <div className="pcard-whole">
-          <span>аз {WHOLESALE_MIN} дона</span>
-          <b>{fmt(wholesalePrice(p.price))} смн</b>
+          {bulk ? (
+            <>
+              <span>аз {fmtQty(bulk.min)} {unit}</span>
+              <b>{fmt(bulk.price!)} смн</b>
+            </>
+          ) : (
+            <>
+              <span>аз {WHOLESALE_MIN} дона</span>
+              <b>{fmt(wholesalePrice(p.price))} смн</b>
+            </>
+          )}
         </div>
         {!compact && (
           <div className="pcard-meta">

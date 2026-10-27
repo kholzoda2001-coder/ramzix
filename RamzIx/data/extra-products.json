@@ -1,0 +1,453 @@
+[
+ {
+  "slug": "monster-energy-500",
+  "name": "Monster Energy 500 мл",
+  "subtitle": "Нӯшокии энергетикӣ, 24 банка дар картон",
+  "brand": "Monster",
+  "category": "food",
+  "country": "ae",
+  "source": "ramzix",
+  "price": 288,
+  "listPrice": null,
+  "weightKg": 13,
+  "images": [
+   "/products/monster.svg",
+   "/products/monster-group.svg"
+  ],
+  "rating": 4.8,
+  "reviews": 214,
+  "sizes": null,
+  "description": "Нӯшокии энергетикии Monster Energy, банкаи 500 мл. Дар як картон 24 банка. Нигоҳдорӣ: ҷои хушк, аз офтоб дур, то 25°C.",
+  "sale": {
+   "unit": "картон",
+   "per": 24,
+   "perLabel": "банка",
+   "step": 1,
+   "min": 1,
+   "quick": [
+    1,
+    5,
+    10,
+    20,
+    50
+   ],
+   "tiers": [
+    {
+     "min": 1,
+     "off": 0
+    },
+    {
+     "min": 5,
+     "off": 0.04
+    },
+    {
+     "min": 20,
+     "off": 0.08
+    },
+    {
+     "min": 50,
+     "off": 0.12
+    }
+   ],
+   "rfqFrom": 200,
+   "weightKgPerUnit": 13,
+   "shelfLife": "18 моҳ",
+   "storage": "Ҷои хушк, то 25°C",
+   "note": "Фақат бо картон"
+  }
+ },
+ {
+  "slug": "monster-ultra-500",
+  "name": "Monster Ultra Zero 500 мл",
+  "subtitle": "Бе шакар, 24 банка дар картон",
+  "brand": "Monster",
+  "category": "food",
+  "country": "ae",
+  "source": "ramzix",
+  "price": 298,
+  "listPrice": null,
+  "weightKg": 13,
+  "images": [
+   "/products/monster-ultra.svg",
+   "/products/monster-ultra-group.svg"
+  ],
+  "rating": 4.7,
+  "reviews": 96,
+  "sizes": null,
+  "description": "Monster Ultra Zero Sugar, банкаи 500 мл, бе шакар. Дар як картон 24 банка.",
+  "sale": {
+   "unit": "картон",
+   "per": 24,
+   "perLabel": "банка",
+   "step": 1,
+   "min": 1,
+   "quick": [
+    1,
+    5,
+    10,
+    20,
+    50
+   ],
+   "tiers": [
+    {
+     "min": 1,
+     "off": 0
+    },
+    {
+     "min": 5,
+     "off": 0.04
+    },
+    {
+     "min": 20,
+     "off": 0.08
+    },
+    {
+     "min": 50,
+     "off": 0.12
+    }
+   ],
+   "rfqFrom": 200,
+   "weightKgPerUnit": 13,
+   "shelfLife": "18 моҳ",
+   "storage": "Ҷои хушк, то 25°C",
+   "note": "Фақат бо картон"
+  }
+ },
+ {
+  "slug": "asal-kuhi",
+  "name": "Асали кӯҳии Тоҷикистон",
+  "subtitle": "Асали табиӣ, фурӯш бо кило",
+  "brand": "Pamir Honey",
+  "category": "food",
+  "country": "tj",
+  "source": "ramzix",
+  "price": 95,
+  "listPrice": null,
+  "weightKg": 1.1,
+  "images": [
+   "/products/honey.svg",
+   "/products/honey-group.svg"
+  ],
+  "rating": 4.9,
+  "reviews": 128,
+  "sizes": null,
+  "description": "Асали табиии кӯҳӣ аз ноҳияҳои Тоҷикистон. Бе иловаҳо. Фурӯш бо вазн: аз 2 кг. Барои мағозаҳо дар зарфи 20 кг низ мумкин аст.",
+  "sale": {
+   "unit": "кг",
+   "step": 0.5,
+   "min": 2,
+   "quick": [
+    2,
+    5,
+    10,
+    20,
+    50
+   ],
+   "tiers": [
+    {
+     "min": 2,
+     "off": 0
+    },
+    {
+     "min": 10,
+     "off": 0.05
+    },
+    {
+     "min": 50,
+     "off": 0.1
+    },
+    {
+     "min": 200,
+     "off": 0.15
+    }
+   ],
+   "rfqFrom": 1000,
+   "weightKgPerUnit": 1.1,
+   "shelfLife": "24 моҳ",
+   "storage": "Ҷои хунук, дар зарфи пӯшида",
+   "note": "Бо вазн, қадам 0.5 кг",
+   "decimals": true
+  }
+ },
+ {
+  "slug": "shakar-25",
+  "name": "Шакар, навъи 1",
+  "subtitle": "Халта 25 кг, фурӯш бо кило",
+  "brand": "RamzIx",
+  "category": "food",
+  "country": "tr",
+  "source": "ramzix",
+  "price": 13,
+  "listPrice": null,
+  "weightKg": 1,
+  "images": [
+   "/products/sugar.svg",
+   "/products/sugar-group.svg"
+  ],
+  "rating": 4.5,
+  "reviews": 41,
+  "sizes": null,
+  "description": "Шакари сафеди навъи 1. Дар халтаи 25 кг ё бо вазн (аз 25 кг). Барои мағозаҳо ва нонвойхонаҳо.",
+  "sale": {
+   "unit": "кг",
+   "step": 1,
+   "min": 25,
+   "quick": [
+    25,
+    50,
+    100,
+    500,
+    1000
+   ],
+   "tiers": [
+    {
+     "min": 25,
+     "off": 0
+    },
+    {
+     "min": 100,
+     "off": 0.03
+    },
+    {
+     "min": 500,
+     "off": 0.06
+    },
+    {
+     "min": 2000,
+     "off": 0.09
+    }
+   ],
+   "rfqFrom": 5000,
+   "weightKgPerUnit": 1,
+   "shelfLife": "24 моҳ",
+   "storage": "Ҷои хушк",
+   "note": "Аз 25 кг"
+  }
+ },
+ {
+  "slug": "birinj-25",
+  "name": "Биринҷи дарозидона",
+  "subtitle": "Халта 25 кг, фурӯш бо кило",
+  "brand": "RamzIx",
+  "category": "food",
+  "country": "tr",
+  "source": "ramzix",
+  "price": 24,
+  "listPrice": null,
+  "weightKg": 1,
+  "images": [
+   "/products/rice.svg",
+   "/products/rice-group.svg"
+  ],
+  "rating": 4.6,
+  "reviews": 57,
+  "sizes": null,
+  "description": "Биринҷи дарозидонаи сифати олӣ. Халта 25 кг. Барои ошхонаҳо ва мағозаҳо.",
+  "sale": {
+   "unit": "кг",
+   "step": 1,
+   "min": 25,
+   "quick": [
+    25,
+    50,
+    100,
+    500,
+    1000
+   ],
+   "tiers": [
+    {
+     "min": 25,
+     "off": 0
+    },
+    {
+     "min": 100,
+     "off": 0.03
+    },
+    {
+     "min": 500,
+     "off": 0.06
+    },
+    {
+     "min": 2000,
+     "off": 0.09
+    }
+   ],
+   "rfqFrom": 5000,
+   "weightKgPerUnit": 1,
+   "shelfLife": "24 моҳ",
+   "storage": "Ҷои хушк",
+   "note": "Аз 25 кг"
+  }
+ },
+ {
+  "slug": "obi-mineral-15",
+  "name": "Оби минералӣ 1.5 л",
+  "subtitle": "Картон 6 шиша",
+  "brand": "Pamir Spring",
+  "category": "food",
+  "country": "tj",
+  "source": "ramzix",
+  "price": 42,
+  "listPrice": null,
+  "weightKg": 9.5,
+  "images": [
+   "/products/water.svg",
+   "/products/water-group.svg"
+  ],
+  "rating": 4.4,
+  "reviews": 73,
+  "sizes": null,
+  "description": "Оби минералии ғайригазнок аз чашмаҳои Помир. Шишаи 1.5 л, дар як картон 6 шиша.",
+  "sale": {
+   "unit": "картон",
+   "per": 6,
+   "perLabel": "шиша",
+   "step": 1,
+   "min": 2,
+   "quick": [
+    2,
+    10,
+    20,
+    50,
+    100
+   ],
+   "tiers": [
+    {
+     "min": 2,
+     "off": 0
+    },
+    {
+     "min": 10,
+     "off": 0.04
+    },
+    {
+     "min": 50,
+     "off": 0.08
+    },
+    {
+     "min": 200,
+     "off": 0.12
+    }
+   ],
+   "rfqFrom": 1000,
+   "weightKgPerUnit": 9.5,
+   "shelfLife": "12 моҳ",
+   "storage": "Аз офтоб дур",
+   "note": "Аз 2 картон"
+  }
+ },
+ {
+  "slug": "ravgan-1l",
+  "name": "Равғани офтобпараст 1 л",
+  "subtitle": "Картон 12 шиша",
+  "brand": "RamzIx",
+  "category": "food",
+  "country": "tr",
+  "source": "ramzix",
+  "price": 205,
+  "listPrice": null,
+  "weightKg": 11.5,
+  "images": [
+   "/products/oil.svg",
+   "/products/oil-group.svg"
+  ],
+  "rating": 4.6,
+  "reviews": 88,
+  "sizes": null,
+  "description": "Равғани офтобпарасти тозашуда, шишаи 1 л. Дар як картон 12 шиша.",
+  "sale": {
+   "unit": "картон",
+   "per": 12,
+   "perLabel": "шиша",
+   "step": 1,
+   "min": 1,
+   "quick": [
+    1,
+    5,
+    10,
+    20,
+    50
+   ],
+   "tiers": [
+    {
+     "min": 1,
+     "off": 0
+    },
+    {
+     "min": 5,
+     "off": 0.03
+    },
+    {
+     "min": 20,
+     "off": 0.06
+    },
+    {
+     "min": 50,
+     "off": 0.09
+    }
+   ],
+   "rfqFrom": 300,
+   "weightKgPerUnit": 11.5,
+   "shelfLife": "12 моҳ",
+   "storage": "Аз офтоб дур",
+   "note": "Фақат бо картон"
+  }
+ },
+ {
+  "slug": "choy-siyoh-100",
+  "name": "Чойи сиёҳ, 100 пакет",
+  "subtitle": "Картон 24 қуттӣ",
+  "brand": "Ceylon Gold",
+  "category": "food",
+  "country": "ae",
+  "source": "ramzix",
+  "price": 410,
+  "listPrice": null,
+  "weightKg": 6,
+  "images": [
+   "/products/tea.svg",
+   "/products/tea-group.svg"
+  ],
+  "rating": 4.7,
+  "reviews": 64,
+  "sizes": null,
+  "description": "Чойи сиёҳи Сейлон, 100 пакети чойи 2 г дар як қуттӣ. Дар як картон 24 қуттӣ.",
+  "sale": {
+   "unit": "картон",
+   "per": 24,
+   "perLabel": "қуттӣ",
+   "step": 1,
+   "min": 1,
+   "quick": [
+    1,
+    3,
+    5,
+    10,
+    20
+   ],
+   "tiers": [
+    {
+     "min": 1,
+     "off": 0
+    },
+    {
+     "min": 3,
+     "off": 0.04
+    },
+    {
+     "min": 10,
+     "off": 0.08
+    },
+    {
+     "min": 30,
+     "off": 0.12
+    }
+   ],
+   "rfqFrom": 100,
+   "weightKgPerUnit": 6,
+   "shelfLife": "24 моҳ",
+   "storage": "Ҷои хушк",
+   "note": "Фақат бо картон"
+  }
+ }
+]

@@ -1,6 +1,24 @@
 import raw from "@/data/catalog.json";
+import extra from "@/data/extra-products.json";
 
 export type CountryCode = "ae" | "cn" | "tr" | "tj";
+
+/* Воҳиди фурӯш: картон, кг, бастабандӣ… (агар набошад — дона) */
+export type Sale = {
+  unit: string;
+  per?: number;
+  perLabel?: string;
+  step: number;
+  min: number;
+  quick: number[];
+  tiers: { min: number; off: number }[];
+  rfqFrom: number;
+  weightKgPerUnit: number;
+  shelfLife?: string;
+  storage?: string;
+  note?: string;
+  decimals?: boolean;
+};
 
 export type Product = {
   slug: string;
@@ -18,9 +36,10 @@ export type Product = {
   reviews: number;
   sizes: string[] | null;
   description: string | null;
+  sale?: Sale;
 };
 
-export const products = raw as Product[];
+export const products = [...(raw as Product[]), ...(extra as Product[])];
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
 
@@ -35,9 +54,9 @@ export const CATEGORIES: { id: string; name: string; icon: string; tint: string 
   { id: "audio", name: "Наушник ва аудио", icon: "headphones", tint: "#e8eefc" },
   { id: "phones", name: "Телефон ва аксессуар", icon: "phone", tint: "#fde8f1" },
   { id: "men", name: "Либоси мардона", icon: "shirt", tint: "#e6f4fb" },
-  { id: "home", name: "Хона ва ошхона", icon: "home", tint: "#e7f6ee" },
+  { id: "home", name: "Хона ва ошхона", icon: "home", tint: "#f1ecfd" },
   { id: "beauty", name: "Зебоӣ ва саломатӣ", icon: "sparkle", tint: "#fdecec" },
-  { id: "kids", name: "Кӯдакон", icon: "baby", tint: "#f1ecfd" },
+  { id: "food", name: "Озуқа ва нӯшокӣ", icon: "cup", tint: "#e7f6ee" },
   { id: "office", name: "Компютер ва офис", icon: "laptop", tint: "#fdf3e1" },
   { id: "all", name: "Ҳамаи категорияҳо", icon: "grid", tint: "#eef1f6" },
 ];
@@ -45,7 +64,25 @@ export const CATEGORIES: { id: string; name: string; icon: string; tint: string 
 /* Нархи зинагӣ: ҳар қадар миқдор зиёд — нархи як дона камтар */
 export type Tier = { min: number; max: number; label: string; off: number; price: number | null };
 
-export function tiersFor(base: number): Tier[] {
+export const unitOf = (p: Product) => p.sale?.unit ?? "дона";
+export const fmtQty = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, ""));
+
+export function tiersFor(base: number, sale?: Sale): Tier[] {
+  if (sale) {
+    const list = sale.tiers;
+    const out: Tier[] = list.map((t, i) => {
+      const max = i + 1 < list.length ? +(list[i + 1].min - sale.step).toFixed(2) : +(sale.rfqFrom - sale.step).toFixed(2);
+      return {
+        min: t.min,
+        max,
+        label: `${fmtQty(t.min)}–${fmtQty(max)} ${sale.unit}`,
+        off: t.off,
+        price: Math.round(base * (1 - t.off)),
+      };
+    });
+    out.push({ min: sale.rfqFrom, max: Infinity, label: `${fmtQty(sale.rfqFrom)}+ ${sale.unit}`, off: 0, price: null });
+    return out;
+  }
   const t = (min: number, max: number, label: string, off: number): Tier => ({
     min, max, label, off, price: Math.round(base * (1 - off)),
   });

@@ -27,6 +27,7 @@ export default function Home() {
   // Тахфифҳо: маҳсулоте, ки нархи пешинаашон баландтар буд
   const deals = products.filter((p) => p.listPrice).slice(0, 6);
   const popular = interleave([...products].sort((a, b) => b.reviews - a.reviews)).slice(0, 4);
+  const food = products.filter((p) => p.sale);
   const feed = interleave(products.filter((p) => !popular.includes(p)));
 
   return (
@@ -41,7 +42,7 @@ export default function Home() {
           <a href="#catalog">Телефон</a>
           <a href="#catalog">Хона</a>
           <a href="#catalog">Зебоӣ</a>
-          <a href="#catalog">Кӯдакон</a>
+          <a href="#food">Озуқа</a>
         </nav>
 
         <HeroSlider />
@@ -88,6 +89,17 @@ export default function Home() {
             </div>
             <div className="hscroll">
               {deals.map((p) => <ProductCard key={p.slug} p={p} compact />)}
+            </div>
+          </section>
+        )}
+
+        {food.length > 0 && (
+          <section className="block" id="food">
+            <div className="sec-head">
+              <div><h2>Озуқа ва нӯшокӣ</h2><p className="sec-sub">Бо картон ва бо кило</p></div>
+            </div>
+            <div className="hscroll">
+              {food.map((p) => <ProductCard key={p.slug} p={p} compact />)}
             </div>
           </section>
         )}
