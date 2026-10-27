@@ -123,10 +123,12 @@ export default function CartView() {
                 <span>
                   {g.shipping.mode.label}, {fmtQty(round2(g.kg))} кг
                   <small>
-                    {g.shipping.mode.daysMin}–{g.shipping.mode.daysMax} рӯз
-                    {g.shipping.basis === "m3" ? " · аз рӯи ҳаҷм" : ""}
-                    {g.shipping.mode.assumed ? " · нарх тахминӣ" : ""}
-                    {g.shipping.mode.note ? ` · ${g.shipping.mode.note}` : ""}
+                    {[
+                      modeList.length === 1 ? `${g.shipping.mode.daysMin}–${g.shipping.mode.daysMax} рӯз` : null,
+                      g.shipping.basis === "m3" ? "аз рӯи ҳаҷм" : null,
+                      g.shipping.mode.assumed ? "нарх тахминӣ" : null,
+                      g.shipping.mode.note ?? null,
+                    ].filter(Boolean).join(" · ")}
                   </small>
                 </span>
                 <b>{g.shipping.tjs > 0 ? `${fmt(g.shipping.tjs)} смн` : "бо тасдиқ"}</b>
