@@ -164,9 +164,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
               <span className="wh-tag"><Icon name="tag" size={14} /> Оптом</span>
               <span className="wh-val"><b>{fmtPrice(whLow)}–{fmtPrice(whHigh)}</b> смн / {unit}</span>
             </div>
-            <p className="wh-sub">
-              Аз {fmt(wholesale[0].from)} то {fmt(wholesale[wholesale.length - 1].from)}+ смн фармоиш. Нарх дар сабад худкор арзон мешавад.
-            </p>
 
             <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
               <span className="wa-ic"><Icon name="wa" size={24} /></span>
@@ -208,7 +205,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
                   onBlur={() => setQ(qty)}
                 />
                 <button onClick={() => setQ(qty + step)} aria-label="Зиёд"><Icon name="plus" size={18} stroke={2.4} /></button>
-                <span className="unit-badge">{unit}</span>
               </div>
               <div className="sum">
                 <span>Нархи мол</span>
