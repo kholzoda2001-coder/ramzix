@@ -34,7 +34,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         )}
         {!compact && (
           <div className="pcard-meta">
-            {p.rating ? <span><Icon name="star" size={12} className="star" /> {p.rating}</span> : <span className="new">Нав</span>}
+            {p.rating ? <span><Icon name="star" size={12} className="star" /> {p.rating}</span> : <span />}
             <span>{p.brand ?? ""}</span>
           </div>
         )}
