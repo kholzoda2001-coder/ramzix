@@ -7,7 +7,6 @@ import { COUNTRIES, fmt, fmtPrice, fmtQty, unitOf, waLink, type Product } from "
 import { defaultMode, listUnitPrice, modesFor, rfqFromOf, shippingCost, volumeOf, weightOf, wholesalePrices } from "@/lib/pricing";
 import { QUOTE_VALID_HOURS, SHIPPING } from "@/lib/pricing-config";
 import { CartBadge, useCart } from "./Cart";
-import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
@@ -114,10 +113,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
         <div className="pd-body">
           {/* Номи маҳсулот */}
-          <div className="pd-badges">
-            <span className="pill pill-navy"><Flag code={p.country} className="pill-flag" /> Аз {country.short}</span>
-            <span className="pill pill-green"><i className="live" /> Дар анбор</span>
-          </div>
           {p.brand && <div className="pd-brand">{p.brand}</div>}
           <h1 className="pd-title">{p.name}</h1>
           {p.subtitle && <p className="pd-sub">{p.subtitle}</p>}
