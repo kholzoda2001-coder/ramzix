@@ -101,7 +101,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             ))}
           </div>
           <span className="g-count">{img + 1} / {p.images.length}</span>
-          <span className="g-badge">{sale ? `Фурӯш бо ${unit}` : "Нархи миқдорӣ"}</span>
         </div>
         <div className="thumbs">
           {p.images.map((src, k) => (
