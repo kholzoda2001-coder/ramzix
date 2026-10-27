@@ -613,3 +613,9 @@ h1, h2, h3, p { margin: 0; }
 .wh-val b { font-size: 21px; font-weight: 800; color: var(--navy); letter-spacing: -.4px; }
 .wh-sub { margin-top: 7px; font-size: 11.5px; color: var(--muted); line-height: 1.4; }
 .pcard-whole span { white-space: nowrap; }
+
+/* ---------- Кашидани слайдҳо бо муш ---------- */
+.g-track, .hero-track { cursor: grab; }
+.g-track.dragging, .hero-track.dragging { cursor: grabbing; scroll-snap-type: none; scroll-behavior: auto; }
+.g-track img, .hero-track img { -webkit-user-drag: none; user-select: none; }
+.g-track.dragging *, .hero-track.dragging * { pointer-events: none; }
