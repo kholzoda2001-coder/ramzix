@@ -1,5 +1,5 @@
 import { CATEGORIES, COUNTRIES, products, unitOf, type CountryCode, type Product } from "./catalog";
-import { priceTiers } from "./pricing";
+import { listUnitPrice } from "./pricing";
 
 /* ---------- бренд ---------- */
 
@@ -87,7 +87,7 @@ export const activeCount = (f: Filters) =>
   f.category.length + f.brand.length + f.country.length + f.unit.length + (f.min !== undefined || f.max !== undefined ? 1 : 0);
 
 /** Нархи 1 воҳид барои миқдори ҳадди ақал (смн) */
-export const basePrice = (p: Product) => priceTiers(p)[0].unit ?? 0;
+export const basePrice = (p: Product) => listUnitPrice(p);
 
 const norm = (s: string) => s.toLowerCase();
 

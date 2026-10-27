@@ -1,11 +1,11 @@
 """Каталоги намунавиро аз data/sources/*-sample.json месозад -> data/catalog.json.
 
 Дар маҳсулот НАРХИ ХАРИД (cost) бо асъори манбаъ нигоҳ дошта мешавад.
-Нархи фурӯш дар сайт аз cost + ҳаққи хизмат + расонидан ҳисоб мешавад
+Нархи фурӯш дар сайт аз cost + фоида + расонидан ҳисоб мешавад
 (ниг. lib/pricing.ts ва lib/pricing-config.ts).
 
-Диққат: costTiers (нархи миқдорӣ) ва volumeM3 дар ин ҷо НАМУНАВӣ ҳастанд,
-то ки сайт нишон дода шавад. Дар версияи воқеӣ онҳо аз таъминкунанда меоянд.
+Диққат: volumeM3 дар ин ҷо НАМУНАВӣ аст, то ки сайт нишон дода шавад.
+Дар версияи воқеӣ он аз таъминкунанда меояд.
 """
 import json, re, pathlib
 
@@ -19,10 +19,6 @@ SOURCES = [
     ("shein-sample.json", "cn", "men", 0.35, 0.004),
     ("trendyol-sample.json", "tr", "men", 0.25, 0.003),
 ]
-
-# намуна: ҳар қадар зиёд, нархи харид камтар
-SAMPLE_TIERS = [(1, 1.0), (10, 0.93), (50, 0.87)]
-
 
 def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", str(s).lower()).strip("-")[:60]
@@ -59,7 +55,6 @@ for fname, country, cat, wdef, vol in SOURCES:
             "source": src,
             "cost": money(price),
             "costCurrency": p["currency"],
-            "costTiers": [{"min": m, "cost": money(price * f)} for m, f in SAMPLE_TIERS],
             "weightKg": p.get("weight_kg") or wdef,
             "volumeM3": vol,
             "images": p["image_urls"][:6],

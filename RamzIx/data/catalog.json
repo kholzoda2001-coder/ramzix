@@ -9,20 +9,6 @@
   "source": "anker",
   "cost": 349,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 349.0
-   },
-   {
-    "min": 10,
-    "cost": 324.57
-   },
-   {
-    "min": 50,
-    "cost": 303.63
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -48,20 +34,6 @@
   "source": "anker",
   "cost": 699,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 699.0
-   },
-   {
-    "min": 10,
-    "cost": 650.07
-   },
-   {
-    "min": 50,
-    "cost": 608.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -87,20 +59,6 @@
   "source": "anker",
   "cost": 899,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 899.0
-   },
-   {
-    "min": 10,
-    "cost": 836.07
-   },
-   {
-    "min": 50,
-    "cost": 782.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -126,20 +84,6 @@
   "source": "anker",
   "cost": 199,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 199.0
-   },
-   {
-    "min": 10,
-    "cost": 185.07
-   },
-   {
-    "min": 50,
-    "cost": 173.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -165,20 +109,6 @@
   "source": "anker",
   "cost": 299,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 299.0
-   },
-   {
-    "min": 10,
-    "cost": 278.07
-   },
-   {
-    "min": 50,
-    "cost": 260.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -204,20 +134,6 @@
   "source": "anker",
   "cost": 339,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 339.0
-   },
-   {
-    "min": 10,
-    "cost": 315.27
-   },
-   {
-    "min": 50,
-    "cost": 294.93
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -243,20 +159,6 @@
   "source": "anker",
   "cost": 199,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 199.0
-   },
-   {
-    "min": 10,
-    "cost": 185.07
-   },
-   {
-    "min": 50,
-    "cost": 173.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -282,20 +184,6 @@
   "source": "anker",
   "cost": 799,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 799.0
-   },
-   {
-    "min": 10,
-    "cost": 743.07
-   },
-   {
-    "min": 50,
-    "cost": 695.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -321,20 +209,6 @@
   "source": "anker",
   "cost": 499,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 499.0
-   },
-   {
-    "min": 10,
-    "cost": 464.07
-   },
-   {
-    "min": 50,
-    "cost": 434.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -360,20 +234,6 @@
   "source": "anker",
   "cost": 299,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 299.0
-   },
-   {
-    "min": 10,
-    "cost": 278.07
-   },
-   {
-    "min": 50,
-    "cost": 260.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -399,20 +259,6 @@
   "source": "anker",
   "cost": 229,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 229.0
-   },
-   {
-    "min": 10,
-    "cost": 212.97
-   },
-   {
-    "min": 50,
-    "cost": 199.23
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -438,20 +284,6 @@
   "source": "anker",
   "cost": 99,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 99.0
-   },
-   {
-    "min": 10,
-    "cost": 92.07
-   },
-   {
-    "min": 50,
-    "cost": 86.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -477,20 +309,6 @@
   "source": "anker",
   "cost": 399,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 399.0
-   },
-   {
-    "min": 10,
-    "cost": 371.07
-   },
-   {
-    "min": 50,
-    "cost": 347.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -516,20 +334,6 @@
   "source": "anker",
   "cost": 199,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 199.0
-   },
-   {
-    "min": 10,
-    "cost": 185.07
-   },
-   {
-    "min": 50,
-    "cost": 173.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -555,20 +359,6 @@
   "source": "anker",
   "cost": 349,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 349.0
-   },
-   {
-    "min": 10,
-    "cost": 324.57
-   },
-   {
-    "min": 50,
-    "cost": 303.63
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -594,20 +384,6 @@
   "source": "anker",
   "cost": 699,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 699.0
-   },
-   {
-    "min": 10,
-    "cost": 650.07
-   },
-   {
-    "min": 50,
-    "cost": 608.13
-   }
-  ],
   "weightKg": 0.3,
   "volumeM3": 0.0015,
   "images": [
@@ -633,20 +409,6 @@
   "source": "noon",
   "cost": 60,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 60.0
-   },
-   {
-    "min": 10,
-    "cost": 55.8
-   },
-   {
-    "min": 50,
-    "cost": 52.2
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -667,20 +429,6 @@
   "source": "noon",
   "cost": 52,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 52.0
-   },
-   {
-    "min": 10,
-    "cost": 48.36
-   },
-   {
-    "min": 50,
-    "cost": 45.24
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -702,20 +450,6 @@
   "source": "noon",
   "cost": 129,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 129.0
-   },
-   {
-    "min": 10,
-    "cost": 119.97
-   },
-   {
-    "min": 50,
-    "cost": 112.23
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -737,20 +471,6 @@
   "source": "noon",
   "cost": 107,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 107.0
-   },
-   {
-    "min": 10,
-    "cost": 99.51
-   },
-   {
-    "min": 50,
-    "cost": 93.09
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -776,20 +496,6 @@
   "source": "shein",
   "cost": 52,
   "costCurrency": "SAR",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 52.0
-   },
-   {
-    "min": 10,
-    "cost": 48.36
-   },
-   {
-    "min": 50,
-    "cost": 45.24
-   }
-  ],
   "weightKg": 0.35,
   "volumeM3": 0.004,
   "images": [
@@ -822,20 +528,6 @@
   "source": "shein",
   "cost": 98.3,
   "costCurrency": "SAR",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 98.3
-   },
-   {
-    "min": 10,
-    "cost": 91.42
-   },
-   {
-    "min": 50,
-    "cost": 85.52
-   }
-  ],
   "weightKg": 0.35,
   "volumeM3": 0.004,
   "images": [
@@ -868,20 +560,6 @@
   "source": "shein",
   "cost": 58.62,
   "costCurrency": "SAR",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 58.62
-   },
-   {
-    "min": 10,
-    "cost": 54.52
-   },
-   {
-    "min": 50,
-    "cost": 51.0
-   }
-  ],
   "weightKg": 0.35,
   "volumeM3": 0.004,
   "images": [
@@ -915,20 +593,6 @@
   "source": "shein",
   "cost": 32.98,
   "costCurrency": "SAR",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 32.98
-   },
-   {
-    "min": 10,
-    "cost": 30.67
-   },
-   {
-    "min": 50,
-    "cost": 28.69
-   }
-  ],
   "weightKg": 0.35,
   "volumeM3": 0.004,
   "images": [
@@ -961,20 +625,6 @@
   "source": "shein",
   "cost": 35,
   "costCurrency": "SAR",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 35.0
-   },
-   {
-    "min": 10,
-    "cost": 32.55
-   },
-   {
-    "min": 50,
-    "cost": 30.45
-   }
-  ],
   "weightKg": 0.35,
   "volumeM3": 0.004,
   "images": [
@@ -1008,20 +658,6 @@
   "source": "trendyol",
   "cost": 10.09,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 10.09
-   },
-   {
-    "min": 10,
-    "cost": 9.38
-   },
-   {
-    "min": 50,
-    "cost": 8.78
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -1044,20 +680,6 @@
   "source": "trendyol",
   "cost": 13.34,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 13.34
-   },
-   {
-    "min": 10,
-    "cost": 12.41
-   },
-   {
-    "min": 50,
-    "cost": 11.61
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -1079,20 +701,6 @@
   "source": "trendyol",
   "cost": 13.24,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 13.24
-   },
-   {
-    "min": 10,
-    "cost": 12.31
-   },
-   {
-    "min": 50,
-    "cost": 11.52
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -1114,20 +722,6 @@
   "source": "trendyol",
   "cost": 25.54,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 25.54
-   },
-   {
-    "min": 10,
-    "cost": 23.75
-   },
-   {
-    "min": 50,
-    "cost": 22.22
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [
@@ -1149,20 +743,6 @@
   "source": "trendyol",
   "cost": 21.35,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 21.35
-   },
-   {
-    "min": 10,
-    "cost": 19.86
-   },
-   {
-    "min": 50,
-    "cost": 18.57
-   }
-  ],
   "weightKg": 0.25,
   "volumeM3": 0.003,
   "images": [

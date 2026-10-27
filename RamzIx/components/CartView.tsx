@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
 import { modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
-import { FEE_TIERS, MIN_FEE, QUOTE_VALID_HOURS } from "@/lib/pricing-config";
+import { QUOTE_VALID_HOURS } from "@/lib/pricing-config";
 import { useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -35,11 +35,6 @@ export default function CartView() {
     );
   }
 
-  // Прогресси то зинаи навбатии ҳаққи хизмат
-  const next = order.next;
-  const prevFrom = FEE_TIERS.filter((t) => t.from <= order.goods).pop()!.from;
-  const progress = next ? Math.min(100, ((order.goods - prevFrom) / (next.from - prevFrom)) * 100) : 100;
-
   const message = buildMessage();
 
   function buildMessage() {
@@ -54,7 +49,6 @@ export default function CartView() {
     }
     rows.push(
       `Нархи мол: ${fmt(order.goods)} смн`,
-      `Ҳаққи хизмат (${order.feePct}%): ${fmt(order.fee)} смн`,
       `Расонидан: ${fmt(order.shipping)} смн`,
       `Ҷамъ: ${fmt(order.total)} смн`,
     );
@@ -133,30 +127,18 @@ export default function CartView() {
         );
       })}
 
-      {/* Ҳаққи хизмат: то зинаи навбатӣ */}
-      <div className="fee-card">
-        {next ? (
-          <>
-            <div className="fee-line">
-              <Icon name="bolt" size={16} />
-              Боз <b>{fmt(next.need)} смн</b> мол харед: ҳаққи хизмат <b>{next.pct}%</b> мешавад
-            </div>
-            <div className="fee-bar"><i style={{ width: `${progress}%` }} /></div>
-          </>
-        ) : (
-          <div className="fee-line"><Icon name="check" size={16} stroke={2.6} /> Ҳаққи хизмати ҳадди ақал: <b>{order.feePct}%</b></div>
-        )}
-      </div>
+      {/* Агар боз харад, нарх арзонтар мешавад */}
+      {order.next && (
+        <div className="fee-card">
+          <div className="fee-line">
+            <Icon name="bolt" size={16} />
+            Боз тақрибан <b>{fmt(order.next.need)} смн</b> харед: нархи ҳамаи молҳо <b>{order.next.drop}%</b> арзонтар мешавад
+          </div>
+        </div>
+      )}
 
       <div className="sum-card">
         <div className="est-row"><span>Нархи мол</span><b>{fmt(order.goods)} смн</b></div>
-        <div className="est-row">
-          <span>
-            Ҳаққи хизмат ({order.feePct}%)
-            {order.minFeeApplied && <small>Ҳадди ақал {MIN_FEE} смн барои фармоиш</small>}
-          </span>
-          <b>{fmt(order.fee)} смн</b>
-        </div>
         <div className="est-row"><span>Расонидан</span><b>{order.shipping > 0 ? `${fmt(order.shipping)} смн` : "бо тасдиқ"}</b></div>
         <div className="est-total"><span>Ҷамъ</span><b>{fmt(order.total)} смн</b></div>
         <p className="est-note">Нарх {QUOTE_VALID_HOURS} соат дуруст аст. Пеш аз харид менеҷер мавҷудият ва нархро тасдиқ мекунад.</p>

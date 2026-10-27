@@ -30,8 +30,6 @@ export type Product = {
   /** Нархи харид барои 1 воҳид (бо асъори costCurrency), барои миқдори ҳадди ақал */
   cost: number;
   costCurrency: Currency;
-  /** Нархи таъминкунанда аз рӯи миқдор: агар набошад — як нарх */
-  costTiers?: { min: number; cost: number }[];
   /** Вазн ва ҳаҷми 1 воҳид (бо бастабандӣ) барои ҳисоби расонидан */
   weightKg: number;
   volumeM3?: number;

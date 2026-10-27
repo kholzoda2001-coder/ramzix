@@ -9,24 +9,6 @@
   "source": "ramzix",
   "cost": 77,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 77
-   },
-   {
-    "min": 5,
-    "cost": 75
-   },
-   {
-    "min": 20,
-    "cost": 72
-   },
-   {
-    "min": 50,
-    "cost": 69
-   }
-  ],
   "weightKg": 13,
   "volumeM3": 0.02,
   "images": [
@@ -66,24 +48,6 @@
   "source": "ramzix",
   "cost": 80,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 80
-   },
-   {
-    "min": 5,
-    "cost": 78
-   },
-   {
-    "min": 20,
-    "cost": 75
-   },
-   {
-    "min": 50,
-    "cost": 72
-   }
-  ],
   "weightKg": 13,
   "volumeM3": 0.02,
   "images": [
@@ -123,24 +87,6 @@
   "source": "ramzix",
   "cost": 70,
   "costCurrency": "TJS",
-  "costTiers": [
-   {
-    "min": 2,
-    "cost": 70
-   },
-   {
-    "min": 10,
-    "cost": 66
-   },
-   {
-    "min": 50,
-    "cost": 62
-   },
-   {
-    "min": 200,
-    "cost": 58
-   }
-  ],
   "weightKg": 1.1,
   "volumeM3": 0.001,
   "images": [
@@ -179,24 +125,6 @@
   "source": "ramzix",
   "cost": 11,
   "costCurrency": "TJS",
-  "costTiers": [
-   {
-    "min": 25,
-    "cost": 11
-   },
-   {
-    "min": 100,
-    "cost": 10.6
-   },
-   {
-    "min": 500,
-    "cost": 10.2
-   },
-   {
-    "min": 2000,
-    "cost": 9.8
-   }
-  ],
   "weightKg": 1,
   "volumeM3": 0.0015,
   "images": [
@@ -234,24 +162,6 @@
   "source": "ramzix",
   "cost": 20,
   "costCurrency": "TJS",
-  "costTiers": [
-   {
-    "min": 25,
-    "cost": 20
-   },
-   {
-    "min": 100,
-    "cost": 19.4
-   },
-   {
-    "min": 500,
-    "cost": 18.8
-   },
-   {
-    "min": 2000,
-    "cost": 18.2
-   }
-  ],
   "weightKg": 1,
   "volumeM3": 0.0015,
   "images": [
@@ -289,24 +199,6 @@
   "source": "ramzix",
   "cost": 30,
   "costCurrency": "TJS",
-  "costTiers": [
-   {
-    "min": 2,
-    "cost": 30
-   },
-   {
-    "min": 10,
-    "cost": 29
-   },
-   {
-    "min": 50,
-    "cost": 28
-   },
-   {
-    "min": 200,
-    "cost": 27
-   }
-  ],
   "weightKg": 9.5,
   "volumeM3": 0.012,
   "images": [
@@ -346,24 +238,6 @@
   "source": "ramzix",
   "cost": 160,
   "costCurrency": "TJS",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 160
-   },
-   {
-    "min": 5,
-    "cost": 155
-   },
-   {
-    "min": 20,
-    "cost": 150
-   },
-   {
-    "min": 50,
-    "cost": 145
-   }
-  ],
   "weightKg": 11.5,
   "volumeM3": 0.014,
   "images": [
@@ -403,24 +277,6 @@
   "source": "ramzix",
   "cost": 115,
   "costCurrency": "AED",
-  "costTiers": [
-   {
-    "min": 1,
-    "cost": 115
-   },
-   {
-    "min": 3,
-    "cost": 112
-   },
-   {
-    "min": 10,
-    "cost": 108
-   },
-   {
-    "min": 30,
-    "cost": 104
-   }
-  ],
   "weightKg": 6,
   "volumeM3": 0.03,
   "images": [
