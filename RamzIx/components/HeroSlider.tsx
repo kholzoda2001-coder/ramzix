@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { FEE_TIERS } from "@/lib/pricing-config";
 import Icon from "./Icon";
 
 const SLIDES = [
@@ -36,7 +37,7 @@ export default function HeroSlider() {
           <div className="slide-img-text">
             <span className="chip-sm">Anker · soundcore</span>
             <h2>Наушникҳои бесим</h2>
-            <p>Аслӣ, аз Дубай, бо кафолат. Оптом аз 10 дона</p>
+            <p>Аслӣ, аз Дубай, бо кафолат</p>
             <Link href="/#popular" className="btn btn-sm btn-navy">Харид <Icon name="chevron" size={14} stroke={2.4} /></Link>
           </div>
         </div>
@@ -52,13 +53,14 @@ export default function HeroSlider() {
         </div>
 
         <div className="slide slide-tiers">
-          <span className="chip-sm light"><Icon name="tag" size={13} /> Нархи зинагӣ</span>
-          <h2>Бештар харед, <em>камтар</em> пардохт кунед</h2>
+          <span className="chip-sm light"><Icon name="tag" size={13} /> Ҳаққи хизмат</span>
+          <h2>Бештар харед, <em>камтар</em> хизмат пардохт кунед</h2>
           <div className="mini-tiers">
-            <span><b>1–3</b>нархи оддӣ</span>
-            <span><b>4–9</b>−5%</span>
-            <span className="on"><b>10+</b>−10%</span>
-            <span><b>50+</b>−14%</span>
+            {FEE_TIERS.map((t, i) => (
+              <span key={t.from} className={i === 1 ? "on" : ""}>
+                <b>{t.pct}%</b>{i === 0 ? "оддӣ" : `${t.from / 1000}k+`}
+              </span>
+            ))}
           </div>
         </div>
       </div>

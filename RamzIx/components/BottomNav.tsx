@@ -9,7 +9,7 @@ const ITEMS = [
   { href: "/", icon: "home", label: "Асосӣ" },
   { href: "/#catalog", icon: "grid", label: "Каталог" },
   { href: "/#rfq", icon: "doc", label: "Дархостҳо" },
-  { href: "/#cart", icon: "cart", label: "Сабад", badge: true },
+  { href: "/cart", icon: "cart", label: "Сабад", badge: true },
   { href: "/#profile", icon: "user", label: "Профил" },
 ];
 

@@ -11,7 +11,7 @@ export default function HomeHeader() {
         <Logo />
         <div className="hh-actions">
           <button className="ic-btn" aria-label="Огоҳиҳо"><Icon name="bell" /><span className="dot" /></button>
-          <Link href="/#cart" className="ic-btn" aria-label="Сабад"><Icon name="cart" /><CartBadge /></Link>
+          <Link href="/cart" className="ic-btn" aria-label="Сабад"><Icon name="cart" /><CartBadge /></Link>
         </div>
       </div>
       <form className="search" role="search" action="/">
