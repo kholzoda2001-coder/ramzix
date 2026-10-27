@@ -10,6 +10,7 @@ import { CartBadge, useCart } from "./Cart";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
+import useDragScroll from "./useDragScroll";
 
 const QUICK = [4, 10, 20, 50, 100];
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -29,6 +30,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const [more, setMore] = useState(false);
   const [solid, setSolid] = useState(false);
   const track = useRef<HTMLDivElement>(null);
+  useDragScroll(track);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 240);

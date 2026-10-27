@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { waLink } from "@/lib/catalog";
 import Icon from "./Icon";
+import useDragScroll from "./useDragScroll";
 
 const SLIDES = [
   { key: "earbuds" },
@@ -14,6 +15,7 @@ const SLIDES = [
 
 export default function HeroSlider() {
   const ref = useRef<HTMLDivElement>(null);
+  useDragScroll(ref);
   const [i, setI] = useState(0);
 
   // Ҳар 5 сония слайди навбатӣ; ангушт ҳам кор мекунад (scroll-snap)
