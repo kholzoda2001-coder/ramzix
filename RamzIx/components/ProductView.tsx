@@ -124,16 +124,21 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="colors">
               <span className="colors-label">Ранг: <b>{colorName}</b></span>
               <div className="swatches">
-                {p.colors.map((c, k) => (
-                  <button
-                    key={c.name}
-                    className={`swatch ${c.name === colorName ? "on" : ""}`}
-                    style={{ ["--c" as string]: c.hex }}
-                    onClick={() => { setColorName(c.name); goImg(c.image ?? k); }}
-                    aria-label={c.name}
-                    title={c.name}
-                  />
-                ))}
+                {p.colors.map((c, k) => {
+                  const src = p.images[c.image ?? k];
+                  return (
+                    <button
+                      key={c.name}
+                      className={`swatch ${src ? "photo" : ""} ${c.name === colorName ? "on" : ""}`}
+                      style={{ ["--c" as string]: c.hex }}
+                      onClick={() => { setColorName(c.name); goImg(c.image ?? k); }}
+                      aria-label={c.name}
+                      title={c.name}
+                    >
+                      {src && <ProductImage src={src} alt={c.name} />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
