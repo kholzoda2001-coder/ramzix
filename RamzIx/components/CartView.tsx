@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
-import { useCart } from "./Cart";
+import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductImage from "./ProductImage";
@@ -16,6 +16,12 @@ export default function CartView() {
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
+
+  // Маҳсулоте, ки дигар дар каталог нест, аз сабад хориҷ мешавад (нишонаи сабад ҳам дуруст мешавад)
+  useEffect(() => {
+    if (!ready) return;
+    lines.filter((l) => !getProduct(l.slug)).forEach((l) => remove(lineKey(l)));
+  }, [ready, lines, remove]);
 
   const back = () => (history.length > 1 ? router.back() : router.push("/"));
 
@@ -39,7 +45,7 @@ export default function CartView() {
   // Дарозии хати пурраи нардбон: байни нуқтаҳои зинаҳо (ҳар як зина як ҳисса)
   const lo = ladder[reached].from;
   const hi = ladder[reached + 1]?.from ?? lo;
-  const within = hi > lo ? Math.min(1, (order.listAmount - lo) / (hi - lo)) : 1;
+  const within = hi > lo ? Math.min(1, (order.listAmount - lo) / (hi - lo)) : 0; // дар зинаи охирин хат ба нуқтаи охирин мерасад ва аз он намегузарад
   const fillPct = ladder.length > 1 ? ((reached + within) / (ladder.length - 1)) * 80 : 0;
 
   const message = buildMessage();

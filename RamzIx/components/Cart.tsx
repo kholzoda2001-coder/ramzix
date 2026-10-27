@@ -28,6 +28,24 @@ const Ctx = createContext<CartCtx>({
 export const useCart = () => useContext(Ctx);
 
 const KEY = "ramzix-cart-v2";
+export const MAX_QTY = 99999;
+const clampQty = (q: number) => Math.min(MAX_QTY, Math.max(0, Math.round(q * 100) / 100));
+
+/* Маълумоти хотираро тафтиш мекунад: агар вайрон бошад, сабад намешиканад */
+function cleanLines(raw: unknown): Line[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((l): Line[] => {
+    if (!l || typeof l !== "object" || typeof (l as Line).slug !== "string") return [];
+    const q = clampQty(Number((l as Line).qty));
+    if (!Number.isFinite(q) || q <= 0) return [];
+    const { size, color } = l as Line;
+    return [{ slug: (l as Line).slug, qty: q, size: typeof size === "string" ? size : undefined, color: typeof color === "string" ? color : undefined }];
+  });
+}
+function cleanModes(raw: unknown): Modes {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return {};
+  return Object.fromEntries(Object.entries(raw).filter(([, v]) => typeof v === "string")) as Modes;
+}
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<Line[]>([]);
@@ -41,8 +59,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       const saved = localStorage.getItem(KEY);
       if (saved) {
         const d = JSON.parse(saved);
-        setLines(d.lines ?? []);
-        setModes(d.modes ?? {});
+        setLines(cleanLines(d?.lines));
+        setModes(cleanModes(d?.modes));
       }
     } catch {}
     setReady(true);
@@ -57,7 +75,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setLines((prev) => {
       const key = lineKey(line);
       const old = prev.find((l) => lineKey(l) === key);
-      return [...prev.filter((l) => lineKey(l) !== key), { ...line, qty: +((old?.qty ?? 0) + line.qty).toFixed(2) }];
+      return [...prev.filter((l) => lineKey(l) !== key), { ...line, qty: clampQty((old?.qty ?? 0) + line.qty) }];
     });
     setToast(label);
     clearTimeout(timer.current);
@@ -65,7 +83,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const setQty = useCallback((key: string, qty: number) => {
-    setLines((prev) => prev.map((l) => (lineKey(l) === key ? { ...l, qty } : l)));
+    setLines((prev) => prev.map((l) => (lineKey(l) === key ? { ...l, qty: clampQty(qty) } : l)));
   }, []);
   const remove = useCallback((key: string) => setLines((prev) => prev.filter((l) => lineKey(l) !== key)), []);
   const setMode = useCallback((country: CountryCode, mode: string) => setModes((m) => ({ ...m, [country]: mode })), []);

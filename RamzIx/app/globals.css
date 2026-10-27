@@ -657,3 +657,8 @@ h1, h2, h3, p { margin: 0; }
 .pr-wh-vals b { font-size: 14.5px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
 .pr-wh-vals i { font-style: normal; color: #cbd5e1; margin-right: 4px; }
 .pr-wh-vals em { font-style: normal; font-size: 11.5px; font-weight: 700; color: var(--muted); }
+
+/* Сабад дар экрани танг (320 px): миқдор ва ҷамъ ба сатри дуюм мегузаранд */
+.cl-ctrl { flex-wrap: wrap; row-gap: 6px; }
+.cl-sum { margin-left: auto; }
+@media (max-width: 340px) { .cl-qty span { min-width: 62px; } .cl-img { width: 64px; height: 64px; } }

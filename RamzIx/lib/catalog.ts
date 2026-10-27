@@ -77,5 +77,6 @@ export const fmtPrice = (n: number) => {
   return (Number.isInteger(r) ? String(r) : r.toFixed(1)).replace(".", ",");
 };
 
-export const WHATSAPP = "992000000000";
+/** Рақами WhatsApp бе «+» ва фосила (формати wa.me): +971 50 838 5259 */
+export const WHATSAPP = "971508385259";
 export const waLink = (text: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
