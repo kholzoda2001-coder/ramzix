@@ -1,6 +1,7 @@
 import type { CountryCode, Product } from "./catalog";
 import {
   MARKUP_TIERS,
+  SHOWN_WHOLESALE_PCTS,
   RFQ_FROM_DEFAULT,
   SHIPPING,
   TO_USD,
@@ -15,14 +16,32 @@ export const rfqFromOf = (p: Product) => p.sale?.rfqFrom ?? RFQ_FROM_DEFAULT;
 /** Нархи харид барои 1 воҳид (смн) */
 export const costPerUnit = (p: Product) => p.cost * TO_USD[p.costCurrency] * USD_TO_TJS;
 
-/** Фоидаи шумо барои маблағи умумии харид (смн, бо нархи харид) */
-export const markupPct = (goodsCost: number) => {
-  for (const t of MARKUP_TIERS) if (goodsCost <= t.upTo) return t.pct;
-  return MARKUP_TIERS[MARKUP_TIERS.length - 1].pct;
-};
+const BASE_PCT = MARKUP_TIERS[0].pct;
 
 /** Нархи асосии нишондодашаванда барои 1 воҳид: нархи харид + фоида барои фармоиши хурд */
-export const listUnitPrice = (p: Product) => costPerUnit(p) * (1 + MARKUP_TIERS[0].pct / 100);
+export const listUnitPrice = (p: Product) => costPerUnit(p) * (1 + BASE_PCT / 100);
+
+/** Фоида барои маблағи фармоиш (бо нархи асосӣ) */
+export const markupPct = (listAmount: number) => {
+  let pct = MARKUP_TIERS[0].pct;
+  for (const t of MARKUP_TIERS) if (listAmount >= t.from) pct = t.pct;
+  return pct;
+};
+
+/** Арзонӣ нисбат ба нархи асосӣ, фоиз (масалан 8% фоида → 4.4%) */
+export const discountFor = (pct: number) => Math.round((1 - (1 + pct / 100) / (1 + BASE_PCT / 100)) * 1000) / 10;
+
+/** Нархҳои оптовии дар саҳифаи маҳсулот нишондодашаванда */
+export function wholesalePrices(p: Product) {
+  return SHOWN_WHOLESALE_PCTS.flatMap((pct) => {
+    const tier = MARKUP_TIERS.find((t) => t.pct === pct);
+    if (!tier) return [];
+    return [{ pct, from: tier.from, unit: costPerUnit(p) * (1 + pct / 100), off: discountFor(pct) }];
+  });
+}
+
+/** Зинаҳои тахфиф барои сабад: аз чӣ қадар маблағ чанд фоиз арзонтар */
+export const discountLadder = () => MARKUP_TIERS.map((t) => ({ from: t.from, off: discountFor(t.pct) }));
 
 /* ---------- вазн, ҳаҷм, расонидан ---------- */
 
@@ -55,7 +74,8 @@ export type CartLine = { slug: string; qty: number };
 export type PricedLine = {
   p: Product;
   qty: number;
-  /** нархи 1 воҳид барои харидор (бо фоида), смн */
+  /** нархи 1 воҳид бо нархи асосӣ ва бо тахфифи ҷорӣ, смн */
+  listUnit: number;
   unit: number;
   goods: number;
 };
@@ -71,11 +91,19 @@ export type PricedGroup = {
 
 export type PricedOrder = {
   groups: PricedGroup[];
+  /** маблағи мол бо нархи асосӣ */
+  listGoods: number;
+  /** тахфиф, смн ва фоиз */
+  discount: number;
+  discountPct: number;
+  /** маблағи мол бо тахфиф */
   goods: number;
   shipping: number;
   total: number;
-  /** Агар боз харад, нарх арзонтар мешавад: тақрибан чӣ қадар ва чанд фоиз */
-  next: { need: number; drop: number } | null;
+  /** маблағи фармоиш бо нархи асосӣ, барои ҳисоби зинаҳо */
+  listAmount: number;
+  /** зинаи навбатӣ: чӣ қадар боқӣ мондааст ва тахфифи он */
+  next: { need: number; off: number; from: number } | null;
 };
 
 export function priceOrder(
@@ -88,14 +116,15 @@ export function priceOrder(
     return p ? [{ p, qty: l.qty, cost: costPerUnit(p) }] : [];
   });
 
-  // Фоида аз маблағи умумии нархи харид муайян мешавад
-  const costTotal = found.reduce((s, l) => s + l.cost * l.qty, 0);
-  const pct = markupPct(costTotal);
+  // Тахфиф аз маблағи фармоиш бо нархи асосӣ муайян мешавад
+  const listAmount = found.reduce((s, l) => s + l.cost * (1 + BASE_PCT / 100) * l.qty, 0);
+  const pct = markupPct(listAmount);
 
   const byCountry = new Map<CountryCode, PricedLine[]>();
   for (const l of found) {
+    const listUnit = l.cost * (1 + BASE_PCT / 100);
     const unit = l.cost * (1 + pct / 100);
-    const row: PricedLine = { p: l.p, qty: l.qty, unit, goods: Math.round(unit * l.qty) };
+    const row: PricedLine = { p: l.p, qty: l.qty, listUnit, unit, goods: Math.round(unit * l.qty) };
     byCountry.set(l.p.country, [...(byCountry.get(l.p.country) ?? []), row]);
   }
 
@@ -113,18 +142,28 @@ export function priceOrder(
   });
 
   const goods = groups.reduce((s, g) => s + g.goods, 0);
+  const listGoods = groups.reduce((s, g) => s + g.lines.reduce((a, r) => a + Math.round(r.listUnit * r.qty), 0), 0);
   const shipping = Math.round(groups.reduce((s, g) => s + g.shipping.tjs, 0));
 
-  // Зинаи навбатӣ (фоидаи камтар)
-  let next: PricedOrder["next"] = null;
-  const idx = MARKUP_TIERS.findIndex((t) => costTotal <= t.upTo);
-  const nextTier = idx >= 0 ? MARKUP_TIERS[idx + 1] : undefined;
-  if (costTotal > 0 && nextTier && nextTier.pct < pct) {
-    next = {
-      need: Math.ceil(((MARKUP_TIERS[idx].upTo - costTotal) * (1 + pct / 100)) / 50) * 50,
-      drop: Math.round((1 - (1 + nextTier.pct / 100) / (1 + pct / 100)) * 1000) / 10,
-    };
-  }
+  const nextTier = MARKUP_TIERS.find((t) => t.from > listAmount);
+  const next =
+    listAmount > 0 && nextTier
+      ? {
+          need: Math.ceil((nextTier.from - listAmount) / 10) * 10,
+          off: discountFor(nextTier.pct),
+          from: nextTier.from,
+        }
+      : null;
 
-  return { groups, goods, shipping, total: goods + shipping, next };
+  return {
+    groups,
+    listGoods,
+    discount: Math.max(0, listGoods - goods),
+    discountPct: discountFor(pct),
+    goods,
+    shipping,
+    total: goods + shipping,
+    listAmount,
+    next,
+  };
 }

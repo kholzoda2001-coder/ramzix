@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
-import { defaultMode, listUnitPrice, modesFor, rfqFromOf, shippingCost, volumeOf, weightOf } from "@/lib/pricing";
+import { defaultMode, listUnitPrice, modesFor, rfqFromOf, shippingCost, volumeOf, weightOf, wholesalePrices } from "@/lib/pricing";
 import { QUOTE_VALID_HOURS, SHIPPING } from "@/lib/pricing-config";
 import { CartBadge, useCart } from "./Cart";
 import Flag from "./Flag";
@@ -45,6 +45,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   }, [ready, modes, p.country]);
 
   const unitPrice = listUnitPrice(p);
+  const wholesale = wholesalePrices(p);
   const goods = unitPrice * qty;
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
@@ -131,16 +132,30 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Нарх */}
           <div className="price-box">
+            <div className="pb-label">Нархи асосӣ</div>
             <div className="pb-main">
               <b>{fmtPrice(unitPrice)}</b><span>смн / {unit}</span>
             </div>
             <div className="pb-note">
-              Нархи мол{ship.tjs > 0 && <> · расонидан: <b>{fmtPrice(shipPerUnit)} смн</b> / {unit}</>}
+              Барои як {unit}{ship.tjs > 0 && <> · расонидан: <b>{fmtPrice(shipPerUnit)} смн</b> / {unit}</>}
             </div>
-            <a className="wh-btn" href={wholesaleLink} target="_blank" rel="noreferrer">
-              <Icon name="wa" size={18} />
-              <span><b>Нархи оптовӣ</b><small>Барои миқдори калон дар WhatsApp пурсед</small></span>
-              <Icon name="chevron" size={16} stroke={2.4} />
+
+            <div className="wh">
+              <div className="wh-head"><Icon name="tag" size={15} /> Нархи оптовӣ <small>бо маблағи фармоиш</small></div>
+              {wholesale.map((w) => (
+                <div className="wh-row" key={w.pct}>
+                  <span className="wh-from">аз <b>{fmt(w.from)}</b> смн</span>
+                  <span className="wh-price"><b>{fmtPrice(w.unit)}</b> смн / {unit}</span>
+                  <em>−{w.off}%</em>
+                </div>
+              ))}
+              <p className="wh-note">Маблағи ҳамаи молҳои сабад ҳисоб мешавад. Нарх дар сабад худкор арзон мешавад.</p>
+            </div>
+
+            <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
+              <span className="wa-ic"><Icon name="wa" size={24} /></span>
+              <span className="wa-txt"><b>Дар WhatsApp пурсед</b><small>Барои миқдори калон нархи махсус</small></span>
+              <Icon name="chevron" size={18} stroke={2.4} />
             </a>
           </div>
 
