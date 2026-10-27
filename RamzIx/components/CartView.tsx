@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
-import { modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
+import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { QUOTE_VALID_HOURS } from "@/lib/pricing-config";
 import { useCart } from "./Cart";
 import Flag from "./Flag";
@@ -35,6 +35,14 @@ export default function CartView() {
     );
   }
 
+  const ladder = discountLadder();
+  const reached = ladder.reduce((r, st, i) => (order.listAmount >= st.from ? i : r), 0);
+  // Дарозии хати пурраи нардбон: байни нуқтаҳои зинаҳо (ҳар як зина як ҳисса)
+  const lo = ladder[reached].from;
+  const hi = ladder[reached + 1]?.from ?? lo;
+  const within = hi > lo ? Math.min(1, (order.listAmount - lo) / (hi - lo)) : 1;
+  const fillPct = ladder.length > 1 ? ((reached + within) / (ladder.length - 1)) * 80 : 0;
+
   const message = buildMessage();
 
   function buildMessage() {
@@ -48,7 +56,8 @@ export default function CartView() {
       rows.push(`   Расонидан (${g.shipping.mode.label}, ${fmtQty(round2(g.kg))} кг): ${g.shipping.tjs > 0 ? fmt(g.shipping.tjs) + " смн" : "бо тасдиқ"}`, "");
     }
     rows.push(
-      `Нархи мол: ${fmt(order.goods)} смн`,
+      `Нархи мол: ${fmt(order.listGoods)} смн`,
+      ...(order.discount > 0 ? [`Тахфиф (−${order.discountPct}%): −${fmt(order.discount)} смн`] : []),
       `Расонидан: ${fmt(order.shipping)} смн`,
       `Ҷамъ: ${fmt(order.total)} смн`,
     );
@@ -80,7 +89,7 @@ export default function CartView() {
                   <div className="cl-body">
                     <Link href={`/product/${l.p.slug}`} className="cl-name">{l.p.name}</Link>
                     <div className="cl-price">
-                      <b>{fmtPrice(l.unit)}</b> смн / {unit}
+                      {l.unit < l.listUnit - 0.05 && <span className="cl-old">{fmtPrice(l.listUnit)}</span>}<b>{fmtPrice(l.unit)}</b> смн / {unit}
                       {l.p.sale?.per && <small> · {l.p.sale.per} {l.p.sale.perLabel}</small>}
                     </div>
                     <div className="cl-ctrl">
@@ -127,18 +136,37 @@ export default function CartView() {
         );
       })}
 
-      {/* Агар боз харад, нарх арзонтар мешавад */}
-      {order.next && (
-        <div className="fee-card">
-          <div className="fee-line">
-            <Icon name="bolt" size={16} />
-            Боз тақрибан <b>{fmt(order.next.need)} смн</b> харед: нархи ҳамаи молҳо <b>{order.next.drop}%</b> арзонтар мешавад
-          </div>
+      {/* Тахфиф ҳангоми зиёд харидан */}
+      <div className="disc-card">
+        <div className="disc-head">
+          <Icon name="bolt" size={17} /><b>Тахфиф ҳангоми зиёд харидан</b>
+          {order.discountPct > 0 && <span className="disc-now">−{order.discountPct}%</span>}
         </div>
-      )}
+        <div className="ladder">
+          <i className="fill" style={{ width: `${fillPct}%` }} />
+          {ladder.map((st, i) => (
+            <div key={st.from} className={`st ${i <= reached ? "on" : ""}`}>
+              <span className="dot">{i <= reached && <Icon name="check" size={12} stroke={3.2} />}</span>
+              <b>{st.off > 0 ? `−${st.off}%` : "Асосӣ"}</b>
+              <small>{st.from > 0 ? `аз ${fmt(st.from)}` : "то " + fmt(ladder[1].from)}</small>
+            </div>
+          ))}
+        </div>
+        <p className="disc-hint">
+          {order.next ? (
+            <>Боз <b>{fmt(order.next.need)} смн</b> харед (бо нархи асосӣ): тахфиф <b>−{order.next.off}%</b> мешавад.</>
+          ) : (
+            <>Шумо тахфифи ҳадди аксарро гирифтед: <b>−{order.discountPct}%</b>.</>
+          )}
+        </p>
+      </div>
 
       <div className="sum-card">
-        <div className="est-row"><span>Нархи мол</span><b>{fmt(order.goods)} смн</b></div>
+        <div className="est-row"><span>Нархи мол</span><b>{fmt(order.listGoods)} смн</b></div>
+        <div className="est-row disc">
+          <span>Тахфиф{order.discountPct > 0 && <small>−{order.discountPct}% аз нархи асосӣ</small>}</span>
+          <b>{order.discount > 0 ? `−${fmt(order.discount)} смн` : "—"}</b>
+        </div>
         <div className="est-row"><span>Расонидан</span><b>{order.shipping > 0 ? `${fmt(order.shipping)} смн` : "бо тасдиқ"}</b></div>
         <div className="est-total"><span>Ҷамъ</span><b>{fmt(order.total)} смн</b></div>
         <p className="est-note">Нарх {QUOTE_VALID_HOURS} соат дуруст аст. Пеш аз харид менеҷер мавҷудият ва нархро тасдиқ мекунад.</p>
