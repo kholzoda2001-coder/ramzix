@@ -259,17 +259,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             </p>
           </div>
 
-          <div className="card-list">
-            <div className="cl-row">
-              <span className="cl-ic"><Icon name="card" size={20} /></span>
-              <span className="cl-txt"><b>Пардохт</b><small>Алиф, DC, корт, интиқоли бонкӣ, нақд</small></span>
-            </div>
-            <div className="cl-row">
-              <span className="cl-ic"><Icon name="return" size={20} /></span>
-              <span className="cl-txt"><b>Бозгашт 14 рӯз</b><small>Маҳсулоти нуқсондор ройгон иваз мешавад</small></span>
-            </div>
-          </div>
-
           {/* Табҳо */}
           <div className="tabs" role="tablist">
             {([["desc", "Тавсиф"], ["terms", "Шартҳои оптовӣ"], ["ship", "Расонидан"]] as const).map(([k, l]) => (
