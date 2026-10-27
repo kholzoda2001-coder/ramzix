@@ -156,7 +156,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="price-row">
               <div className="pr-base">
                 <div><b>{fmtPrice(unitPrice)}</b><span>смн</span></div>
-                <small>/ {unit}</small>
               </div>
               <div className="pr-wh">
                 <span className="wh-tag">Оптом</span>
