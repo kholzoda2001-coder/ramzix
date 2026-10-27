@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { COUNTRIES, fmt, fmtPrice, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
-import { QUOTE_VALID_HOURS } from "@/lib/pricing-config";
 import { useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -170,7 +169,6 @@ export default function CartView() {
         </div>
         <div className="est-row"><span>Расонидан</span><b>{order.shipping > 0 ? `${fmt(order.shipping)} смн` : "бо тасдиқ"}</b></div>
         <div className="est-total"><span>Ҷамъ</span><b>{fmt(order.total)} смн</b></div>
-        <p className="est-note">Нарх {QUOTE_VALID_HOURS} соат дуруст аст. Пеш аз харид менеҷер мавҷудият ва нархро тасдиқ мекунад.</p>
       </div>
 
       <div className="cart-bar">
