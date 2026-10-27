@@ -32,6 +32,7 @@ const PATHS: Record<string, React.ReactNode> = {
   baby: <><circle cx="12" cy="12" r="8.5" /><circle cx="9.3" cy="11" r=".9" fill="currentColor" /><circle cx="14.7" cy="11" r=".9" fill="currentColor" /><path d="M9.5 15a3.5 3.5 0 0 0 5 0M12 3.5c-1 1.2-1 2.3 0 3" /></>,
   laptop: <><rect x="4.5" y="5" width="15" height="10.5" rx="1.5" /><path d="M2.5 19h19" /></>,
   globe: <><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5a13 13 0 0 1 0 17M12 3.5a13 13 0 0 0 0 17" /></>,
+  cup: <><path d="M6 4h12l-1.4 15.2a1.8 1.8 0 0 1-1.8 1.6H9.2a1.8 1.8 0 0 1-1.8-1.6z" /><path d="M6.7 10h10.6" /></>,
   minus: <path d="M5 12h14" />,
   plus: <path d="M12 5v14M5 12h14" />,
   clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,

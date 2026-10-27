@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { COUNTRIES, fmt, tiersFor, waLink, type Product } from "@/lib/catalog";
+import { COUNTRIES, fmt, fmtQty, tiersFor, unitOf, waLink, type Product } from "@/lib/catalog";
 import { CartBadge, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -19,12 +19,17 @@ const CITIES = [
   { name: "Хоруғ", extra: 4 },
 ];
 const QUICK = [4, 10, 20, 50, 100];
+const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export default function ProductView({ p, related, other }: { p: Product; related: Product[]; other: Product[] }) {
   const router = useRouter();
   const { add } = useCart();
-  const tiers = useMemo(() => tiersFor(p.price), [p.price]);
-  const [qty, setQty] = useState(1);
+  const sale = p.sale;
+  const unit = unitOf(p);
+  const step = sale?.step ?? 1;
+  const minQty = sale?.min ?? 1;
+  const tiers = useMemo(() => tiersFor(p.price, sale), [p.price, sale]);
+  const [qty, setQty] = useState(minQty);
   const [img, setImg] = useState(0);
   const [size, setSize] = useState<string | null>(p.sizes?.[2] ?? p.sizes?.[0] ?? null);
   const [city, setCity] = useState(0);
@@ -42,20 +47,22 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
   const tier = tiers.find((t) => qty >= t.min && qty <= t.max)!;
   const next = tiers[tiers.indexOf(tier) + 1];
-  const unit = tier.price;
-  const total = unit ? unit * qty : null;
-  const saved = unit ? (p.price - unit) * qty : 0;
+  const unitPrice = tier.price;
+  const total = unitPrice ? Math.round(unitPrice * qty) : null;
+  const saved = unitPrice ? Math.round((p.price - unitPrice) * qty) : 0;
+  const pieces = sale?.per ? qty * sale.per : null;
+  const weight = round2(qty * (sale?.weightKgPerUnit ?? p.weightKg));
   const country = COUNTRIES[p.country];
   const points = useMemo(() => splitDescription(p.description), [p.description]);
 
-  const setQ = (v: number) => setQty(Math.min(9999, Math.max(1, Math.round(v) || 1)));
+  const setQ = (v: number) => setQty(Math.min(99999, Math.max(minQty, round2(Math.round((v || minQty) / step) * step))));
   const goImg = (k: number) => track.current?.scrollTo({ left: k * track.current.clientWidth, behavior: "smooth" });
 
-  const waText = `Салом! Маҳсулот: ${p.name}${size ? `, андоза ${size}` : ""}. Миқдор: ${qty} дона. Нархи оптовиро гуфта метавонед?`;
+  const waText = `Салом! Маҳсулот: ${p.name}${size ? `, андоза ${size}` : ""}. Миқдор: ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${sale?.perLabel})` : ""}. Нархи оптовиро гуфта метавонед?`;
 
   const addToCart = () => {
-    if (!unit) { window.location.href = waLink(waText); return; }
-    add({ slug: p.slug, qty, unit }, `${qty} дона ба сабад илова шуд`);
+    if (!unitPrice) { window.location.href = waLink(waText); return; }
+    add({ slug: p.slug, qty, unit: unitPrice }, `${fmtQty(qty)} ${unit} ба сабад илова шуд`);
   };
 
   const share = async () => {
@@ -90,7 +97,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             ))}
           </div>
           <span className="g-count">{img + 1} / {p.images.length}</span>
-          <span className="g-badge">Оптовӣ аз 10 дона</span>
+          <span className="g-badge">{sale ? `Фурӯш бо ${unit}` : "Оптовӣ аз 10 дона"}</span>
         </div>
         <div className="thumbs">
           {p.images.map((src, k) => (
@@ -123,19 +130,19 @@ export default function ProductView({ p, related, other }: { p: Product; related
           {/* Нарх */}
           <div className="price-box">
             <div className="pb-main">
-              {unit ? <><b>{fmt(unit)}</b><span>смн / дона</span></> : <b className="rfq">Нарх бо дархост</b>}
+              {unitPrice ? <><b>{fmt(unitPrice)}</b><span>смн / {unit}</span></> : <b className="rfq">Нарх бо дархост</b>}
               {p.listPrice && tier.off === 0 && <s>{fmt(p.listPrice)}</s>}
               {tier.off > 0 && <span className="pill pill-green">−{Math.round(tier.off * 100)}%</span>}
             </div>
             <div className="pb-hint">
               {next?.price
-                ? <><Icon name="bolt" size={14} /> Боз {next.min - qty} дона илова кунед: <b>{fmt(next.price)} смн</b> / дона</>
-                : next ? <><Icon name="bolt" size={14} /> Аз {next.min} дона нархи махсус</> : "Барои ин миқдор менеҷер нарх медиҳад"}
+                ? <><Icon name="bolt" size={14} /> Боз {fmtQty(round2(next.min - qty))} {unit} илова кунед: <b>{fmt(next.price)} смн</b> / {unit}</>
+                : next ? <><Icon name="bolt" size={14} /> Аз {fmtQty(next.min)} {unit} нархи махсус</> : "Барои ин миқдор менеҷер нарх медиҳад"}
             </div>
           </div>
 
           <div className="tiers">
-            <div className="tiers-head"><span>Нарх аз рӯи миқдор</span><span>барои 1 дона</span></div>
+            <div className="tiers-head"><span>Нарх аз рӯи миқдор</span><span>барои 1 {unit}</span></div>
             {tiers.map((t) => (
               <button key={t.label} className={`tier ${t === tier ? "on" : ""}`} onClick={() => setQ(t.min)}>
                 <span className="t-q">{t.label}</span>
@@ -159,17 +166,26 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Миқдор */}
           <div className="opt">
-            <div className="opt-label">Миқдор <span>Ҳадди ақал: 1 дона</span></div>
+            <div className="opt-label">Миқдор <span>Ҳадди ақал: {fmtQty(minQty)} {unit}</span></div>
+            {sale && (
+              <div className="pack-info">
+                {sale.per && <span>📦 1 {unit} = <b>{sale.per} {sale.perLabel}</b></span>}
+                {!sale.per && <span>⚖️ Қадам: <b>{fmtQty(step)} {unit}</b></span>}
+                {sale.note && <span>ℹ️ {sale.note}</span>}
+              </div>
+            )}
             <div className="qty-row">
               <div className="qty">
-                <button onClick={() => setQ(qty - 1)} aria-label="Кам" disabled={qty <= 1}><Icon name="minus" size={18} stroke={2.4} /></button>
+                <button onClick={() => setQ(qty - step)} aria-label="Кам" disabled={qty <= minQty}><Icon name="minus" size={18} stroke={2.4} /></button>
                 <input
                   value={qty}
-                  inputMode="numeric"
                   aria-label="Миқдор"
-                  onChange={(e) => setQ(parseInt(e.target.value.replace(/\D/g, "")))}
+                  inputMode={sale?.decimals ? "decimal" : "numeric"}
+                  onChange={(e) => setQty(parseFloat(e.target.value.replace(",", ".").replace(/[^\d.]/g, "")) || minQty)}
+                  onBlur={() => setQ(qty)}
                 />
-                <button onClick={() => setQ(qty + 1)} aria-label="Зиёд"><Icon name="plus" size={18} stroke={2.4} /></button>
+                <button onClick={() => setQ(qty + step)} aria-label="Зиёд"><Icon name="plus" size={18} stroke={2.4} /></button>
+                <span className="unit-badge">{unit}</span>
               </div>
               <div className="sum">
                 <span>Ҳамагӣ</span>
@@ -178,10 +194,17 @@ export default function ProductView({ p, related, other }: { p: Product; related
               </div>
             </div>
             <div className="quick">
-              {QUICK.map((q) => (
-                <button key={q} className={qty === q ? "on" : ""} onClick={() => setQ(q)}>{q === 100 ? "100+" : q}</button>
+              {(sale?.quick ?? QUICK).map((q) => (
+                <button key={q} className={qty === q ? "on" : ""} onClick={() => setQ(q)}>{!sale && q === 100 ? "100+" : fmtQty(q)}</button>
               ))}
             </div>
+            {(pieces || sale) && (
+              <div className="pack-info">
+                {pieces && <span>Ҳамагӣ: <b>{fmt(pieces)} {sale?.perLabel}</b></span>}
+                <span>Вазн: <b>{fmtQty(weight)} кг</b></span>
+                {unitPrice && pieces && <span>1 {sale?.perLabel}: <b>{fmtQty(round2(unitPrice / sale!.per!))} смн</b></span>}
+              </div>
+            )}
           </div>
 
           <a className="rfq-btn" href={waLink(waText)} target="_blank" rel="noreferrer">
@@ -239,9 +262,18 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 <tbody>
                   {p.brand && <tr><td>Бренд</td><td>{p.brand}</td></tr>}
                   <tr><td>Таъминот аз</td><td>{country.name}</td></tr>
-                  <tr><td>Вазн (бо қуттӣ)</td><td>{p.weightKg} кг</td></tr>
+                  {sale ? (
+                    <>
+                      <tr><td>Воҳиди фурӯш</td><td>{sale.per ? `${sale.unit} (${sale.per} ${sale.perLabel})` : sale.unit}</td></tr>
+                      <tr><td>Вазни 1 {sale.unit}</td><td>{fmtQty(sale.weightKgPerUnit)} кг</td></tr>
+                      {sale.shelfLife && <tr><td>Мӯҳлати истифода</td><td>{sale.shelfLife}</td></tr>}
+                      {sale.storage && <tr><td>Нигоҳдорӣ</td><td>{sale.storage}</td></tr>}
+                    </>
+                  ) : (
+                    <tr><td>Вазн (бо қуттӣ)</td><td>{p.weightKg} кг</td></tr>
+                  )}
                   {p.sizes && <tr><td>Андозаҳо</td><td>{p.sizes.join(", ")}</td></tr>}
-                  <tr><td>Кафолат</td><td>{p.category === "audio" ? "12 моҳ" : "Ивази нуқсон 14 рӯз"}</td></tr>
+                  <tr><td>Кафолат</td><td>{sale ? "Бо сана ва сертификат" : p.category === "audio" ? "12 моҳ" : "Ивази нуқсон 14 рӯз"}</td></tr>
                   <tr><td>Артикул</td><td>{p.slug.toUpperCase().slice(0, 18)}</td></tr>
                 </tbody>
               </table>
@@ -250,10 +282,10 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {tab === "terms" && (
             <div className="pane terms">
-              <div><Icon name="box" size={20} /><span><b>Ҳадди ақал</b>Чакана аз 1 дона, нархи оптовӣ аз 10 дона</span></div>
+              <div><Icon name="box" size={20} /><span><b>Ҳадди ақал</b>{sale ? `Аз ${fmtQty(minQty)} ${unit}. Нарх бо ${unit} ҳисоб мешавад` : "Чакана аз 1 дона, нархи оптовӣ аз 10 дона"}</span></div>
               <div><Icon name="doc" size={20} /><span><b>Фактура ва ҳуҷҷат</b>Барои ҳисоби бизнес: фактура, шартнома, ҳуҷҷатҳои гумрукӣ</span></div>
               <div><Icon name="card" size={20} /><span><b>Пардохт бо мӯҳлат</b>Барои мизоҷони доимӣ: 30% пешпардохт, боқимонда то 14 рӯз</span></div>
-              <div><Icon name="tag" size={20} /><span><b>Нархи махсус</b>Аз 100 дона ё омехтаи моделҳо: ҷавоб то 2 соат</span></div>
+              <div><Icon name="tag" size={20} /><span><b>Нархи махсус</b>{sale ? `Аз ${fmtQty(sale.rfqFrom)} ${unit} ё омехта` : "Аз 100 дона ё омехтаи моделҳо"}: ҷавоб то 2 соат</span></div>
             </div>
           )}
 
@@ -300,8 +332,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
       <div className="buy-bar">
         <a href={waLink(waText)} className="bb-wa" aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} /></a>
         <button className="bb-add" onClick={addToCart}>
-          <span className="bb-l"><Icon name="cart" size={20} /> {unit ? "Ба сабад" : "Дархости нарх"}</span>
-          <span className="bb-r">{total ? `${fmt(total)} смн` : `${qty} дона`}</span>
+          <span className="bb-l"><Icon name="cart" size={20} /> {unitPrice ? "Ба сабад" : "Дархости нарх"}</span>
+          <span className="bb-r">{total ? `${fmt(total)} смн` : `${fmtQty(qty)} ${unit}`}</span>
         </button>
       </div>
     </>
