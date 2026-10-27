@@ -55,6 +55,11 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const bigOrder = qty >= rfqFromOf(p);
   const country = COUNTRIES[p.country];
   const modeList = modesFor(p.country);
+  // Мӯҳлати расонидан як бор нишон дода мешавад: дар тугмаи интихоб (агар якчанд намуд бошад), вагарна дар сатр
+  const shipNote = [
+    modeList.length === 1 ? `${ship.mode.label}, ${ship.mode.daysMin}–${ship.mode.daysMax} рӯз` : null,
+    ship.basis === "m3" ? "аз рӯи ҳаҷм" : null,
+  ].filter(Boolean).join(", ");
   const points = useMemo(() => splitDescription(p.description), [p.description]);
 
   const setQ = (v: number) => setQty(Math.min(99999, Math.max(minQty, round2(Math.round((v || minQty) / step) * step))));
@@ -243,7 +248,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="est-row">
               <span>
                 Расонидан · вазн {fmtQty(weight)} кг
-                <small>{ship.mode.label}, {ship.mode.daysMin}–{ship.mode.daysMax} рӯз{ship.basis === "m3" ? ", аз рӯи ҳаҷм" : ""}</small>
+                {shipNote && <small>{shipNote}</small>}
               </span>
               <b>{ship.tjs > 0 ? `${fmt(ship.tjs)} смн` : "бо тасдиқ"}</b>
             </div>
@@ -255,10 +260,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
           </div>
 
           <div className="card-list">
-            <div className="cl-row">
-              <span className="cl-ic"><Icon name="truck" size={20} /></span>
-              <span className="cl-txt"><b>Фармоиш аз {country.short}</b><small>{ship.mode.daysMin}–{ship.mode.daysMax} рӯз, гумрук аз мо</small></span>
-            </div>
             <div className="cl-row">
               <span className="cl-ic"><Icon name="card" size={20} /></span>
               <span className="cl-txt"><b>Пардохт</b><small>Алиф, DC, корт, интиқоли бонкӣ, нақд</small></span>
