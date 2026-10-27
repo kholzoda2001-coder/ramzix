@@ -1,18 +1,18 @@
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import Countdown from "@/components/Countdown";
 import Flag from "@/components/Flag";
 import HeroSlider from "@/components/HeroSlider";
 import HomeHeader from "@/components/HomeHeader";
 import Icon from "@/components/Icon";
 import ProductCard from "@/components/ProductCard";
 import ProductFeed from "@/components/ProductFeed";
-import { CATEGORIES, COUNTRIES, products, waLink, type CountryCode } from "@/lib/catalog";
+import { CATEGORIES, COUNTRIES, fmt, products, waLink, type CountryCode } from "@/lib/catalog";
+import { FEE_TIERS } from "@/lib/pricing-config";
 
 const TRUST = [
   { icon: "shield", title: "Маҳсулоти аслӣ", text: "Аз таъминкунандагони санҷидашуда" },
   { icon: "truck", title: "Расонидан", text: "Ба тамоми Тоҷикистон" },
-  { icon: "tag", title: "Нархи зинагӣ", text: "Аз 4 дона арзонтар" },
+  { icon: "tag", title: "Ҳаққи хизмат 10% → 5%", text: "Ҳар қадар зиёд, камтар" },
   { icon: "headset", title: "Менеҷери шахсӣ", text: "Тоҷикӣ, русӣ, англисӣ" },
 ];
 
@@ -24,8 +24,11 @@ const STEPS = [
 ];
 
 export default function Home() {
-  // Тахфифҳо: маҳсулоте, ки нархи пешинаашон баландтар буд
-  const deals = products.filter((p) => p.listPrice).slice(0, 6);
+  // Маҳсулоте, ки бо миқдор бештар арзон мешавад
+  const deals = products
+    .filter((p) => p.costTiers && p.costTiers.length > 1)
+    .sort((a, b) => b.costTiers![b.costTiers!.length - 1].cost / b.cost - a.costTiers![a.costTiers!.length - 1].cost / a.cost)
+    .slice(0, 6);
   const popular = interleave([...products].sort((a, b) => b.reviews - a.reviews)).slice(0, 4);
   const food = products.filter((p) => p.sale);
   const feed = interleave(products.filter((p) => !popular.includes(p)));
@@ -84,8 +87,7 @@ export default function Home() {
         {deals.length > 0 && (
           <section className="block deals">
             <div className="sec-head">
-              <h2><Icon name="bolt" size={20} className="bolt" /> Нархи рӯз</h2>
-              <span className="deals-timer">Тамом мешавад <Countdown /></span>
+              <div><h2><Icon name="bolt" size={20} className="bolt" /> Бо миқдор арзонтар</h2><p className="sec-sub">Нархи мол аз таъминкунанда</p></div>
             </div>
             <div className="hscroll">
               {deals.map((p) => <ProductCard key={p.slug} p={p} compact />)}
@@ -106,18 +108,21 @@ export default function Home() {
 
         <section className="tiers-card">
           <div className="tc-head">
-            <span className="chip-sm light"><Icon name="tag" size={13} /> Чӣ тавр нарх кор мекунад</span>
-            <h2>Як дона ҳам мумкин, оптом арзонтар</h2>
-            <p>Нархи як дона худкор аз рӯи миқдор паст мешавад.</p>
+            <span className="chip-sm light"><Icon name="tag" size={13} /> Чӣ тавр нарх ҳисоб мешавад</span>
+            <h2>Нархи мол + хизмат + расонидан</h2>
+            <p>Ҳар қадар зиёд харед, ҳаққи хизмат камтар мешавад.</p>
           </div>
           <div className="tc-steps">
-            <div><small>Чакана</small><b>1–3</b><span>нархи оддӣ</span></div>
-            <div><small>Хурдоптом</small><b>4–9</b><span>−5%</span></div>
-            <div className="best"><small>Оптовӣ</small><b>10–49</b><span>−10%</span></div>
-            <div><small>Калон</small><b>50+</b><span>то −14%</span></div>
+            {FEE_TIERS.map((t, i) => (
+              <div key={t.from} className={i === 1 ? "best" : ""}>
+                <small>{i === 0 ? "то" : "аз"} {fmt(i === 0 ? FEE_TIERS[1].from : t.from)}</small>
+                <b>{t.pct}%</b>
+                <span>хизмат</span>
+              </div>
+            ))}
           </div>
-          <a href={waLink("Салом! Барои фармоиши калон (100+ дона) нархи махсус лозим аст.")} className="tc-rfq" id="rfq">
-            <Icon name="doc" size={18} /> 100+ дона? Нархи махсусро дархост кунед
+          <a href={waLink("Салом! Барои фармоиши калон нархи махсус лозим аст.")} className="tc-rfq" id="rfq">
+            <Icon name="doc" size={18} /> Фармоиши хеле калон? Нархи махсусро дархост кунед
             <Icon name="chevron" size={16} stroke={2.4} />
           </a>
         </section>

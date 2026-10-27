@@ -7,9 +7,28 @@
   "category": "food",
   "country": "ae",
   "source": "ramzix",
-  "price": 288,
-  "listPrice": null,
+  "cost": 77,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 77
+   },
+   {
+    "min": 5,
+    "cost": 75
+   },
+   {
+    "min": 20,
+    "cost": 72
+   },
+   {
+    "min": 50,
+    "cost": 69
+   }
+  ],
   "weightKg": 13,
+  "volumeM3": 0.02,
   "images": [
    "/products/monster.svg",
    "/products/monster-group.svg"
@@ -31,26 +50,7 @@
     20,
     50
    ],
-   "tiers": [
-    {
-     "min": 1,
-     "off": 0
-    },
-    {
-     "min": 5,
-     "off": 0.04
-    },
-    {
-     "min": 20,
-     "off": 0.08
-    },
-    {
-     "min": 50,
-     "off": 0.12
-    }
-   ],
    "rfqFrom": 200,
-   "weightKgPerUnit": 13,
    "shelfLife": "18 моҳ",
    "storage": "Ҷои хушк, то 25°C",
    "note": "Фақат бо картон"
@@ -64,9 +64,28 @@
   "category": "food",
   "country": "ae",
   "source": "ramzix",
-  "price": 298,
-  "listPrice": null,
+  "cost": 80,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 80
+   },
+   {
+    "min": 5,
+    "cost": 78
+   },
+   {
+    "min": 20,
+    "cost": 75
+   },
+   {
+    "min": 50,
+    "cost": 72
+   }
+  ],
   "weightKg": 13,
+  "volumeM3": 0.02,
   "images": [
    "/products/monster-ultra.svg",
    "/products/monster-ultra-group.svg"
@@ -88,26 +107,7 @@
     20,
     50
    ],
-   "tiers": [
-    {
-     "min": 1,
-     "off": 0
-    },
-    {
-     "min": 5,
-     "off": 0.04
-    },
-    {
-     "min": 20,
-     "off": 0.08
-    },
-    {
-     "min": 50,
-     "off": 0.12
-    }
-   ],
    "rfqFrom": 200,
-   "weightKgPerUnit": 13,
    "shelfLife": "18 моҳ",
    "storage": "Ҷои хушк, то 25°C",
    "note": "Фақат бо картон"
@@ -121,9 +121,28 @@
   "category": "food",
   "country": "tj",
   "source": "ramzix",
-  "price": 95,
-  "listPrice": null,
+  "cost": 70,
+  "costCurrency": "TJS",
+  "costTiers": [
+   {
+    "min": 2,
+    "cost": 70
+   },
+   {
+    "min": 10,
+    "cost": 66
+   },
+   {
+    "min": 50,
+    "cost": 62
+   },
+   {
+    "min": 200,
+    "cost": 58
+   }
+  ],
   "weightKg": 1.1,
+  "volumeM3": 0.001,
   "images": [
    "/products/honey.svg",
    "/products/honey-group.svg"
@@ -131,7 +150,7 @@
   "rating": 4.9,
   "reviews": 128,
   "sizes": null,
-  "description": "Асали табиии кӯҳӣ аз ноҳияҳои Тоҷикистон. Бе иловаҳо. Фурӯш бо вазн: аз 2 кг. Барои мағозаҳо дар зарфи 20 кг низ мумкин аст.",
+  "description": "Асали табиии кӯҳӣ аз ноҳияҳои Тоҷикистон. Бе иловаҳо. Фурӯш бо вазн: аз 2 кг.",
   "sale": {
    "unit": "кг",
    "step": 0.5,
@@ -143,26 +162,7 @@
     20,
     50
    ],
-   "tiers": [
-    {
-     "min": 2,
-     "off": 0
-    },
-    {
-     "min": 10,
-     "off": 0.05
-    },
-    {
-     "min": 50,
-     "off": 0.1
-    },
-    {
-     "min": 200,
-     "off": 0.15
-    }
-   ],
    "rfqFrom": 1000,
-   "weightKgPerUnit": 1.1,
    "shelfLife": "24 моҳ",
    "storage": "Ҷои хунук, дар зарфи пӯшида",
    "note": "Бо вазн, қадам 0.5 кг",
@@ -175,11 +175,30 @@
   "subtitle": "Халта 25 кг, фурӯш бо кило",
   "brand": "RamzIx",
   "category": "food",
-  "country": "tr",
+  "country": "tj",
   "source": "ramzix",
-  "price": 13,
-  "listPrice": null,
+  "cost": 11,
+  "costCurrency": "TJS",
+  "costTiers": [
+   {
+    "min": 25,
+    "cost": 11
+   },
+   {
+    "min": 100,
+    "cost": 10.6
+   },
+   {
+    "min": 500,
+    "cost": 10.2
+   },
+   {
+    "min": 2000,
+    "cost": 9.8
+   }
+  ],
   "weightKg": 1,
+  "volumeM3": 0.0015,
   "images": [
    "/products/sugar.svg",
    "/products/sugar-group.svg"
@@ -199,26 +218,7 @@
     500,
     1000
    ],
-   "tiers": [
-    {
-     "min": 25,
-     "off": 0
-    },
-    {
-     "min": 100,
-     "off": 0.03
-    },
-    {
-     "min": 500,
-     "off": 0.06
-    },
-    {
-     "min": 2000,
-     "off": 0.09
-    }
-   ],
    "rfqFrom": 5000,
-   "weightKgPerUnit": 1,
    "shelfLife": "24 моҳ",
    "storage": "Ҷои хушк",
    "note": "Аз 25 кг"
@@ -230,11 +230,30 @@
   "subtitle": "Халта 25 кг, фурӯш бо кило",
   "brand": "RamzIx",
   "category": "food",
-  "country": "tr",
+  "country": "tj",
   "source": "ramzix",
-  "price": 24,
-  "listPrice": null,
+  "cost": 20,
+  "costCurrency": "TJS",
+  "costTiers": [
+   {
+    "min": 25,
+    "cost": 20
+   },
+   {
+    "min": 100,
+    "cost": 19.4
+   },
+   {
+    "min": 500,
+    "cost": 18.8
+   },
+   {
+    "min": 2000,
+    "cost": 18.2
+   }
+  ],
   "weightKg": 1,
+  "volumeM3": 0.0015,
   "images": [
    "/products/rice.svg",
    "/products/rice-group.svg"
@@ -254,26 +273,7 @@
     500,
     1000
    ],
-   "tiers": [
-    {
-     "min": 25,
-     "off": 0
-    },
-    {
-     "min": 100,
-     "off": 0.03
-    },
-    {
-     "min": 500,
-     "off": 0.06
-    },
-    {
-     "min": 2000,
-     "off": 0.09
-    }
-   ],
    "rfqFrom": 5000,
-   "weightKgPerUnit": 1,
    "shelfLife": "24 моҳ",
    "storage": "Ҷои хушк",
    "note": "Аз 25 кг"
@@ -287,9 +287,28 @@
   "category": "food",
   "country": "tj",
   "source": "ramzix",
-  "price": 42,
-  "listPrice": null,
+  "cost": 30,
+  "costCurrency": "TJS",
+  "costTiers": [
+   {
+    "min": 2,
+    "cost": 30
+   },
+   {
+    "min": 10,
+    "cost": 29
+   },
+   {
+    "min": 50,
+    "cost": 28
+   },
+   {
+    "min": 200,
+    "cost": 27
+   }
+  ],
   "weightKg": 9.5,
+  "volumeM3": 0.012,
   "images": [
    "/products/water.svg",
    "/products/water-group.svg"
@@ -311,26 +330,7 @@
     50,
     100
    ],
-   "tiers": [
-    {
-     "min": 2,
-     "off": 0
-    },
-    {
-     "min": 10,
-     "off": 0.04
-    },
-    {
-     "min": 50,
-     "off": 0.08
-    },
-    {
-     "min": 200,
-     "off": 0.12
-    }
-   ],
    "rfqFrom": 1000,
-   "weightKgPerUnit": 9.5,
    "shelfLife": "12 моҳ",
    "storage": "Аз офтоб дур",
    "note": "Аз 2 картон"
@@ -342,11 +342,30 @@
   "subtitle": "Картон 12 шиша",
   "brand": "RamzIx",
   "category": "food",
-  "country": "tr",
+  "country": "tj",
   "source": "ramzix",
-  "price": 205,
-  "listPrice": null,
+  "cost": 160,
+  "costCurrency": "TJS",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 160
+   },
+   {
+    "min": 5,
+    "cost": 155
+   },
+   {
+    "min": 20,
+    "cost": 150
+   },
+   {
+    "min": 50,
+    "cost": 145
+   }
+  ],
   "weightKg": 11.5,
+  "volumeM3": 0.014,
   "images": [
    "/products/oil.svg",
    "/products/oil-group.svg"
@@ -368,26 +387,7 @@
     20,
     50
    ],
-   "tiers": [
-    {
-     "min": 1,
-     "off": 0
-    },
-    {
-     "min": 5,
-     "off": 0.03
-    },
-    {
-     "min": 20,
-     "off": 0.06
-    },
-    {
-     "min": 50,
-     "off": 0.09
-    }
-   ],
    "rfqFrom": 300,
-   "weightKgPerUnit": 11.5,
    "shelfLife": "12 моҳ",
    "storage": "Аз офтоб дур",
    "note": "Фақат бо картон"
@@ -401,9 +401,28 @@
   "category": "food",
   "country": "ae",
   "source": "ramzix",
-  "price": 410,
-  "listPrice": null,
+  "cost": 115,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 115
+   },
+   {
+    "min": 3,
+    "cost": 112
+   },
+   {
+    "min": 10,
+    "cost": 108
+   },
+   {
+    "min": 30,
+    "cost": 104
+   }
+  ],
   "weightKg": 6,
+  "volumeM3": 0.03,
   "images": [
    "/products/tea.svg",
    "/products/tea-group.svg"
@@ -425,26 +444,7 @@
     10,
     20
    ],
-   "tiers": [
-    {
-     "min": 1,
-     "off": 0
-    },
-    {
-     "min": 3,
-     "off": 0.04
-    },
-    {
-     "min": 10,
-     "off": 0.08
-    },
-    {
-     "min": 30,
-     "off": 0.12
-    }
-   ],
    "rfqFrom": 100,
-   "weightKgPerUnit": 6,
    "shelfLife": "24 моҳ",
    "storage": "Ҷои хушк",
    "note": "Фақат бо картон"

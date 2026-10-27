@@ -7,9 +7,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 966,
-  "listPrice": null,
+  "cost": 349,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 349.0
+   },
+   {
+    "min": 10,
+    "cost": 324.57
+   },
+   {
+    "min": 50,
+    "cost": 303.63
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/Frame2147238790.png?v=1787133694",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/DTC_Rich_Image_D1205Z11_MEA_00_7d4dabfe-4358-49d1-966e-c15643a78374.png?v=1787208235",
@@ -31,9 +46,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 1931,
-  "listPrice": null,
+  "cost": 699,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 699.0
+   },
+   {
+    "min": 10,
+    "cost": 650.07
+   },
+   {
+    "min": 50,
+    "cost": 608.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1203Z31_DTC_Rich_image_TD01_Mea_V1.png?v=1779678584",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1203Z31_DTCRichimage_TD01_Mea_V1-1.png?v=1779677943",
@@ -55,9 +85,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 2483,
-  "listPrice": null,
+  "cost": 899,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 899.0
+   },
+   {
+    "min": 10,
+    "cost": 836.07
+   },
+   {
+    "min": 50,
+    "cost": 782.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1204ZB1_DTC_Rich_image_TD01_Mea_V1_05bf8738-3064-40d1-b3ea-4cf2a2544f9f.png?v=1791972786",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1204ZB1_DTC_Rich_image_TD01_Mea_V1-1.png?v=1780451554",
@@ -79,9 +124,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 552,
-  "listPrice": null,
+  "cost": 199,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 199.0
+   },
+   {
+    "min": 10,
+    "cost": 185.07
+   },
+   {
+    "min": 50,
+    "cost": 173.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1101Z11_Richimage_TD01_UK_V1.png?v=1779763918",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1101Z11_Richimage_TD04_UK_V1.jpg?v=1777260431",
@@ -103,9 +163,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 828,
-  "listPrice": null,
+  "cost": 299,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 299.0
+   },
+   {
+    "min": 10,
+    "cost": 278.07
+   },
+   {
+    "min": 50,
+    "cost": 260.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1200Z11_DTC_listing_image_TD01_1.png?v=1772077547",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/D1200Z11_DTC_listing_image_TD02.png?v=1772077547",
@@ -127,9 +202,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 938,
-  "listPrice": null,
+  "cost": 339,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 339.0
+   },
+   {
+    "min": 10,
+    "cost": 315.27
+   },
+   {
+    "min": 50,
+    "cost": 294.93
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/51E5S8_tPcL._AC_SL1500.png?v=1781253579",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/61R5gfrIJxL._AC_SL1500.jpg?v=1777458866",
@@ -151,9 +241,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 552,
-  "listPrice": null,
+  "cost": 199,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 199.0
+   },
+   {
+    "min": 10,
+    "cost": 185.07
+   },
+   {
+    "min": 50,
+    "cost": 173.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3878Z21_Product_Image_06_V1.png?v=1765421808",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3878G21_Rich_image_TD01_UK_V1.png?v=1765421807",
@@ -175,9 +280,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 2207,
-  "listPrice": null,
+  "cost": 799,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 799.0
+   },
+   {
+    "min": 10,
+    "cost": 743.07
+   },
+   {
+    "min": 50,
+    "cost": 695.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/51aHskBJJJL._AC_SL1500_886769c3-1a94-4934-95da-c677303ef101.png?v=1790757931",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/best-soundcore-sleep-A30-white-earbuds-for-side-sleeper.png?v=1767951863",
@@ -199,9 +319,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 1380,
-  "listPrice": null,
+  "cost": 499,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 499.0
+   },
+   {
+    "min": 10,
+    "cost": 464.07
+   },
+   {
+    "min": 50,
+    "cost": 434.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3874Z12_DTC_listing_image_TD01_US_V2.png?v=1765421691",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3874Z12_DTC_listing_image_TD02_US_V2.png?v=1765421691",
@@ -223,9 +358,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 828,
-  "listPrice": null,
+  "cost": 299,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 299.0
+   },
+   {
+    "min": 10,
+    "cost": 278.07
+   },
+   {
+    "min": 50,
+    "cost": 260.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3957Z11_1.png?v=1790757034",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3957Z11_DTC_listing_image_TD03_US_V1_66867ac5-229e-4215-9251-ab316ebe4034.png?v=1769153547",
@@ -247,9 +397,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 635,
-  "listPrice": null,
+  "cost": 229,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 229.0
+   },
+   {
+    "min": 10,
+    "cost": 212.97
+   },
+   {
+    "min": 50,
+    "cost": 199.23
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/61ppFxQOuPL._AC_SL1500.png?v=1779763270",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3937G12_Rich_image_TD02_UK_V1_661b85b5-1963-421b-baad-fde88f761bb6.jpg?v=1765421686",
@@ -271,9 +436,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 277,
-  "listPrice": null,
+  "cost": 99,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 99.0
+   },
+   {
+    "min": 10,
+    "cost": 92.07
+   },
+   {
+    "min": 50,
+    "cost": 86.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3876Z11_Product_Image_06_no_copy.png?v=1770363595",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/51Q_XUr7QGL._AC_SX679.jpg?v=1770363595",
@@ -295,9 +475,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 1104,
-  "listPrice": null,
+  "cost": 399,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 399.0
+   },
+   {
+    "min": 10,
+    "cost": 371.07
+   },
+   {
+    "min": 50,
+    "cost": 347.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3388G11_DTC_listing_TD01_UK_V2__1_-removebg-preview.png?v=1765356439",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3388G11_DTC_listing_TD07_UK_V1backup.png?v=1765356441",
@@ -319,9 +514,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 552,
-  "listPrice": null,
+  "cost": 199,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 199.0
+   },
+   {
+    "min": 10,
+    "cost": 185.07
+   },
+   {
+    "min": 50,
+    "cost": 173.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/Frame_427322112.png?v=1765421736",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3331ZB1_Rich_image_TD03_US_V1.jpg?v=1765421734",
@@ -343,9 +553,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 966,
-  "listPrice": null,
+  "cost": 349,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 349.0
+   },
+   {
+    "min": 10,
+    "cost": 324.57
+   },
+   {
+    "min": 50,
+    "cost": 303.63
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3874Z11_DTC_listing_image_TD01_US_V1-removebg-preview.png?v=1765356270",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3874Z11_Rich_image_TD02_US_V3_1.jpg?v=1765356271",
@@ -367,9 +592,24 @@
   "category": "audio",
   "country": "ae",
   "source": "anker",
-  "price": 1931,
-  "listPrice": null,
+  "cost": 699,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 699.0
+   },
+   {
+    "min": 10,
+    "cost": 650.07
+   },
+   {
+    "min": 50,
+    "cost": 608.13
+   }
+  ],
   "weightKg": 0.3,
+  "volumeM3": 0.0015,
   "images": [
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/A3875Z11_DTC_listing_image_TD01_US_V2.png?v=1768890072",
    "https://cdn.shopify.com/s/files/1/0845/5241/7314/files/soundcore-aerofit-2-pro-dual-form-earbuds.png?v=1768890072",
@@ -391,9 +631,24 @@
   "category": "men",
   "country": "ae",
   "source": "noon",
-  "price": 168,
-  "listPrice": null,
+  "cost": 60,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 60.0
+   },
+   {
+    "min": 10,
+    "cost": 55.8
+   },
+   {
+    "min": 50,
+    "cost": 52.2
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://f.nooncdn.com/p/pzsku/Z614CB32855727963EA2BZ/45/1754742028/198deb7a-1e1b-4735-8369-f7bc1d93a94c.jpg?width=1200"
   ],
@@ -410,9 +665,24 @@
   "category": "men",
   "country": "ae",
   "source": "noon",
-  "price": 146,
-  "listPrice": null,
+  "cost": 52,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 52.0
+   },
+   {
+    "min": 10,
+    "cost": 48.36
+   },
+   {
+    "min": 50,
+    "cost": 45.24
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://f.nooncdn.com/p/pzsku/Z25CFA4B224A6E65C3961Z/45/1766942614/e5aa5097-593a-4578-acc2-5386bf3c959c.jpg?width=1200",
    "https://f.nooncdn.com/p/pzsku/Z25CFA4B224A6E65C3961Z/45/1766942614/1fa74f33-6b4e-4321-b042-9b96d189ea3e.jpg?width=1200"
@@ -430,9 +700,24 @@
   "category": "men",
   "country": "ae",
   "source": "noon",
-  "price": 359,
-  "listPrice": null,
+  "cost": 129,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 129.0
+   },
+   {
+    "min": 10,
+    "cost": 119.97
+   },
+   {
+    "min": 50,
+    "cost": 112.23
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://f.nooncdn.com/p/pzsku/ZE474782B495613189FEBZ/45/_/1692127896/89fd7f61-b64a-422e-b1d6-2a3dc13d5037.jpg?width=1200",
    "https://f.nooncdn.com/p/pzsku/ZE474782B495613189FEBZ/45/_/1692127896/51a64e51-9ab8-452a-b291-3cc3156a0f65.jpg?width=1200"
@@ -450,9 +735,24 @@
   "category": "men",
   "country": "ae",
   "source": "noon",
-  "price": 298,
-  "listPrice": null,
+  "cost": 107,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 107.0
+   },
+   {
+    "min": 10,
+    "cost": 99.51
+   },
+   {
+    "min": 50,
+    "cost": 93.09
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/d21e0fc1-3d2f-479a-8848-2b599ab20280.jpg?width=1200",
    "https://f.nooncdn.com/p/pzsku/ZE6D0BA515F9048DD8326Z/45/_/1775546452/e3c1286e-8114-42aa-a8a5-6483696b29c1.jpg?width=1200",
@@ -474,9 +774,24 @@
   "category": "men",
   "country": "cn",
   "source": "shein",
-  "price": 145,
-  "listPrice": null,
+  "cost": 52,
+  "costCurrency": "SAR",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 52.0
+   },
+   {
+    "min": 10,
+    "cost": 48.36
+   },
+   {
+    "min": 50,
+    "cost": 45.24
+   }
+  ],
   "weightKg": 0.35,
+  "volumeM3": 0.004,
   "images": [
    "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/1c/17760574929795b926872ec79e60ce724b7e529dbc_thumbnail_900x.webp",
    "https://img.ltwebstatic.com/v4/j/pi/2026/04/13/a0/17760574949b1d73d3cb6fee74754c1298b0447d88_thumbnail_900x.webp",
@@ -505,9 +820,24 @@
   "category": "men",
   "country": "cn",
   "source": "shein",
-  "price": 271,
-  "listPrice": null,
+  "cost": 98.3,
+  "costCurrency": "SAR",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 98.3
+   },
+   {
+    "min": 10,
+    "cost": 91.42
+   },
+   {
+    "min": 50,
+    "cost": 85.52
+   }
+  ],
   "weightKg": 0.35,
+  "volumeM3": 0.004,
   "images": [
    "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/25/1785746355cffbb0e48e8d89436b9a2a5fb9c5619b_thumbnail_900x.webp",
    "https://img.ltwebstatic.com/v4/j/pi/2026/08/03/c6/17857463579711456ec1e2332efe9b2dc76fa9b652_thumbnail_900x.webp",
@@ -536,9 +866,24 @@
   "category": "men",
   "country": "cn",
   "source": "shein",
-  "price": 163,
-  "listPrice": null,
+  "cost": 58.62,
+  "costCurrency": "SAR",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 58.62
+   },
+   {
+    "min": 10,
+    "cost": 54.52
+   },
+   {
+    "min": 50,
+    "cost": 51.0
+   }
+  ],
   "weightKg": 0.35,
+  "volumeM3": 0.004,
   "images": [
    "https://img.ltwebstatic.com/v4/j/spmp/2026/09/07/43/17887624320ddfc56e5baa763f90887cd1ec714b56_thumbnail_900x.webp",
    "https://img.ltwebstatic.com/v4/j/spmp/2026/08/24/a1/17875632573dbacaf0f53bc7806b3f5520ce9bbbbd_thumbnail_900x.webp",
@@ -568,9 +913,24 @@
   "category": "men",
   "country": "cn",
   "source": "shein",
-  "price": 94,
-  "listPrice": null,
+  "cost": 32.98,
+  "costCurrency": "SAR",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 32.98
+   },
+   {
+    "min": 10,
+    "cost": 30.67
+   },
+   {
+    "min": 50,
+    "cost": 28.69
+   }
+  ],
   "weightKg": 0.35,
+  "volumeM3": 0.004,
   "images": [
    "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/78/1788964936fdf9c7db7a93f7cd1428fc0584e4c08a_thumbnail_900x.webp",
    "https://img.ltwebstatic.com/v4/j/spmp/2026/09/09/21/1788964936c275bfcb394c6d51e32107504365880b_thumbnail_900x.webp",
@@ -599,9 +959,24 @@
   "category": "men",
   "country": "cn",
   "source": "shein",
-  "price": 99,
-  "listPrice": null,
+  "cost": 35,
+  "costCurrency": "SAR",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 35.0
+   },
+   {
+    "min": 10,
+    "cost": 32.55
+   },
+   {
+    "min": 50,
+    "cost": 30.45
+   }
+  ],
   "weightKg": 0.35,
+  "volumeM3": 0.004,
   "images": [
    "https://img.ltwebstatic.com/v4/j/spmp/2026/06/23/68/17821985433008e915eb6d3bd4773acb74129db9d6_thumbnail_900x.webp",
    "https://img.ltwebstatic.com/v4/j/spmp/2025/12/24/90/17665658836b2c10288ce70497c1608b79c920da7c_thumbnail_900x.webp",
@@ -631,9 +1006,24 @@
   "category": "men",
   "country": "tr",
   "source": "trendyol",
-  "price": 31,
-  "listPrice": null,
+  "cost": 10.09,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 10.09
+   },
+   {
+    "min": 10,
+    "cost": 9.38
+   },
+   {
+    "min": 50,
+    "cost": 8.78
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1854/prod/QC_PREP/20260413/17/c9b72930-7c22-3407-848e-8136fd8b9813/1_org_zoom.jpg",
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1856/prod/QC_PREP/20260413/17/bc1c6c61-2836-3aae-9d4c-afebfde3081f/1_org_zoom.jpg",
@@ -652,9 +1042,24 @@
   "category": "men",
   "country": "tr",
   "source": "trendyol",
-  "price": 40,
-  "listPrice": 108,
+  "cost": 13.34,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 13.34
+   },
+   {
+    "min": 10,
+    "cost": 12.41
+   },
+   {
+    "min": 50,
+    "cost": 11.61
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1804/prod/QC_PREP/20251226/04/8bdb1e62-c874-382d-b1aa-13996dae5337/1_org_zoom.jpg",
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1856/prod/QC_ENRICHMENT/20260411/20/fc4b16bd-8309-374a-8952-f4db18651d00/1_org_zoom.jpg"
@@ -672,9 +1077,24 @@
   "category": "men",
   "country": "tr",
   "source": "trendyol",
-  "price": 40,
-  "listPrice": 107,
+  "cost": 13.24,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 13.24
+   },
+   {
+    "min": 10,
+    "cost": 12.31
+   },
+   {
+    "min": 50,
+    "cost": 11.52
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1804/prod/QC_PREP/20251226/04/77309dbe-b9a8-32ac-82b4-3bbb4229a2c9/1_org_zoom.jpg",
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1854/prod/QC_ENRICHMENT/20260411/20/fc4b16bd-8309-374a-8952-f4db18651d00/1_org_zoom.jpg"
@@ -692,9 +1112,24 @@
   "category": "men",
   "country": "tr",
   "source": "trendyol",
-  "price": 73,
-  "listPrice": 199,
+  "cost": 25.54,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 25.54
+   },
+   {
+    "min": 10,
+    "cost": 23.75
+   },
+   {
+    "min": 50,
+    "cost": 22.22
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1954/prod/QC_PREP/20260911/00/e8211b17-42a7-3120-a169-6e4485fa9daa/1_org_zoom.jpg",
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1954/prod/QC_PREP/20260911/00/0aa263d4-4baa-3461-9724-5c10dc3afbf3/1_org_zoom.jpg"
@@ -712,9 +1147,24 @@
   "category": "men",
   "country": "tr",
   "source": "trendyol",
-  "price": 62,
-  "listPrice": 121,
+  "cost": 21.35,
+  "costCurrency": "AED",
+  "costTiers": [
+   {
+    "min": 1,
+    "cost": 21.35
+   },
+   {
+    "min": 10,
+    "cost": 19.86
+   },
+   {
+    "min": 50,
+    "cost": 18.57
+   }
+  ],
   "weightKg": 0.25,
+  "volumeM3": 0.003,
   "images": [
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1943/prod/QC_PREP/20260628/14/b1e09eae-a9d0-3257-9103-a6b989891df6/1_org_zoom.jpg",
    "https://cdn.dsmcdn.com/mnresize/400/-/ty1837/prod/QC_PREP/20260312/18/f3923b39-357c-3519-b87e-22fff0de4d92/1_org_zoom.jpg",
