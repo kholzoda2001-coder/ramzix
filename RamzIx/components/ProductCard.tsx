@@ -21,11 +21,9 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         <div className="pcard-price">
           <b>{fmtPrice(listUnitPrice(p))}</b> <span>смн / {unit}</span>
         </div>
-        {p.sale && (
-          <div className="pcard-pack">
-            {p.sale.per ? `${p.sale.per} ${p.sale.perLabel} / ${unit}` : `Аз ${fmtQty(p.sale.min)} ${unit}`}
-          </div>
-        )}
+        <div className="pcard-pack">
+          {p.sale?.per ? `${p.sale.per} ${p.sale.perLabel} / ${unit}` : `Аз ${fmtQty(p.sale?.min ?? 1)} ${unit}`}
+        </div>
         {wh.length > 0 && (
           <div className="pcard-whole">
             <span>оптом</span>
@@ -34,8 +32,8 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         )}
         {!compact && (
           <div className="pcard-meta">
-            {p.rating ? <span><Icon name="star" size={12} className="star" /> {p.rating}</span> : <span />}
             <span>{p.brand ?? ""}</span>
+            {p.rating ? <span><Icon name="star" size={12} className="star" /> {p.rating}</span> : <span />}
           </div>
         )}
       </div>
