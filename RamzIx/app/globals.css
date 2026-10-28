@@ -168,8 +168,8 @@ h1, h2, h3, p { margin: 0; }
 .hscroll > * { flex: 0 0 142px; scroll-snap-align: start; }
 
 /* ---------- Карти маҳсулот ---------- */
-.grid2 { column-count: 2; column-gap: 10px; padding: 0 16px; }
-.grid2 > .pcard { break-inside: avoid; margin-bottom: 10px; }
+.grid2 { column-count: 2; column-gap: 1px; padding: 0; background: var(--line, #e3e6ee); }
+.grid2 > .pcard { break-inside: avoid; margin-bottom: 1px; border-radius: 0; box-shadow: none; }
 .pcard { background: var(--card); border-radius: var(--r); overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; transition: transform .15s; }
 .pcard:active { transform: scale(.98); }
 /* Расм бо таносуби табиӣ: расми дароз дароз нишон дода мешавад (масонрӣ) */
