@@ -684,3 +684,16 @@ h1, h2, h3, p { margin: 0; }
 .lb-thumbs button.on { opacity: 1; outline-color: var(--orange); }
 .lb-thumbs img { width: 100%; height: 100%; object-fit: cover; }
 .g-slide { cursor: zoom-in; }
+
+/* ---------- Интихоби асъор ---------- */
+.cur { position: relative; display: inline-flex; }
+.hh-lang { display: inline-flex; align-items: center; gap: 4px; font-size: inherit; }
+.cur.light .hh-lang { border-color: var(--line); color: var(--text); background: #fff; font-size: 12.5px; padding: 5px 10px; font-weight: 700; }
+.cur-back { position: fixed; inset: 0; z-index: 90; }
+.cur-menu { position: absolute; right: 0; top: calc(100% + 6px); z-index: 91; min-width: 200px; background: #fff; color: var(--text); border-radius: 14px; box-shadow: 0 10px 30px rgba(11,31,58,.22); padding: 6px; display: flex; flex-direction: column; }
+.cur-menu button { display: grid; grid-template-columns: 44px 1fr auto; align-items: center; gap: 6px; padding: 10px; border-radius: 10px; text-align: left; font-size: 13.5px; }
+.cur-menu button.on { background: #fff3e2; }
+.cur-menu button b { font-weight: 800; }
+.cur-menu button small { color: var(--muted); font-size: 11.5px; }
+.cur-menu em { font-style: normal; font-size: 11px; color: var(--muted); padding: 6px 10px 4px; }
+.cur-row { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 0 16px 6px; font-size: 12.5px; color: var(--muted); }

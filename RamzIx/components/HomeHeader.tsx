@@ -2,6 +2,7 @@ import Link from "next/link";
 import Logo from "./Logo";
 import Icon from "./Icon";
 import { CartBadge } from "./Cart";
+import { CurrencySwitch } from "./Currency";
 
 export default function HomeHeader() {
   return (
@@ -21,7 +22,7 @@ export default function HomeHeader() {
       </form>
       <div className="hh-meta">
         <span><Icon name="pin" size={15} /> Расонидан ба <b>Душанбе</b> <Icon name="down" size={14} /></span>
-        <span className="hh-lang">TJ · смн</span>
+        <CurrencySwitch />
       </div>
     </header>
   );

@@ -1,9 +1,10 @@
 "use client";
 
+import { CurrencySwitch, useMoney } from "./Currency";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { COUNTRIES, fmt, fmtPrice, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
+import { COUNTRIES, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
@@ -13,6 +14,7 @@ import ProductImage from "./ProductImage";
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export default function CartView() {
+  const { price, sum, label } = useMoney();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
@@ -56,15 +58,15 @@ export default function CartView() {
     for (const g of order.groups) {
       rows.push(`📦 ${COUNTRIES[g.country].name}:`);
       for (const l of g.lines) {
-        rows.push(`${n++}) ${l.p.name}${l.color ? `, ${l.color}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${unitOf(l.p)} × ${fmtPrice(l.unit)} = ${fmt(l.goods)} смн`);
+        rows.push(`${n++}) ${l.p.name}${l.color ? `, ${l.color}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${unitOf(l.p)} × ${price(l.unit)} = ${sum(l.goods)} ${label}`);
       }
-      rows.push(`   Расонидан (${g.shipping.mode.label}, ${fmtQty(round2(g.kg))} кг): ${g.shipping.tjs > 0 ? fmt(g.shipping.tjs) + " смн" : "бо тасдиқ"}`, "");
+      rows.push(`   Расонидан (${g.shipping.mode.label}, ${fmtQty(round2(g.kg))} кг): ${g.shipping.tjs > 0 ? sum(g.shipping.tjs) + " " + label : "бо тасдиқ"}`, "");
     }
     rows.push(
-      `Нархи мол: ${fmt(order.listGoods)} смн`,
-      ...(order.discount > 0 ? [`Тахфиф (−${order.discountPct}%): −${fmt(order.discount)} смн`] : []),
-      `Расонидан: ${fmt(order.shipping)} смн`,
-      `Ҷамъ: ${fmt(order.total)} смн`,
+      `Нархи мол: ${sum(order.listGoods)} ${label}`,
+      ...(order.discount > 0 ? [`Тахфиф (−${order.discountPct}%): −${sum(order.discount)} ${label}`] : []),
+      `Расонидан: ${sum(order.shipping)} ${label}`,
+      `Ҷамъ: ${sum(order.total)} ${label}`,
     );
     return rows.join("\n");
   }
@@ -95,7 +97,7 @@ export default function CartView() {
                     <Link href={`/product/${l.p.slug}`} className="cl-name">{l.p.name}</Link>
                     {(l.size || l.color) && <div className="cl-var">{[l.color && `Ранг: ${l.color}`, l.size && `Андоза: ${l.size}`].filter(Boolean).join(" · ")}</div>}
                     <div className="cl-price">
-                      {l.unit < l.listUnit - 0.05 && <span className="cl-old">{fmtPrice(l.listUnit)}</span>}<b>{fmtPrice(l.unit)}</b> смн / {unit}
+                      {l.unit < l.listUnit - 0.05 && <span className="cl-old">{price(l.listUnit)}</span>}<b>{price(l.unit)}</b> {label} / {unit}
                       {l.p.sale?.per && <small> · {l.p.sale.per} {l.p.sale.perLabel}</small>}
                     </div>
                     <div className="cl-ctrl">
@@ -104,7 +106,7 @@ export default function CartView() {
                         <span>{fmtQty(l.qty)} <small>{unit}</small></span>
                         <button onClick={() => set(l.qty + step)} aria-label="Зиёд"><Icon name="plus" size={16} stroke={2.4} /></button>
                       </div>
-                      <b className="cl-sum">{fmt(l.goods)} смн</b>
+                      <b className="cl-sum">{sum(l.goods)} {label}</b>
                     </div>
                     {rfq && <div className="cl-warn">Миқдори калон: менеҷер нархи махсус медиҳад</div>}
                   </div>
@@ -137,7 +139,7 @@ export default function CartView() {
                     ].filter(Boolean).join(" · ")}
                   </small>
                 </span>
-                <b>{g.shipping.tjs > 0 ? `${fmt(g.shipping.tjs)} смн` : "бо тасдиқ"}</b>
+                <b>{g.shipping.tjs > 0 ? `${sum(g.shipping.tjs)} ${label}` : "бо тасдиқ"}</b>
               </div>
             </div>
           </section>
@@ -156,13 +158,13 @@ export default function CartView() {
             <div key={st.from} className={`st ${i <= reached ? "on" : ""}`}>
               <span className="dot">{i <= reached && <Icon name="check" size={12} stroke={3.2} />}</span>
               <b>{st.off > 0 ? `−${st.off}%` : "Асосӣ"}</b>
-              <small>{st.from > 0 ? `аз ${fmt(st.from)}` : "то " + fmt(ladder[1].from)}</small>
+              <small>{st.from > 0 ? `аз ${sum(st.from)}` : "то " + sum(ladder[1].from)}</small>
             </div>
           ))}
         </div>
         <p className="disc-hint">
           {order.next ? (
-            <>Боз <b>{fmt(order.next.need)} смн</b> харед (бо нархи асосӣ): тахфиф <b>−{order.next.off}%</b> мешавад.</>
+            <>Боз <b>{sum(order.next.need)} {label}</b> харед (бо нархи асосӣ): тахфиф <b>−{order.next.off}%</b> мешавад.</>
           ) : (
             <>Шумо тахфифи ҳадди аксарро гирифтед: <b>−{order.discountPct}%</b>.</>
           )}
@@ -170,17 +172,17 @@ export default function CartView() {
       </div>
 
       <div className="sum-card">
-        <div className="est-row"><span>Нархи мол</span><b>{fmt(order.listGoods)} смн</b></div>
+        <div className="est-row"><span>Нархи мол</span><b>{sum(order.listGoods)} {label}</b></div>
         <div className="est-row disc">
           <span>Тахфиф{order.discountPct > 0 && <small>−{order.discountPct}% аз нархи асосӣ</small>}</span>
-          <b>{order.discount > 0 ? `−${fmt(order.discount)} смн` : "—"}</b>
+          <b>{order.discount > 0 ? `−${sum(order.discount)} ${label}` : "—"}</b>
         </div>
-        <div className="est-row"><span>Расонидан</span><b>{order.shipping > 0 ? `${fmt(order.shipping)} смн` : "бо тасдиқ"}</b></div>
-        <div className="est-total"><span>Ҷамъ</span><b>{fmt(order.total)} смн</b></div>
+        <div className="est-row"><span>Расонидан</span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : "бо тасдиқ"}</b></div>
+        <div className="est-total"><span>Ҷамъ</span><b>{sum(order.total)} {label}</b></div>
       </div>
 
       <div className="cart-bar">
-        <div className="cb-total"><small>Ҷамъ</small><b>{fmt(order.total)} смн</b></div>
+        <div className="cb-total"><small>Ҷамъ</small><b>{sum(order.total)} {label}</b></div>
         <a className="cb-btn" href={waLink(message)} target="_blank" rel="noreferrer">
           <Icon name="wa" size={20} /> Фиристодани фармоиш
         </a>
@@ -195,7 +197,8 @@ function CartShell({ children, onBack, onClear }: { children: React.ReactNode; o
       <header className="cart-top">
         <button className="ic-round" onClick={onBack} aria-label="Бозгашт"><Icon name="back" stroke={2.2} /></button>
         <h1>Сабад</h1>
-        {onClear ? <button className="cart-clear" onClick={onClear}>Тоза кардан</button> : <span />}
+        <CurrencySwitch light />
+        {onClear && <button className="cart-clear" onClick={onClear}>Тоза кардан</button>}
       </header>
       <main className="cart-main">{children}</main>
     </>
