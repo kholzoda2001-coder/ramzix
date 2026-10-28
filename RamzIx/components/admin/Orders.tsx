@@ -4,11 +4,13 @@ import { useMemo, useState } from "react";
 import { PAY_LABEL, PAY_METHODS, STATUSES, itemProfit, itemSell, orderVolume, orderWeight, routeOf, totals, useAdmin, type Order } from "@/lib/admin";
 import { WHATSAPP } from "@/lib/catalog";
 import OrderForm from "./OrderForm";
-import { PayBar, PayChip, Sheet, StatusChip, dateStr, money } from "./ui";
+import { PayBar, PayChip, Sheet, StatusChip, dateStr } from "./ui";
+import { useFx } from "./fx";
 
 type Admin = ReturnType<typeof useAdmin>;
 
 export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId: string | null; onOpen: (id: string | null) => void }) {
+  const { m, label } = useFx();
   const [q, setQ] = useState("");
   const [st, setSt] = useState<string>("all");
   const [pay, setPay] = useState<string>("all");
@@ -47,9 +49,9 @@ export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId
                   <div className="ao-top"><b>{o.code}</b><span className="ao-type">{o.type === "pos" ? "POS" : "Сайт"}</span><StatusChip status={o.status} /></div>
                   <div className="ao-who">{o.customer.name || "Бе ном"}{o.customer.phone && <small> · {o.customer.phone}</small>}</div>
                   <div className="ao-items">{o.items.map((i) => `${i.name} ×${i.qty}`).join(", ")}</div>
-                  <div className="ao-money"><b>{money(t.total)} смн</b><span className="g">+{money(t.profit)}</span><PayChip order={o} /></div>
+                  <div className="ao-money"><b>{m(t.total)} {label}</b><span className="g">+{m(t.profit)}</span><PayChip order={o} /></div>
                   <PayBar order={o} />
-                  <small className="ao-date">{dateStr(o.date)}{t.paid > 0 && ` · гирифта шуд ${money(t.paid)} (${t.paidPct}%)`}</small>
+                  <small className="ao-date">{dateStr(o.date)}{t.paid > 0 && ` · гирифта шуд ${m(t.paid)} (${t.paidPct}%)`}</small>
                 </div>
                 <div className="ao-quick">
                   <select value={o.status} aria-label="Ҳолат" onChange={(e) => admin.patchOrder(o.id, { status: e.target.value as Order["status"] })}>
@@ -76,18 +78,21 @@ export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId
 }
 
 function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onClose: () => void }) {
+  const { m, label, inp, base, cur } = useFx();
   const t = totals(o);
   const [edit, setEdit] = useState(false);
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState(PAY_METHODS[0]);
   const [confirmDel, setConfirmDel] = useState(false);
 
-  if (edit) return <OrderForm initial={o} onDone={() => setEdit(false)} />;
+  if (edit) return <OrderForm key={cur} initial={o} onDone={() => setEdit(false)} />;
 
   const addPay = () => {
     const a = parseFloat(amount.replace(",", "."));
     if (!(a > 0)) return;
-    admin.addPayment(o.id, { date: new Date().toISOString(), amount: a, method });
+    // Агар маблағ бо номи «пурра» мувофиқ бошад, сомонии дақиқ гирифта мешавад
+    const exact = amount === inp(t.due) ? t.due : base(a);
+    admin.addPayment(o.id, { date: new Date().toISOString(), amount: exact, method });
     setAmount("");
   };
   const phone = o.customer.phone.replace(/[^\d+]/g, "");
@@ -119,16 +124,16 @@ function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onCl
             {o.items.map((i) => (
               <tr key={i.id}>
                 <td>{i.name}<small>{i.qty} {i.unit} · {i.markupPct}%</small></td>
-                <td>{money(i.costTotal)}</td><td>{money(itemSell(i))}</td><td className="g">{money(itemProfit(i))}</td>
+                <td>{m(i.costTotal)}</td><td>{m(itemSell(i))}</td><td className="g">{m(itemProfit(i))}</td>
               </tr>
             ))}
             {(o.shippingCharged > 0 || o.shippingCost > 0) && (
-              <tr><td>Расонидан</td><td>{money(o.shippingCost)}</td><td>{money(o.shippingCharged)}</td><td className="g">{money(o.shippingCharged - o.shippingCost)}</td></tr>
+              <tr><td>Расонидан</td><td>{m(o.shippingCost)}</td><td>{m(o.shippingCharged)}</td><td className="g">{m(o.shippingCharged - o.shippingCost)}</td></tr>
             )}
           </tbody>
-          <tfoot><tr><td>Ҷамъ</td><td>{money(t.cost)}</td><td>{money(t.total)}</td><td className="g">{money(t.profit)}</td></tr></tfoot>
+          <tfoot><tr><td>Ҷамъ</td><td>{m(t.cost)}</td><td>{m(t.total)}</td><td className="g">{m(t.profit)}</td></tr></tfoot>
         </table>
-        <p className="ad-hint">Фоидаи софи шумо: <b>{money(t.profit)} смн</b>{t.cost > 0 && ` (${t.margin}% болои хароҷот)`}</p>
+        <p className="ad-hint">Фоидаи софи шумо: <b>{m(t.profit)} {label}</b>{t.cost > 0 && ` (${t.margin}% болои хароҷот)`}</p>
         {(orderWeight(o) > 0 || orderVolume(o) > 0 || routeOf(o.routeKey)) && (
           <p className="ad-hint">Расонидан: {routeOf(o.routeKey)?.label ?? "—"} · вазн {orderWeight(o)} кг · ҳаҷм {orderVolume(o)} м³</p>
         )}
@@ -137,28 +142,28 @@ function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onCl
       <section className="ad-card">
         <h3>Пардохт</h3>
         <div className="ad-pay-sum">
-          <div><span>Ҷамъ</span><b>{money(t.total)}</b></div>
-          <div><span>Гирифта шуд</span><b className="g">{money(t.paid)} <small>{t.paidPct}%</small></b></div>
-          <div><span>Боқимонда</span><b className={t.due > 0.005 ? "r" : ""}>{money(Math.max(0, t.due))}</b></div>
+          <div><span>Ҷамъ</span><b>{m(t.total)}</b></div>
+          <div><span>Гирифта шуд</span><b className="g">{m(t.paid)} <small>{t.paidPct}%</small></b></div>
+          <div><span>Боқимонда</span><b className={t.due > 0.005 ? "r" : ""}>{m(Math.max(0, t.due))}</b></div>
         </div>
         <PayBar order={o} />
         {o.payments.length > 0 && (
           <ul className="ad-pays">
             {o.payments.map((p) => (
-              <li key={p.id}><span>{dateStr(p.date)} · {p.method}</span><b>{money(p.amount)}</b><button onClick={() => admin.removePayment(o.id, p.id)} aria-label="Хориҷ">✕</button></li>
+              <li key={p.id}><span>{dateStr(p.date)} · {p.method}</span><b>{m(p.amount)}</b><button onClick={() => admin.removePayment(o.id, p.id)} aria-label="Хориҷ">✕</button></li>
             ))}
           </ul>
         )}
         {t.due > 0.005 && (
           <>
             <div className="ad-grid2">
-              <label><span>Маблағ, смн</span><input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} /></label>
+              <label><span>{`Маблағ, ${label}`}</span><input inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} /></label>
               <label><span>Тарз</span><select value={method} onChange={(e) => setMethod(e.target.value)}>{PAY_METHODS.map((m) => <option key={m}>{m}</option>)}</select></label>
             </div>
             <div className="ad-quick">
-              <button onClick={() => setAmount(String(t.due))}>Пурра ({money(t.due)})</button>
-              <button onClick={() => setAmount(String(Math.round(t.total * 0.3 * 100) / 100))}>30%</button>
-              <button onClick={() => setAmount(String(Math.round(t.total * 0.5 * 100) / 100))}>50%</button>
+              <button onClick={() => setAmount(inp(t.due))}>Пурра ({m(t.due)})</button>
+              <button onClick={() => setAmount(inp(t.total * 0.3))}>30%</button>
+              <button onClick={() => setAmount(inp(t.total * 0.5))}>50%</button>
             </div>
             <button className="ad-primary" onClick={addPay}>Пардохтро сабт кардан</button>
           </>
