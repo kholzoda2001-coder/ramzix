@@ -12,6 +12,7 @@ import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
 import useDragScroll from "./useDragScroll";
 import Lightbox from "./Lightbox";
+import BrandLogo from "./BrandLogo";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -346,7 +347,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Фурӯшанда */}
           <div className="seller">
-            <span className="seller-av">{(p.brand ?? "R").slice(0, 2).toUpperCase()}</span>
+            <BrandLogo name={p.brand ?? "RamzIx"} small />
             <span className="seller-txt">
               <b>{p.brand ?? "RamzIx"} · {country.short}</b>
               <small><Icon name="shield" size={13} /> Санҷидашуда · Ҷавоб &lt; 1 соат</small>

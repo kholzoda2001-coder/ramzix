@@ -1,5 +1,6 @@
 import raw from "@/data/catalog.json";
 import extra from "@/data/extra-products.json";
+import { cleanBrand } from "./brands";
 import type { Currency } from "./pricing-config";
 
 export type CountryCode = "ae" | "cn" | "tr" | "tj";
@@ -43,7 +44,7 @@ export type Product = {
   sale?: Sale;
 };
 
-export const products = [...(raw as unknown as Product[]), ...(extra as unknown as Product[])];
+export const products: Product[] = [...(raw as unknown as Product[]), ...(extra as unknown as Product[])].map((p) => ({ ...p, brand: cleanBrand(p.brand) }));
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
 
