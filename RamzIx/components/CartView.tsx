@@ -3,6 +3,7 @@
 import { useMoney } from "./Currency";
 import { T, useT } from "./Lang";
 import Prefs from "./Prefs";
+import { addOrder, useProfile } from "@/lib/profile";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
@@ -18,6 +19,7 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export default function CartView() {
   const { price, sum, label } = useMoney();
   const { t } = useT();
+  const { profile } = useProfile();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
@@ -58,6 +60,8 @@ export default function CartView() {
   function buildMessage() {
     const days = (m: { daysMin: number; daysMax: number }) => t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax });
     const rows: string[] = [t("Салом! Фармоиши нав аз RamzIx:"), ""];
+    const buyer = [profile.name, profile.shop, profile.phone, profile.city].filter(Boolean).join(", ");
+    if (buyer) rows.push(`${t("Харидор")}: ${buyer}`, "");
     let n = 1;
     for (const g of order.groups) {
       rows.push(`📦 ${t(COUNTRIES[g.country].name)}:`);
@@ -187,7 +191,7 @@ export default function CartView() {
 
       <div className="cart-bar">
         <div className="cb-total"><small><T>Ҷамъ</T></small><b>{sum(order.total)} {label}</b></div>
-        <a className="cb-btn" href={waLink(message)} target="_blank" rel="noreferrer">
+        <a className="cb-btn" href={waLink(message)} target="_blank" rel="noreferrer" onClick={() => addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) })}>
           <Icon name="wa" size={20} /> <T>Фиристодани фармоиш</T>
         </a>
       </div>
