@@ -1,5 +1,6 @@
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
+import BrandLogo from "@/components/BrandLogo";
 import Flag from "@/components/Flag";
 import HeroSlider from "@/components/HeroSlider";
 import HomeHeader from "@/components/HomeHeader";
@@ -84,7 +85,7 @@ export default function Home() {
           <div className="brand-row">
             {brands.map((b) => (
               <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-chip">
-                <span className="bc-logo sm">{b.name.slice(0, 2).toUpperCase()}</span>
+                <BrandLogo name={b.name} small />
                 <span><b>{b.name}</b><small>{b.count} мол</small></span>
               </Link>
             ))}
