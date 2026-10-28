@@ -323,5 +323,8 @@ export const EN: Record<string, string> = {
   "Менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.": "The manager will contact you, confirm the order and tell you how to pay. After payment the goods are shipped.",
   "Агар WhatsApp кушода нашуд ё паём фиристода нашуд, тугмаи поёнро пахш кунед ва паёмро фиристед.": "If WhatsApp did not open or the message was not sent, press the button below and send the message.",
   "Паёмро дар WhatsApp фиристодан": "Send the message on WhatsApp",
-  "Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.": "There is no online payment: the manager will contact you, confirm the order and tell you how to pay (Alif, DC, bank, cash). After payment the goods are shipped."
+  "Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.": "There is no online payment: the manager will contact you, confirm the order and tell you how to pay (Alif, DC, bank, cash). After payment the goods are shipped.",
+  "Иморот": "UAE",
+  "Суроғаи пурра": "Full address",
+  "Шаҳр, ноҳия, кӯча, хона": "City, district, street, house"
 };

@@ -824,3 +824,9 @@ h1, h2, h3, p { margin: 0; }
 .ck-hint { color: var(--muted) !important; font-size: 12.5px !important; }
 .ck-done .btn { width: 100%; }
 .ck-home { color: var(--muted); font-weight: 600; padding: 8px; }
+.ck-phone { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 12px; background: #fff; overflow: hidden; }
+.ck-phone:focus-within { border-color: var(--orange); }
+.ck-field.bad .ck-phone, .ck-field.bad textarea { border-color: var(--red); background: #fff7f8; }
+.ck-phone b { padding: 0 10px 0 12px; height: 46px; display: flex; align-items: center; font-size: 16px; color: var(--text); background: #f3f5f9; border-right: 1px solid var(--line); }
+.ck-phone input { border: 0 !important; background: transparent !important; flex: 1; min-width: 0; height: 46px; }
+.ck-field > .ck-seg .seg-flag { width: 20px; height: 14px; border-radius: 3px; }

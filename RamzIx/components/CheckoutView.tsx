@@ -11,9 +11,11 @@ import { useMoney } from "./Currency";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
+import ContactFields from "./ContactFields";
+import { joinPhone, phoneValid, splitPhone, type ShipCountry } from "@/lib/phone";
 
 const CONTACTS = ["WhatsApp", "Занг"] as const;
-type Errors = Partial<Record<"name" | "phone" | "city", boolean>>;
+type Errors = Partial<Record<"name" | "phone" | "address", boolean>>;
 type Done = { code: string; link: string };
 
 export default function CheckoutView() {
@@ -23,7 +25,8 @@ export default function CheckoutView() {
   const { lines, modes, ready, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
 
-  const [form, setForm] = useState<Buyer>({ name: "", phone: "", shop: "", city: "", address: "", comment: "", contact: "WhatsApp" });
+  const [form, setForm] = useState<Buyer>({ name: "", phone: "", shop: "", country: "tj", address: "", comment: "", contact: "WhatsApp" });
+  const [local, setLocal] = useState("");
   const [filledFromProfile, setFilled] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [done, setDone] = useState<Done | null>(null);
@@ -31,7 +34,9 @@ export default function CheckoutView() {
   // Маълумоти профилро як бор ба шакл меорем
   useEffect(() => {
     if (!profileReady || filledFromProfile) return;
-    setForm((f) => ({ ...f, name: profile.name, phone: profile.phone, shop: profile.shop, city: profile.city, address: profile.address }));
+    const ph = splitPhone(profile.phone, profile.country);
+    setForm((f) => ({ ...f, name: profile.name, shop: profile.shop, country: ph.country, address: profile.address }));
+    setLocal(ph.local);
     setFilled(true);
   }, [profileReady, filledFromProfile, profile]);
 
@@ -41,18 +46,17 @@ export default function CheckoutView() {
   };
 
   const submit = () => {
-    const digits = form.phone.replace(/\D/g, "");
-    const err: Errors = { name: form.name.trim().length < 2, phone: digits.length < 7, city: form.city.trim().length < 2 };
+    const err: Errors = { name: form.name.trim().length < 2, phone: !phoneValid(form.country, local), address: form.address.trim().length < 5 };
     setErrors(err);
-    if (err.name || err.phone || err.city) {
+    if (err.name || err.phone || err.address) {
       document.querySelector(".ck-field.bad")?.scrollIntoView({ block: "center" });
       return;
     }
-    const buyer: Buyer = { ...form, name: form.name.trim(), phone: form.phone.trim(), city: form.city.trim(), shop: form.shop.trim(), address: form.address.trim(), comment: form.comment.trim() };
+    const buyer: Buyer = { ...form, name: form.name.trim(), phone: joinPhone(form.country, local), shop: form.shop.trim(), address: form.address.trim(), comment: form.comment.trim() };
     const id = addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) });
     const code = orderCode(id);
     const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label }));
-    saveProfile({ name: buyer.name, phone: buyer.phone, shop: buyer.shop, city: buyer.city, address: buyer.address });
+    saveProfile({ name: buyer.name, phone: buyer.phone, shop: buyer.shop, country: buyer.country, address: buyer.address });
     clear();
     setDone({ code, link });
     window.scrollTo(0, 0);
@@ -87,7 +91,7 @@ export default function CheckoutView() {
     );
   }
 
-  const field = (k: "name" | "phone" | "shop" | "city" | "address", labelKey: string, opts: { req?: boolean; type?: string; mode?: "tel"; auto?: string } = {}) => (
+  const field = (k: "name" | "shop", labelKey: string, opts: { req?: boolean; type?: string; mode?: "tel"; auto?: string } = {}) => (
     <label className={`ck-field ${errors[k as keyof Errors] ? "bad" : ""}`}>
       <span>{t(labelKey)}{opts.req && <i>*</i>}</span>
       <input type={opts.type ?? "text"} inputMode={opts.mode} autoComplete={opts.auto} maxLength={120} value={form[k]} onChange={(e) => set(k, e.target.value)} />
@@ -100,14 +104,21 @@ export default function CheckoutView() {
       <section className="ck-card">
         <h2><span className="ck-n">1</span><T>Маълумоти шумо</T></h2>
         {field("name", "Ном ва насаб", { req: true, auto: "name" })}
-        {field("phone", "Рақами телефон", { req: true, type: "tel", mode: "tel", auto: "tel" })}
         {field("shop", "Номи мағоза / ширкат")}
       </section>
 
       <section className="ck-card">
         <h2><span className="ck-n">2</span><T>Расонидан</T></h2>
-        {field("city", "Шаҳр", { req: true, auto: "address-level2" })}
-        {field("address", "Суроға")}
+        <ContactFields
+          required
+          value={{ country: form.country as ShipCountry, local, address: form.address }}
+          errors={errors}
+          onChange={(v) => {
+            setForm((f) => ({ ...f, country: v.country, address: v.address }));
+            setLocal(v.local);
+            setErrors((e) => ({ ...e, phone: false, address: false }));
+          }}
+        />
         <label className="ck-field">
           <span><T>Эзоҳ барои менеҷер</T></span>
           <textarea rows={3} maxLength={400} value={form.comment} onChange={(e) => set("comment", e.target.value)} />

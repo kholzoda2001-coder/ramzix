@@ -9,15 +9,10 @@ import { clearProfile, saveProfile, useProfile, type Order, type Profile } from 
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
+import ContactFields from "./ContactFields";
+import { joinPhone, splitPhone } from "@/lib/phone";
 import { T, useT } from "./Lang";
 
-const FIELDS: { key: keyof Profile; label: string; type?: string; inputMode?: "tel" }[] = [
-  { key: "name", label: "Ном ва насаб" },
-  { key: "phone", label: "Рақами телефон", type: "tel", inputMode: "tel" },
-  { key: "shop", label: "Номи мағоза / ширкат" },
-  { key: "city", label: "Шаҳр" },
-  { key: "address", label: "Суроға" },
-];
 
 export default function ProfileView() {
   const { t, lang, setLang } = useT();
@@ -26,14 +21,15 @@ export default function ProfileView() {
   const { lines, add } = useCart();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Profile>(profile);
+  const [local, setLocal] = useState("");
   const [confirmClear, setConfirmClear] = useState(false);
 
   const filled = Object.values(profile).some(Boolean);
   const initials = (profile.name || profile.shop || "").trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("");
   const spent = orders.reduce((a, o) => a + o.totalTjs, 0);
 
-  const startEdit = () => { setDraft(profile); setEditing(true); };
-  const save = () => { saveProfile(draft); setEditing(false); };
+  const startEdit = () => { setDraft(profile); setLocal(splitPhone(profile.phone, profile.country).local); setEditing(true); };
+  const save = () => { saveProfile({ ...draft, phone: joinPhone(draft.country, local) }); setEditing(false); };
 
   const repeat = (o: Order) => {
     const ok = o.lines.filter((l) => getProduct(l.slug));
@@ -60,18 +56,18 @@ export default function ProfileView() {
       {editing && (
         <section className="pf-card pf-form">
           <h2><T>Маълумоти ман</T></h2>
-          {FIELDS.map((f) => (
-            <label key={f.key}>
-              <span>{t(f.label)}</span>
-              <input
-                type={f.type ?? "text"}
-                inputMode={f.inputMode}
-                value={draft[f.key]}
-                maxLength={120}
-                onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
-              />
-            </label>
-          ))}
+          <label className="ck-field">
+            <span>{t("Ном ва насаб")}</span>
+            <input value={draft.name} maxLength={120} autoComplete="name" onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+          </label>
+          <label className="ck-field">
+            <span>{t("Номи мағоза / ширкат")}</span>
+            <input value={draft.shop} maxLength={120} onChange={(e) => setDraft({ ...draft, shop: e.target.value })} />
+          </label>
+          <ContactFields
+            value={{ country: draft.country, local, address: draft.address }}
+            onChange={(v) => { setDraft({ ...draft, country: v.country, address: v.address }); setLocal(v.local); }}
+          />
           <div className="pf-actions">
             <button className="btn btn-orange" onClick={save}><T>Нигоҳ доштан</T></button>
             <button className="btn btn-ghost" onClick={() => setEditing(false)}><T>Бекор кардан</T></button>
@@ -83,7 +79,7 @@ export default function ProfileView() {
         <section className="pf-card pf-info">
           {profile.shop && <div><Icon name="store" size={18} /><span>{profile.shop}</span></div>}
           {profile.phone && <div><Icon name="phone" size={18} /><span>{profile.phone}</span></div>}
-          {(profile.city || profile.address) && <div><Icon name="pin" size={18} /><span>{[profile.city, profile.address].filter(Boolean).join(", ")}</span></div>}
+          {profile.address && <div><Icon name="pin" size={18} /><span>{t(profile.country === "ae" ? "Иморот" : "Тоҷикистон")}, {profile.address}</span></div>}
         </section>
       )}
 

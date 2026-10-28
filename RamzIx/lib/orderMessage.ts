@@ -1,7 +1,7 @@
 import { COUNTRIES, fmtQty, unitOf } from "./catalog";
 import { priceOrder } from "./pricing";
 
-export type Buyer = { name: string; phone: string; shop: string; city: string; address: string; comment: string; contact: string };
+export type Buyer = { name: string; phone: string; shop: string; country: "tj" | "ae"; address: string; comment: string; contact: string };
 
 type Fmt = {
   t: (key: string, vars?: Record<string, string | number>) => string;
@@ -17,8 +17,9 @@ export function buildOrderMessage(order: ReturnType<typeof priceOrder>, buyer: B
   const rows: string[] = [`${t("Дархости нав аз RamzIx")} ${id}`, ""];
   rows.push(
     `${t("Харидор")}: ${[buyer.name, buyer.shop].filter(Boolean).join(", ")}`,
+    `${t("Кишвар")}: ${t(buyer.country === "tj" ? "Тоҷикистон" : "Иморот")}`,
     `${t("Телефон")}: ${buyer.phone}`,
-    `${t("Шаҳр")}: ${[buyer.city, buyer.address].filter(Boolean).join(", ")}`,
+    `${t("Суроғаи пурра")}: ${buyer.address}`,
     `${t("Тарзи тамос")}: ${t(buyer.contact)}`,
     ...(buyer.comment ? [`${t("Эзоҳ")}: ${buyer.comment}`] : []),
     "",
