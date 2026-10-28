@@ -11,6 +11,7 @@ import Icon from "./Icon";
 import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
 import useDragScroll from "./useDragScroll";
+import Lightbox from "./Lightbox";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -28,6 +29,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const [modeId, setModeId] = useState(defaultMode(p.country));
   const [tab, setTab] = useState<"desc" | "terms" | "ship">("desc");
   const [more, setMore] = useState(false);
+  const [zoom, setZoom] = useState(false);
   const [solid, setSolid] = useState(false);
   const track = useRef<HTMLDivElement>(null);
   useDragScroll(track);
@@ -96,6 +98,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
       <main className="pd">
         {/* Галерея */}
+        {zoom && <Lightbox images={p.images} name={p.name} start={img} onClose={(k) => { setZoom(false); setImg(k); requestAnimationFrame(() => { const t = track.current; if (t) { t.style.scrollBehavior = "auto"; t.scrollLeft = k * t.clientWidth; t.style.scrollBehavior = ""; } }); }} />}
         <div className="gallery">
           <div
             className="g-track"
@@ -115,7 +118,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             }}
           >
             {p.images.map((src, k) => (
-              <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src}><ProductImage src={src} alt={`${p.name} — ${k + 1}`} eager={k === 0} /></div>
+              <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src} onClick={() => setZoom(true)}><ProductImage src={src} alt={`${p.name} — ${k + 1}`} eager={k === 0} /></div>
             ))}
           </div>
           {p.images.length > 1 && (
