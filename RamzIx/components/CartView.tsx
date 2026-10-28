@@ -2,11 +2,10 @@
 
 import { useMoney } from "./Currency";
 import { T, useT } from "./Lang";
-import { addOrder, useProfile } from "@/lib/profile";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { COUNTRIES, fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
+import { COUNTRIES, fmtQty, getProduct, unitOf } from "@/lib/catalog";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
@@ -18,7 +17,6 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export default function CartView() {
   const { price, sum, label } = useMoney();
   const { t } = useT();
-  const { profile } = useProfile();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
@@ -53,30 +51,6 @@ export default function CartView() {
   const hi = ladder[reached + 1]?.from ?? lo;
   const within = hi > lo ? Math.min(1, (order.listAmount - lo) / (hi - lo)) : 0; // дар зинаи охирин хат ба нуқтаи охирин мерасад ва аз он намегузарад
   const fillPct = ladder.length > 1 ? ((reached + within) / (ladder.length - 1)) * 80 : 0;
-
-  const message = buildMessage();
-
-  function buildMessage() {
-    const days = (m: { daysMin: number; daysMax: number }) => t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax });
-    const rows: string[] = [t("Салом! Фармоиши нав аз RamzIx:"), ""];
-    const buyer = [profile.name, profile.shop, profile.phone, profile.city].filter(Boolean).join(", ");
-    if (buyer) rows.push(`${t("Харидор")}: ${buyer}`, "");
-    let n = 1;
-    for (const g of order.groups) {
-      rows.push(`📦 ${t(COUNTRIES[g.country].name)}:`);
-      for (const l of g.lines) {
-        rows.push(`${n++}) ${t(l.p.name)}${l.color ? `, ${t(l.color)}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${t(unitOf(l.p))} × ${price(l.unit)} = ${sum(l.goods)} ${label}`);
-      }
-      rows.push(`   ${t("Расонидан")} (${t(g.shipping.mode.label)}, ${fmtQty(round2(g.kg))} ${t("кг")}): ${g.shipping.tjs > 0 ? sum(g.shipping.tjs) + " " + label : t("бо тасдиқ")}`, "");
-    }
-    rows.push(
-      `${t("Нархи мол")}: ${sum(order.listGoods)} ${label}`,
-      ...(order.discount > 0 ? [`${t("Тахфиф")} (−${order.discountPct}%): −${sum(order.discount)} ${label}`] : []),
-      `${t("Расонидан")}: ${sum(order.shipping)} ${label}`,
-      `${t("Ҷамъ")}: ${sum(order.total)} ${label}`,
-    );
-    return rows.join("\n");
-  }
 
   return (
     <CartShell onBack={back} onClear={clear}>
@@ -190,9 +164,9 @@ export default function CartView() {
 
       <div className="cart-bar">
         <div className="cb-total"><small><T>Ҷамъ</T></small><b>{sum(order.total)} {label}</b></div>
-        <a className="cb-btn" href={waLink(message)} target="_blank" rel="noreferrer" onClick={() => addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) })}>
-          <Icon name="wa" size={20} /> <T>Фиристодани фармоиш</T>
-        </a>
+        <Link className="cb-btn" href="/checkout">
+          <Icon name="check" size={20} stroke={2.6} /> <T>Расмӣ кардани фармоиш</T>
+        </Link>
       </div>
     </CartShell>
   );
