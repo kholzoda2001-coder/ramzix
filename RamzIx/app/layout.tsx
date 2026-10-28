@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { CartProvider } from "@/components/Cart";
 import { CurrencyProvider } from "@/components/Currency";
 import { LangProvider } from "@/components/Lang";
+import { CatalogProvider } from "@/lib/useCatalog";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin", "cyrillic", "cyrillic-ext"], display: "swap" });
@@ -25,9 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <LangProvider>
           <CurrencyProvider>
-            <CartProvider>
-              <div className="app">{children}</div>
-            </CartProvider>
+            <CatalogProvider>
+              <CartProvider>
+                <div className="app">{children}</div>
+              </CartProvider>
+            </CatalogProvider>
           </CurrencyProvider>
         </LangProvider>
       </body>

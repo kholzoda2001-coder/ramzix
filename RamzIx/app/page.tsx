@@ -9,8 +9,7 @@ import ProductCard from "@/components/ProductCard";
 import ProductFeed from "@/components/ProductFeed";
 import { T } from "@/components/Lang";
 import WaLink from "@/components/WaLink";
-import { CATEGORIES, COUNTRIES, products, type CountryCode } from "@/lib/catalog";
-import { categoryCount, getBrands } from "@/lib/filters";
+import { BrandRow, CategoryGrid, Countries, FoodRow, ForYouFeed, PopularGrid } from "@/components/HomeSections";
 
 const TRUST = [
   { icon: "shield", title: "Маҳсулоти аслӣ", text: "Аз таъминкунандагони санҷидашуда" },
@@ -27,11 +26,6 @@ const STEPS = [
 ];
 
 export default function Home() {
-  const popular = interleave([...products].sort((a, b) => b.reviews - a.reviews)).slice(0, 4);
-  const food = products.filter((p) => p.sale);
-  const brands = getBrands().slice(0, 10);
-  const feed = interleave(products.filter((p) => !popular.includes(p)));
-
   return (
     <>
       <HomeHeader />
@@ -57,53 +51,13 @@ export default function Home() {
           ))}
         </section>
 
-        <section className="block" id="countries">
-          <div className="sec-head"><h2><T>Харид аз рӯи кишвар</T></h2></div>
-          <div className="countries">
-            {(Object.keys(COUNTRIES) as CountryCode[]).map((c) => (
-              <Link key={c} href={`/catalog?country=${c}`} className="country">
-                <Flag code={c} className="country-flag" />
-                <b><T>{COUNTRIES[c].short}</T></b>
-                <span>{products.some((p) => p.country === c) ? <T vars={{ n: products.filter((p) => p.country === c).length }}>{"{n} мол"}</T> : <T>Ба наздикӣ</T>}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <Countries />
 
-        <section className="block" id="catalog">
-          <div className="sec-head"><h2><T>Категорияҳо</T></h2><Link href="/categories"><T>Ҳама</T> <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
-          <div className="cats">
-            {CATEGORIES.map((c) => (
-              <Link key={c.id} href={c.id === "all" ? "/categories" : categoryCount(c.id) > 0 ? `/catalog?category=${c.id}` : "/categories"} className="cat">
-                <span className="cat-ic" style={{ background: c.tint }}><Icon name={c.icon} size={26} stroke={1.6} /></span>
-                <span><T>{c.name}</T></span>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <CategoryGrid />
 
-        <section className="block">
-          <div className="sec-head"><h2><T>Брендҳо</T></h2><Link href="/brands"><T>Ҳама</T> <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
-          <div className="brand-row">
-            {brands.map((b) => (
-              <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-chip">
-                <BrandLogo name={b.name} small />
-                <span><b>{b.name}</b><small><T vars={{ n: b.count }}>{"{n} мол"}</T></small></span>
-              </Link>
-            ))}
-          </div>
-        </section>
+        <BrandRow />
 
-        {food.length > 0 && (
-          <section className="block" id="food">
-            <div className="sec-head">
-              <div><h2><T>Озуқа ва нӯшокӣ</T></h2><p className="sec-sub"><T>Бо картон ва бо кило</T></p></div>
-            </div>
-            <div className="hscroll">
-              {food.map((p) => <ProductCard key={p.slug} p={p} compact />)}
-            </div>
-          </section>
-        )}
+        <FoodRow />
 
         <section className="tiers-card" id="rfq">
           <div className="tc-head">
@@ -117,10 +71,7 @@ export default function Home() {
           </WaLink>
         </section>
 
-        <section className="block">
-          <div className="sec-head"><h2><T>Маҳсулоти машҳур</T></h2></div>
-          <div className="grid2">{popular.map((p) => <ProductCard key={p.slug} p={p} />)}</div>
-        </section>
+        <PopularGrid />
 
         <section className="block">
           <div className="sec-head"><h2><T>Чӣ тавр кор мекунем</T></h2></div>
@@ -135,10 +86,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="block" id="popular">
-          <div className="sec-head"><h2><T>Барои шумо</T></h2><Link href="/catalog"><T>Ҳама</T> <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
-          <ProductFeed items={feed} />
-        </section>
+        <ForYouFeed />
 
         <footer className="foot">
           <div className="pay">
@@ -154,14 +102,4 @@ export default function Home() {
       <BottomNav />
     </>
   );
-}
-
-/* Маҳсулотро аз кишварҳои гуногун омехта мекунад, то лента якранг набошад */
-function interleave<T extends { source: string }>(items: T[]): T[] {
-  const groups = new Map<string, T[]>();
-  items.forEach((p) => groups.set(p.source, [...(groups.get(p.source) ?? []), p]));
-  const lists = [...groups.values()];
-  const out: T[] = [];
-  for (let i = 0; out.length < items.length; i++) lists.forEach((l) => l[i] && out.push(l[i]));
-  return out;
 }

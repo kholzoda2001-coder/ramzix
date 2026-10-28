@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CATEGORIES, COUNTRIES, products } from "@/lib/catalog";
+import { CATEGORIES, COUNTRIES } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import {
   EMPTY_FILTERS,
   SORTS,
@@ -29,6 +30,7 @@ const PAGE = 12;
 
 export default function CatalogView() {
   const { label, conv } = useMoney();
+  const { products } = useCatalog();
   const { t } = useT();
   const router = useRouter();
   const sp = useSearchParams();
@@ -38,7 +40,7 @@ export default function CatalogView() {
   const [shown, setShown] = useState(PAGE);
   const key = sp.toString();
 
-  const list = useMemo(() => sortProducts(filterProducts(products, filters), filters.sort), [filters]);
+  const list = useMemo(() => sortProducts(filterProducts(products, filters), filters.sort), [filters, products]);
   const nActive = activeCount(filters);
 
   const go = (f: Filters) => router.replace(`/catalog${filtersToQuery(f)}`, { scroll: false });
@@ -60,7 +62,7 @@ export default function CatalogView() {
 
   const chips: { label: string; onRemove: () => void }[] = [
     ...filters.category.map((v) => ({ label: t(categoryName(v)), onRemove: () => removeFrom("category", v) })),
-    ...filters.brand.map((v) => ({ label: brandName(v), onRemove: () => removeFrom("brand", v) })),
+    ...filters.brand.map((v) => ({ label: brandName(v, products), onRemove: () => removeFrom("brand", v) })),
     ...filters.country.map((v) => ({ label: t(COUNTRIES[v].short), onRemove: () => removeFrom("country", v) })),
     ...filters.unit.map((v) => ({ label: t(v === "кг" ? "Бо кило" : `Бо ${v}`), onRemove: () => removeFrom("unit", v) })),
     ...(filters.min !== undefined || filters.max !== undefined
@@ -70,7 +72,7 @@ export default function CatalogView() {
 
   const title =
     filters.category.length === 1 && !filters.brand.length ? t(categoryName(filters.category[0]))
-    : filters.brand.length === 1 && !filters.category.length ? brandName(filters.brand[0])
+    : filters.brand.length === 1 && !filters.category.length ? brandName(filters.brand[0], products)
     : t("Каталог");
 
   return (

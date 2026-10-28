@@ -2,10 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { fmtQty, getProduct, unitOf, waLink } from "@/lib/catalog";
+import { fmtQty, unitOf, waLink } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import { buildOrderMessage, type Buyer } from "@/lib/orderMessage";
 import { priceOrder } from "@/lib/pricing";
 import { addOrder, orderCode, saveProfile, useProfile } from "@/lib/profile";
+import { ROUTES, pushWebOrder } from "@/lib/admin";
+import { costPerUnit } from "@/lib/pricing";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
@@ -18,10 +21,11 @@ type Done = { code: string; link: string };
 
 export default function CheckoutView() {
   const { t } = useT();
+  const { getProduct } = useCatalog();
   const { price, sum, label } = useMoney();
   const { profile, ready: profileReady } = useProfile();
   const { lines, modes, ready, clear } = useCart();
-  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
+  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes, getProduct]);
 
   const [form, setForm] = useState<Buyer>({ name: "", phone: "", address: "" });
   const [local, setLocal] = useState("");
@@ -54,6 +58,19 @@ export default function CheckoutView() {
     const code = orderCode(id);
     const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label }));
     saveProfile({ ...profile, name: buyer.name, phone: buyer.phone, address: buyer.address });
+    // Дархост ба рӯйхати фармоишҳои админ ҳам меравад (то пайвастани сервер — дар ҳамин дастгоҳ)
+    const first = order.groups[0];
+    pushWebOrder({
+      code,
+      customer: { name: buyer.name, phone: buyer.phone, address: buyer.address },
+      items: order.groups.flatMap((g) => g.lines).map((l) => {
+        const cost = costPerUnit(l.p) * l.qty;
+        return { id: l.key, name: l.p.name, qty: l.qty, unit: unitOf(l.p), costTotal: Math.round(cost * 100) / 100, markupPct: cost > 0 ? Math.round((l.goods / cost - 1) * 1000) / 10 : 0, weightKg: l.p.weightKg || undefined, volumeM3: l.p.volumeM3 || undefined };
+      }),
+      routeKey: first ? ROUTES.find((r) => r.country === first.country)?.key : undefined,
+      shippingCharged: Math.round(order.shipping * 100) / 100,
+      shippingCost: Math.round(order.shipping * 100) / 100,
+    });
     clear();
     setDone({ code, link });
     window.scrollTo(0, 0);

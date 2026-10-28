@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PAY_METHODS, ROUTES, STATUSES, itemProfit, itemSell, newId, orderVolume, orderWeight, round, routeCost, routeOf, totals, useAdmin, type Item, type Order, type OrderType } from "@/lib/admin";
+import { PAY_METHODS, ROUTES, adminCostTjs, STATUSES, itemProfit, itemSell, newId, orderVolume, orderWeight, round, routeCost, routeOf, totals, useAdmin, type Item, type Order, type OrderType } from "@/lib/admin";
 import { COUNTRIES, products as catalog, unitOf } from "@/lib/catalog";
 import { costPerUnit } from "@/lib/pricing";
 import ProductImage from "../ProductImage";
@@ -39,7 +39,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
 
   const all: Hit[] = useMemo(
     () => [
-      ...admin.products.map((p) => ({ key: "a" + p.id, name: p.name, sub: "Маҳсулоти ман", unit: p.unit, unitCost: p.unitCost, markup: p.markupPct })),
+      ...admin.products.map((p) => ({ key: "a" + p.id, name: p.name, sub: ["Маҳсулоти ман", COUNTRIES[p.country].short].join(" · "), unit: p.unit, unitCost: adminCostTjs(p), markup: p.markupPct, weight: p.weightKg || undefined, vol: p.volumeM3 || undefined, country: p.country, image: p.images[0] })),
       ...catalog.map((p) => ({
         key: p.slug, name: p.name, sub: [p.brand, COUNTRIES[p.country].short].filter(Boolean).join(" · "), unit: unitOf(p),
         unitCost: costPerUnit(p), weight: p.weightKg, vol: p.volumeM3, country: p.country, image: p.images[0],
