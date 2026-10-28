@@ -2,11 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { STATUSES, totals, useAdmin } from "@/lib/admin";
-import { PayBar, StatusChip, money } from "./ui";
+import { PayBar, StatusChip } from "./ui";
+import { useFx } from "./fx";
 
 type Admin = ReturnType<typeof useAdmin>;
 
 export default function Dashboard({ admin, onOpen }: { admin: Admin; onOpen: (id: string) => void }) {
+  const { m, label } = useFx();
   const [period, setPeriod] = useState<"all" | "month" | "week">("month");
 
   const data = useMemo(() => {
@@ -30,11 +32,11 @@ export default function Dashboard({ admin, onOpen }: { admin: Admin; onOpen: (id
 
       <div className="ad-kpis">
         <div><span>Фармоишҳо</span><b>{data.list.length}</b></div>
-        <div><span>Гардиши фурӯш</span><b>{money(data.sum.total)}</b><small>смн</small></div>
-        <div className="g"><span>Фоидаи соф</span><b>{money(data.sum.profit)}</b><small>смн{data.sum.cost > 0 && ` · ${Math.round((data.sum.profit / data.sum.cost) * 100)}%`}</small></div>
-        <div><span>Гирифта шуд</span><b>{money(data.sum.paid)}</b><small>смн</small></div>
-        <div className="r"><span>Қарз (бояд гирем)</span><b>{money(data.sum.due)}</b><small>смн</small></div>
-        <div><span>Хароҷот</span><b>{money(data.sum.cost)}</b><small>смн</small></div>
+        <div><span>Гардиши фурӯш</span><b>{m(data.sum.total)}</b><small>{label}</small></div>
+        <div className="g"><span>Фоидаи соф</span><b>{m(data.sum.profit)}</b><small>{label}{data.sum.cost > 0 && ` · ${Math.round((data.sum.profit / data.sum.cost) * 100)}%`}</small></div>
+        <div><span>Гирифта шуд</span><b>{m(data.sum.paid)}</b><small>{label}</small></div>
+        <div className="r"><span>Қарз (бояд гирем)</span><b>{m(data.sum.due)}</b><small>{label}</small></div>
+        <div><span>Хароҷот</span><b>{m(data.sum.cost)}</b><small>{label}</small></div>
       </div>
 
       <section className="ad-card">
@@ -55,7 +57,7 @@ export default function Dashboard({ admin, onOpen }: { admin: Admin; onOpen: (id
               return (
                 <button className="ad-order slim" key={o.id} onClick={() => onOpen(o.id)}>
                   <div className="ao-top"><b>{o.code}</b><span className="ao-who-inline">{o.customer.name || "Бе ном"}</span><StatusChip status={o.status} /></div>
-                  <div className="ao-money"><b className="r">{money(t.due)} смн</b><small>аз {money(t.total)} · {t.paidPct}%</small></div>
+                  <div className="ao-money"><b className="r">{m(t.due)} {label}</b><small>аз {m(t.total)} · {t.paidPct}%</small></div>
                   <PayBar order={o} />
                 </button>
               );

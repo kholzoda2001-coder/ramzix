@@ -6,7 +6,7 @@ import { COUNTRIES, products as catalog, unitOf } from "@/lib/catalog";
 import { costPerUnit } from "@/lib/pricing";
 import ProductImage from "../ProductImage";
 import { getDefaultMarkup } from "./settings-store";
-import { money } from "./ui";
+import { useFx } from "./fx";
 
 type Draft = { id: string; name: string; qty: string; unit: string; cost: string; markup: string; weight: string; vol: string; dl: string; dw: string; dh: string };
 const blank = (markup: number, p: Partial<Draft> = {}): Draft => ({ id: newId(), name: "", qty: "1", unit: "дона", cost: "", markup: String(markup), weight: "", vol: "", dl: "", dw: "", dh: "", ...p });
@@ -17,6 +17,7 @@ type Hit = { key: string; name: string; sub: string; unit: string; unitCost: num
 
 /* POS / фармоиши нав: ҷустуҷӯи маҳсулот → якчанд маҳсулот, вазн/ҳаҷм, расонидан аз рӯи тариф, фоизи худатон */
 export default function OrderForm({ initial, onDone }: { initial?: Order; onDone: (id: string) => void }) {
+  const { m, label, inp, base } = useFx();
   const admin = useAdmin();
   const defaultMarkup = getDefaultMarkup();
   const [type, setType] = useState<OrderType>(initial?.type ?? "pos");
@@ -24,12 +25,12 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
   const [mode, setMode] = useState<"unit" | "total">("total");
   const [rows, setRows] = useState<Draft[]>(
     initial
-      ? initial.items.map((i) => ({ id: i.id, name: i.name, qty: String(i.qty), unit: i.unit, cost: String(i.costTotal), markup: String(i.markupPct), weight: i.weightKg ? String(i.weightKg) : "", vol: i.volumeM3 ? String(i.volumeM3) : "", dl: "", dw: "", dh: "" }))
+      ? initial.items.map((i) => ({ id: i.id, name: i.name, qty: String(i.qty), unit: i.unit, cost: inp(i.costTotal), markup: String(i.markupPct), weight: i.weightKg ? String(i.weightKg) : "", vol: i.volumeM3 ? String(i.volumeM3) : "", dl: "", dw: "", dh: "" }))
       : [],
   );
   const [route, setRoute] = useState(initial?.routeKey ?? "");
-  const [shipCharged, setShipCharged] = useState<string | null>(initial ? String(initial.shippingCharged) : null);
-  const [shipCost, setShipCost] = useState<string | null>(initial ? String(initial.shippingCost) : null);
+  const [shipCharged, setShipCharged] = useState<string | null>(initial ? inp(initial.shippingCharged) : null);
+  const [shipCost, setShipCost] = useState<string | null>(initial ? inp(initial.shippingCost) : null);
   const [status, setStatus] = useState(initial?.status ?? "confirmed");
   const [note, setNote] = useState(initial?.note ?? "");
   const [pay, setPay] = useState({ amount: "", method: PAY_METHODS[0] });
@@ -41,7 +42,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
       ...admin.products.map((p) => ({ key: "a" + p.id, name: p.name, sub: "Маҳсулоти ман", unit: p.unit, unitCost: p.unitCost, markup: p.markupPct })),
       ...catalog.map((p) => ({
         key: p.slug, name: p.name, sub: [p.brand, COUNTRIES[p.country].short].filter(Boolean).join(" · "), unit: unitOf(p),
-        unitCost: Math.round(costPerUnit(p) * 100) / 100, weight: p.weightKg, vol: p.volumeM3, country: p.country, image: p.images[0],
+        unitCost: costPerUnit(p), weight: p.weightKg, vol: p.volumeM3, country: p.country, image: p.images[0],
       })),
     ],
     [admin.products],
@@ -54,7 +55,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
 
   const addHit = (h: Hit) => {
     setRows((rs) => [...rs, blank(h.markup ?? defaultMarkup, {
-      name: h.name, unit: h.unit, cost: String(mode === "unit" ? h.unitCost : h.unitCost),
+      name: h.name, unit: h.unit, cost: inp(h.unitCost),
       weight: h.weight ? String(h.weight) : "", vol: h.vol ? String(h.vol) : "",
     })]);
     if (!route && h.country) setRoute(`${h.country}:${ROUTES.find((r) => r.country === h.country)?.mode.id ?? ""}`);
@@ -73,7 +74,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
 
   const items: Item[] = rows.map((r) => {
     const qty = n(r.qty);
-    const costTotal = mode === "total" ? n(r.cost) : n(r.cost) * qty;
+    const costTotal = base(mode === "total" ? n(r.cost) : n(r.cost) * qty);
     return { id: r.id, name: r.name.trim(), qty, unit: r.unit, costTotal: round(costTotal), markupPct: n(r.markup), weightKg: n(r.weight) || undefined, volumeM3: n(r.vol) || undefined };
   });
 
@@ -81,10 +82,10 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
   const m3 = orderVolume({ items });
   const calc = routeCost(route, kg, m3);
   const rt = routeOf(route);
-  const charged = shipCharged ?? String(calc.tjs);
-  const cost = shipCost ?? String(calc.tjs);
+  const charged = shipCharged ?? inp(calc.tjs);
+  const cost = shipCost ?? inp(calc.tjs);
 
-  const preview: Order = { id: "", code: "", type, date: "", customer: cust, items, shippingCharged: n(charged), shippingCost: n(cost), status, payments: [], note };
+  const preview: Order = { id: "", code: "", type, date: "", customer: cust, items, shippingCharged: base(n(charged)), shippingCost: base(n(cost)), status, payments: [], note };
   const t = totals(preview);
 
   const save = () => {
@@ -95,10 +96,10 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
       id: initial?.id, code: initial?.code, date: initial?.date, type,
       customer: { name: cust.name.trim(), phone: cust.phone.trim(), address: cust.address.trim() },
       items: items.filter((i) => i.name && i.qty > 0), routeKey: route || undefined,
-      shippingCharged: n(charged), shippingCost: n(cost), status,
+      shippingCharged: base(n(charged)), shippingCost: base(n(cost)), status,
       payments: initial?.payments ?? [], note: note.trim(),
     });
-    if (!initial && n(pay.amount) > 0) admin.addPayment(id, { date: new Date().toISOString(), amount: n(pay.amount), method: pay.method });
+    if (!initial && n(pay.amount) > 0) admin.addPayment(id, { date: new Date().toISOString(), amount: pay.amount === inp(t.total) ? t.total : base(n(pay.amount)), method: pay.method });
     onDone(id);
   };
 
@@ -118,7 +119,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
               {hits.map((h) => (
                 <button key={h.key} onClick={() => addHit(h)}>
                   <span className="ad-hit-img">{h.image ? <ProductImage src={h.image} alt="" /> : "📦"}</span>
-                  <span className="ad-hit-t"><b>{h.name}</b><small>{h.sub} · {money(h.unitCost)} смн/{h.unit}</small></span>
+                  <span className="ad-hit-t"><b>{h.name}</b><small>{h.sub} · {m(h.unitCost)} {label}/{h.unit}</small></span>
                   <span className="ad-hit-add">+</span>
                 </button>
               ))}
@@ -155,7 +156,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
               <div className="ad-grid3">
                 <label><span>Миқдор</span><input inputMode="decimal" value={r.qty} onChange={(e) => setRow(r.id, { qty: e.target.value })} /></label>
                 <label><span>Воҳид</span><input value={r.unit} onChange={(e) => setRow(r.id, { unit: e.target.value })} /></label>
-                <label><span>{mode === "total" ? "Ҷамъи харид, смн" : "Харид/1, смн"}</span><input inputMode="decimal" value={r.cost} onChange={(e) => setRow(r.id, { cost: e.target.value })} /></label>
+                <label><span>{mode === "total" ? `Ҷамъи харид, ${label}` : `Харид/1, ${label}`}</span><input inputMode="decimal" value={r.cost} onChange={(e) => setRow(r.id, { cost: e.target.value })} /></label>
               </div>
               <div className="ad-markup">
                 <label><span>Фоида, %</span><input inputMode="decimal" value={r.markup} onChange={(e) => setRow(r.id, { markup: e.target.value })} /></label>
@@ -173,9 +174,9 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
               </div>
               {it.costTotal > 0 && (
                 <div className="ad-calc">
-                  <span>Харид: <b>{money(it.costTotal)}</b>{it.qty > 0 && <small> ({money(it.costTotal / it.qty)}/{it.unit})</small>}</span>
-                  <span>Фурӯш: <b>{money(itemSell(it))}</b>{it.qty > 0 && <small> ({money(itemSell(it) / it.qty)}/{it.unit})</small>}</span>
-                  <span className="g">Фоида: <b>{money(itemProfit(it))}</b></span>
+                  <span>Харид: <b>{m(it.costTotal)}</b>{it.qty > 0 && <small> ({m(it.costTotal / it.qty)}/{it.unit})</small>}</span>
+                  <span>Фурӯш: <b>{m(itemSell(it))}</b>{it.qty > 0 && <small> ({m(itemSell(it) / it.qty)}/{it.unit})</small>}</span>
+                  <span className="g">Фоида: <b>{m(itemProfit(it))}</b></span>
                 </div>
               )}
             </div>
@@ -202,15 +203,15 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
           <div className="ad-ship-calc">
             <div><span>Вазни умумӣ</span><b>{kg} кг</b></div>
             <div><span>Ҳаҷми умумӣ</span><b>{m3} м³</b></div>
-            <div><span>Аз рӯи вазн</span><b>{money(calc.byKgTjs)}</b></div>
-            {rt.mode.perM3Usd ? <div><span>Аз рӯи ҳаҷм</span><b>{money(calc.byVolTjs)}</b></div> : null}
-            <div className="tot"><span>Нархи расонидан (тариф)</span><b>{money(calc.tjs)} смн</b></div>
+            <div><span>Аз рӯи вазн</span><b>{m(calc.byKgTjs)}</b></div>
+            {rt.mode.perM3Usd ? <div><span>Аз рӯи ҳаҷм</span><b>{m(calc.byVolTjs)}</b></div> : null}
+            <div className="tot"><span>Нархи расонидан (тариф)</span><b>{m(calc.tjs)} {label}</b></div>
             {kg === 0 && m3 === 0 && <p className="ad-hint">Вазн ё ҳаҷми маҳсулотро ворид кунед, то нархи расонидан ҳисоб шавад.</p>}
           </div>
         )}
         <div className="ad-grid2">
-          <label><span>Аз харидор, смн</span><input inputMode="decimal" value={charged} onChange={(e) => setShipCharged(e.target.value)} /></label>
-          <label><span>Хароҷоти шумо, смн</span><input inputMode="decimal" value={cost} onChange={(e) => setShipCost(e.target.value)} /></label>
+          <label><span>{`Аз харидор, ${label}`}</span><input inputMode="decimal" value={charged} onChange={(e) => setShipCharged(e.target.value)} /></label>
+          <label><span>{`Хароҷоти шумо, ${label}`}</span><input inputMode="decimal" value={cost} onChange={(e) => setShipCost(e.target.value)} /></label>
         </div>
         {(shipCharged !== null || shipCost !== null) && rt && <button className="ad-link" onClick={() => { setShipCharged(null); setShipCost(null); }}>↺ Аз тариф ҳисоб кардан</button>}
       </section>
@@ -224,14 +225,14 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
         {!initial && (
           <>
             <div className="ad-grid2">
-              <label><span>Пардохти гирифташуда, смн</span><input inputMode="decimal" placeholder="0" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} /></label>
+              <label><span>{`Пардохти гирифташуда, ${label}`}</span><input inputMode="decimal" placeholder="0" value={pay.amount} onChange={(e) => setPay({ ...pay, amount: e.target.value })} /></label>
               <label><span>Тарзи пардохт</span><select value={pay.method} onChange={(e) => setPay({ ...pay, method: e.target.value })}>{PAY_METHODS.map((m) => <option key={m}>{m}</option>)}</select></label>
             </div>
             {t.total > 0 && (
               <div className="ad-quick">
-                <button onClick={() => setPay({ ...pay, amount: String(t.total) })}>Пурра ({money(t.total)})</button>
-                <button onClick={() => setPay({ ...pay, amount: String(round(t.total * 0.3)) })}>30%</button>
-                <button onClick={() => setPay({ ...pay, amount: String(round(t.total * 0.5)) })}>50%</button>
+                <button onClick={() => setPay({ ...pay, amount: inp(t.total) })}>Пурра ({m(t.total)})</button>
+                <button onClick={() => setPay({ ...pay, amount: inp(t.total * 0.3) })}>30%</button>
+                <button onClick={() => setPay({ ...pay, amount: inp(t.total * 0.5) })}>50%</button>
               </div>
             )}
           </>
@@ -240,9 +241,9 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
       </section>
 
       <section className="ad-sum">
-        <div><span>Хароҷот (харид + расонидан)</span><b>{money(t.cost)} смн</b></div>
-        <div><span>Ба харидор</span><b>{money(t.total)} смн</b></div>
-        <div className="g"><span>Фоидаи софи шумо</span><b>{money(t.profit)} смн{t.cost > 0 && <small> · {t.margin}%</small>}</b></div>
+        <div><span>Хароҷот (харид + расонидан)</span><b>{m(t.cost)} {label}</b></div>
+        <div><span>Ба харидор</span><b>{m(t.total)} {label}</b></div>
+        <div className="g"><span>Фоидаи софи шумо</span><b>{m(t.profit)} {label}{t.cost > 0 && <small> · {t.margin}%</small>}</b></div>
       </section>
 
       {err && <p className="ad-err">{err}</p>}

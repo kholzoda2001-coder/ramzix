@@ -9,6 +9,8 @@ import OrderForm from "./OrderForm";
 import Orders from "./Orders";
 import Products from "./Products";
 import Settings from "./Settings";
+import { useFx } from "./fx";
+import { CURRENCIES } from "@/lib/currency";
 
 type Tab = "dash" | "pos" | "orders" | "products" | "settings";
 const TABS: { id: Tab; label: string; icon: string }[] = [
@@ -57,6 +59,7 @@ function Gate({ mode, onOpen }: { mode: "set" | "locked"; onOpen: () => void }) 
 
 function Panel({ onLock }: { onLock: () => void }) {
   const admin = useAdmin();
+  const fx = useFx();
   const [tab, setTab] = useState<Tab>("dash");
   const [openId, setOpenId] = useState<string | null>(null);
   const go = (t: Tab) => { setTab(t); setOpenId(null); window.scrollTo(0, 0); };
@@ -66,12 +69,15 @@ function Panel({ onLock }: { onLock: () => void }) {
     <>
       <header className="ad-top">
         <h1>{TABS.find((x) => x.id === tab)?.label}</h1>
+        <div className="ad-cur" role="group" aria-label="Асъор">
+          {CURRENCIES.map((c) => <button key={c.id} className={fx.cur === c.id ? "on" : ""} onClick={() => fx.setCur(c.id)} aria-label={c.id}>{c.label}</button>)}
+        </div>
         <Link href="/" className="ad-site">Сайт ↗</Link>
         <button onClick={onLock} aria-label="Қулф" className="ad-lock"><Icon name="shield" size={18} /></button>
       </header>
       <main className="ad-main">
         {tab === "dash" && <Dashboard admin={admin} onOpen={open} />}
-        {tab === "pos" && <OrderForm key="new" onDone={(id) => open(id)} />}
+        {tab === "pos" && <OrderForm key={"new-" + fx.cur} onDone={(id) => open(id)} />}
         {tab === "orders" && <Orders admin={admin} openId={openId} onOpen={setOpenId} />}
         {tab === "products" && <Products admin={admin} />}
         {tab === "settings" && <Settings admin={admin} onLock={onLock} />}
