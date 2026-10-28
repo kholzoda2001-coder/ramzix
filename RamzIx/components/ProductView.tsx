@@ -1,9 +1,10 @@
 "use client";
 
+import { CurrencySwitch, useMoney } from "./Currency";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { COUNTRIES, fmt, fmtPrice, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
+import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { defaultMode, listUnitPrice, modesFor, rfqFromOf, shippingCost, volumeOf, weightOf, wholesalePrices } from "@/lib/pricing";
 import { QUOTE_VALID_HOURS, SHIPPING } from "@/lib/pricing-config";
 import { CartBadge, useCart } from "./Cart";
@@ -17,6 +18,7 @@ import BrandLogo from "./BrandLogo";
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export default function ProductView({ p, related, other }: { p: Product; related: Product[]; other: Product[] }) {
+  const { price, sum, label } = useMoney();
   const router = useRouter();
   const { add, modes, ready, setMode } = useCart();
   const sale = p.sale;
@@ -93,6 +95,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <Icon name="back" stroke={2.2} />
         </button>
         <span className="pd-top-title">{p.name}</span>
+        <CurrencySwitch light />
         <button className="ic-round" onClick={share} aria-label="Фиристодан"><Icon name="share" size={20} /></button>
         <Link href="/cart" className="ic-round" aria-label="Сабад"><Icon name="cart" size={21} /><CartBadge /></Link>
       </header>
@@ -176,15 +179,15 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <div className="price-box">
             <div className="price-row">
               <div className="pr-base">
-                <div><b>{fmtPrice(unitPrice)}</b><span>смн</span></div>
+                <div><b>{price(unitPrice)}</b><span>{label}</span></div>
               </div>
               <div className="pr-wh">
                 <span className="wh-tag">Оптом</span>
                 <span className="pr-wh-vals">
                   {wholesale.map((w, i) => (
-                    <span key={w.pct}>{i > 0 && <i>·</i>}<b>{fmtPrice(w.unit)}</b></span>
+                    <span key={w.pct}>{i > 0 && <i>·</i>}<b>{price(w.unit)}</b></span>
                   ))}
-                  <em>смн</em>
+                  <em>{label}</em>
                 </span>
               </div>
             </div>
@@ -232,14 +235,14 @@ export default function ProductView({ p, related, other }: { p: Product; related
               </div>
               <div className="sum">
                 <span>Нархи мол</span>
-                <b>{fmt(goods)} смн</b>
+                <b>{sum(goods)} {label}</b>
               </div>
             </div>
             {(pieces || sale) && (
               <div className="pack-info">
                 {pieces && <span>Ҳамагӣ: <b>{fmt(pieces)} {sale?.perLabel}</b></span>}
                 <span>Вазн: <b>{fmtQty(weight)} кг</b></span>
-                {pieces && <span>1 {sale?.perLabel}: <b>{fmtPrice(unitPrice / sale!.per!)} смн</b></span>}
+                {pieces && <span>1 {sale?.perLabel}: <b>{price(unitPrice / sale!.per!)} {label}</b></span>}
               </div>
             )}
           </div>
@@ -261,15 +264,15 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 ))}
               </div>
             )}
-            <div className="est-row"><span>Нархи мол</span><b>{fmt(goods)} смн</b></div>
+            <div className="est-row"><span>Нархи мол</span><b>{sum(goods)} {label}</b></div>
             <div className="est-row">
               <span>
                 Расонидан · вазн {fmtQty(weight)} кг
                 {shipNote && <small>{shipNote}</small>}
               </span>
-              <b>{ship.tjs > 0 ? `${fmt(ship.tjs)} смн` : "бо тасдиқ"}</b>
+              <b>{ship.tjs > 0 ? `${sum(ship.tjs)} ${label}` : "бо тасдиқ"}</b>
             </div>
-            <div className="est-total"><span>Ҷамъ</span><b>{fmt(total)} смн</b></div>
+            <div className="est-total"><span>Ҷамъ</span><b>{sum(total)} {label}</b></div>
             <p className="est-note">
               Дар сабад бо харид зиёд нархи мол арзонтар мешавад.
               {ship.mode.assumed && " Нархи расонидан ҳанӯз тасдиқ нашудааст."} Нарх {QUOTE_VALID_HOURS} соат дуруст аст.
@@ -375,7 +378,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
         <a href={waLink(waText)} className="bb-wa" aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} /></a>
         <button className="bb-add" onClick={addToCart}>
           <span className="bb-l"><Icon name="cart" size={20} /> Ба сабад</span>
-          <span className="bb-r">{fmt(goods)} смн</span>
+          <span className="bb-r">{sum(goods)} {label}</span>
         </button>
       </div>
     </>

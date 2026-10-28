@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { CartProvider } from "@/components/Cart";
+import { CurrencyProvider } from "@/components/Currency";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin", "cyrillic", "cyrillic-ext"], display: "swap" });
@@ -21,9 +22,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="tg">
       <body className={inter.className}>
-        <CartProvider>
-          <div className="app">{children}</div>
-        </CartProvider>
+        <CurrencyProvider>
+          <CartProvider>
+            <div className="app">{children}</div>
+          </CartProvider>
+        </CurrencyProvider>
       </body>
     </html>
   );

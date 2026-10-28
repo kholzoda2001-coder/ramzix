@@ -19,6 +19,7 @@ import {
 } from "@/lib/filters";
 import BottomNav from "./BottomNav";
 import { CartBadge } from "./Cart";
+import { CurrencySwitch, useMoney } from "./Currency";
 import FilterSheet from "./FilterSheet";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
@@ -26,6 +27,7 @@ import ProductCard from "./ProductCard";
 const PAGE = 12;
 
 export default function CatalogView() {
+  const { label, conv } = useMoney();
   const router = useRouter();
   const sp = useSearchParams();
   const filters = useMemo(() => parseFilters(sp), [sp]);
@@ -60,7 +62,7 @@ export default function CatalogView() {
     ...filters.country.map((v) => ({ label: COUNTRIES[v].short, onRemove: () => removeFrom("country", v) })),
     ...filters.unit.map((v) => ({ label: `Бо ${v}`, onRemove: () => removeFrom("unit", v) })),
     ...(filters.min !== undefined || filters.max !== undefined
-      ? [{ label: `${filters.min ?? 0}–${filters.max ?? "∞"} смн`, onRemove: () => go({ ...filters, min: undefined, max: undefined }) }]
+      ? [{ label: `${filters.min !== undefined ? Math.round(conv(filters.min)) : 0}–${filters.max !== undefined ? Math.round(conv(filters.max)) : "∞"} ${label}`, onRemove: () => go({ ...filters, min: undefined, max: undefined }) }]
       : []),
   ];
 
@@ -87,6 +89,7 @@ export default function CatalogView() {
           </button>
           <Link href="/cart" className="ic-round" aria-label="Сабад"><Icon name="cart" size={21} /><CartBadge /></Link>
         </div>
+        <div className="cur-row"><span>Нарх дар</span><CurrencySwitch light /></div>
         <div className="quick-cats">
           <button className={!filters.category.length ? "on" : ""} onClick={() => go({ ...filters, category: [] })}>Ҳама</button>
           {quickCats.map((c) => (

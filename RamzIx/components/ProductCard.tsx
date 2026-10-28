@@ -1,11 +1,15 @@
+"use client";
+
 import Link from "next/link";
-import { fmtPrice, unitOf, type Product } from "@/lib/catalog";
+import { unitOf, type Product } from "@/lib/catalog";
 import { listUnitPrice, wholesalePrices } from "@/lib/pricing";
+import { useMoney } from "./Currency";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductImage from "./ProductImage";
 
 export default function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
+  const { price, label } = useMoney();
   const unit = unitOf(p);
   const wh = wholesalePrices(p).map((w) => w.unit);
 
@@ -19,7 +23,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
       <div className="pcard-body">
         <div className="pcard-name">{p.name}</div>
         <div className="pcard-price">
-          <b>{fmtPrice(listUnitPrice(p))}</b> <span>смн / {unit}</span>
+          <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
         </div>
         {p.sale?.per && (
           <div className="pcard-pack">{p.sale.per} {p.sale.perLabel} / {unit}</div>
@@ -27,7 +31,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         {wh.length > 0 && (
           <div className="pcard-whole">
             <span>оптом</span>
-            <b>{fmtPrice(Math.min(...wh))}–{fmtPrice(Math.max(...wh))} смн</b>
+            <b>{price(Math.min(...wh))}–{price(Math.max(...wh))} {label}</b>
           </div>
         )}
         {!compact && (

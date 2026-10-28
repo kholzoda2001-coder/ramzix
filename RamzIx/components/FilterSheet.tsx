@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CATEGORIES, COUNTRIES, products, type CountryCode } from "@/lib/catalog";
 import { EMPTY_FILTERS, UNITS, filterProducts, getBrands, type Filters } from "@/lib/filters";
+import { useMoney } from "./Currency";
 import Flag from "./Flag";
 import Icon from "./Icon";
 
@@ -19,6 +20,7 @@ export default function FilterSheet({
   onClose: () => void;
   onApply: (f: Filters) => void;
 }) {
+  const { cur, label, conv, toTjs } = useMoney();
   const [draft, setDraft] = useState<Filters>(initial);
   const [minTxt, setMinTxt] = useState("");
   const [maxTxt, setMaxTxt] = useState("");
@@ -29,16 +31,17 @@ export default function FilterSheet({
   useEffect(() => {
     if (!open) return;
     setDraft(initial);
-    setMinTxt(initial.min !== undefined ? String(initial.min) : "");
-    setMaxTxt(initial.max !== undefined ? String(initial.max) : "");
+    setMinTxt(initial.min !== undefined ? String(Math.round(conv(initial.min))) : "");
+    setMaxTxt(initial.max !== undefined ? String(Math.round(conv(initial.max))) : "");
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
-  }, [open, initial]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, initial, cur]);
 
   const withPrice: Filters = {
     ...draft,
-    min: minTxt.trim() === "" ? undefined : Number(minTxt),
-    max: maxTxt.trim() === "" ? undefined : Number(maxTxt),
+    min: minTxt.trim() === "" ? undefined : Math.floor(toTjs(Number(minTxt))),
+    max: maxTxt.trim() === "" ? undefined : Math.ceil(toTjs(Number(maxTxt))),
   };
   const count = useMemo(() => filterProducts(products, withPrice).length, [withPrice.q, withPrice.category, withPrice.brand, withPrice.country, withPrice.unit, withPrice.min, withPrice.max]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -105,7 +108,7 @@ export default function FilterSheet({
           </section>
 
           <section>
-            <h3>Нарх <small>смн барои 1 воҳид</small></h3>
+            <h3>Нарх <small>{label} барои 1 воҳид</small></h3>
             <div className="price-inputs">
               <input inputMode="numeric" placeholder="Аз" value={minTxt} onChange={(e) => setMinTxt(e.target.value.replace(/[^\d]/g, ""))} aria-label="Нархи ҳадди ақал" />
               <span>—</span>

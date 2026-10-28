@@ -13,10 +13,10 @@ export type Currency = "USD" | "AED" | "SAR" | "CNY" | "TJS";
 export type CountryKey = "ae" | "cn" | "tr" | "tj";
 
 /** Қурби асъор ба доллар. TJS ва USD аз usdToTjs ҳисоб мешаванд. */
-export const USD_TO_TJS = 9.25;
+export const USD_TO_TJS = 9.224; // расмии Бонки миллии Тоҷикистон, 27.10.2026
 export const TO_USD: Record<Currency, number> = {
   USD: 1,
-  AED: 0.27100271,
+  AED: 1 / 3.6725, // AED ба доллар баста шудааст
   SAR: 0.26666667,
   CNY: 0.14, // тахминӣ: бо қурби воқеӣ иваз кунед
   TJS: 1 / USD_TO_TJS,
