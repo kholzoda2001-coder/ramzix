@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PAY_LABEL, PAY_METHODS, STATUSES, itemProfit, itemSell, totals, useAdmin, type Order } from "@/lib/admin";
+import { PAY_LABEL, PAY_METHODS, STATUSES, itemProfit, itemSell, orderVolume, orderWeight, routeOf, totals, useAdmin, type Order } from "@/lib/admin";
 import { WHATSAPP } from "@/lib/catalog";
 import OrderForm from "./OrderForm";
 import { PayBar, PayChip, Sheet, StatusChip, dateStr, money } from "./ui";
@@ -42,14 +42,27 @@ export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId
           {list.map((o) => {
             const t = totals(o);
             return (
-              <button className="ad-order" key={o.id} onClick={() => onOpen(o.id)}>
-                <div className="ao-top"><b>{o.code}</b><span className="ao-type">{o.type === "pos" ? "POS" : "Сайт"}</span><StatusChip status={o.status} /></div>
-                <div className="ao-who">{o.customer.name || "Бе ном"}{o.customer.phone && <small> · {o.customer.phone}</small>}</div>
-                <div className="ao-items">{o.items.map((i) => `${i.name} ×${i.qty}`).join(", ")}</div>
-                <div className="ao-money"><b>{money(t.total)} смн</b><span className="g">+{money(t.profit)}</span><PayChip order={o} /></div>
-                <PayBar order={o} />
-                <small className="ao-date">{dateStr(o.date)}</small>
-              </button>
+              <div className="ad-order" key={o.id}>
+                <div className="ao-click" onClick={() => onOpen(o.id)} role="button" tabIndex={0} onKeyDown={(e) => e.key === "Enter" && onOpen(o.id)}>
+                  <div className="ao-top"><b>{o.code}</b><span className="ao-type">{o.type === "pos" ? "POS" : "Сайт"}</span><StatusChip status={o.status} /></div>
+                  <div className="ao-who">{o.customer.name || "Бе ном"}{o.customer.phone && <small> · {o.customer.phone}</small>}</div>
+                  <div className="ao-items">{o.items.map((i) => `${i.name} ×${i.qty}`).join(", ")}</div>
+                  <div className="ao-money"><b>{money(t.total)} смн</b><span className="g">+{money(t.profit)}</span><PayChip order={o} /></div>
+                  <PayBar order={o} />
+                  <small className="ao-date">{dateStr(o.date)}{t.paid > 0 && ` · гирифта шуд ${money(t.paid)} (${t.paidPct}%)`}</small>
+                </div>
+                <div className="ao-quick">
+                  <select value={o.status} aria-label="Ҳолат" onChange={(e) => admin.patchOrder(o.id, { status: e.target.value as Order["status"] })}>
+                    {STATUSES.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+                  </select>
+                  {t.due > 0.005 ? (
+                    <>
+                      <button onClick={() => admin.addPayment(o.id, { date: new Date().toISOString(), amount: t.due, method: PAY_METHODS[0] })}>✓ Пурра пардохт шуд</button>
+                      <button className="alt" onClick={() => onOpen(o.id)}>Пардохт…</button>
+                    </>
+                  ) : <span className="ao-paid">✓ Пардохт пурра</span>}
+                </div>
+              </div>
             );
           })}
         </div>
@@ -116,6 +129,9 @@ function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onCl
           <tfoot><tr><td>Ҷамъ</td><td>{money(t.cost)}</td><td>{money(t.total)}</td><td className="g">{money(t.profit)}</td></tr></tfoot>
         </table>
         <p className="ad-hint">Фоидаи софи шумо: <b>{money(t.profit)} смн</b>{t.cost > 0 && ` (${t.margin}% болои хароҷот)`}</p>
+        {(orderWeight(o) > 0 || orderVolume(o) > 0 || routeOf(o.routeKey)) && (
+          <p className="ad-hint">Расонидан: {routeOf(o.routeKey)?.label ?? "—"} · вазн {orderWeight(o)} кг · ҳаҷм {orderVolume(o)} м³</p>
+        )}
       </section>
 
       <section className="ad-card">
