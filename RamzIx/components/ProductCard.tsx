@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fmtPrice, fmtQty, unitOf, type Product } from "@/lib/catalog";
+import { fmtPrice, unitOf, type Product } from "@/lib/catalog";
 import { listUnitPrice, wholesalePrices } from "@/lib/pricing";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -21,9 +21,9 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         <div className="pcard-price">
           <b>{fmtPrice(listUnitPrice(p))}</b> <span>смн / {unit}</span>
         </div>
-        <div className="pcard-pack">
-          {p.sale?.per ? `${p.sale.per} ${p.sale.perLabel} / ${unit}` : `Аз ${fmtQty(p.sale?.min ?? 1)} ${unit}`}
-        </div>
+        {p.sale?.per && (
+          <div className="pcard-pack">{p.sale.per} {p.sale.perLabel} / {unit}</div>
+        )}
         {wh.length > 0 && (
           <div className="pcard-whole">
             <span>оптом</span>
