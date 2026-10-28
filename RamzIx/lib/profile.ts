@@ -39,10 +39,15 @@ function write(s: Store) {
 
 export function saveProfile(profile: Profile) { write({ ...readStore(), profile }); }
 
-export function addOrder(o: Omit<Order, "id" | "date">) {
+export function addOrder(o: Omit<Order, "id" | "date">): number {
   const s = readStore();
-  write({ ...s, orders: [{ ...o, id: Date.now(), date: new Date().toISOString() }, ...s.orders].slice(0, 50) });
+  const id = Date.now();
+  write({ ...s, orders: [{ ...o, id, date: new Date().toISOString() }, ...s.orders].slice(0, 50) });
+  return id;
 }
+
+/** Рақами намоёни фармоиш: RX-123456 */
+export const orderCode = (id: number) => `RX-${String(id).slice(-6)}`;
 
 export function clearProfile() { write({ profile: EMPTY_PROFILE, orders: [] }); }
 
