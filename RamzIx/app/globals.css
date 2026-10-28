@@ -830,3 +830,4 @@ h1, h2, h3, p { margin: 0; }
 .ck-phone b { padding: 0 10px 0 12px; height: 46px; display: flex; align-items: center; font-size: 16px; color: var(--text); background: #f3f5f9; border-right: 1px solid var(--line); }
 .ck-phone input { border: 0 !important; background: transparent !important; flex: 1; min-width: 0; height: 46px; }
 .ck-field > .ck-seg .seg-flag { width: 20px; height: 14px; border-radius: 3px; }
+.ck-plain { height: 46px; font-size: 16px; }

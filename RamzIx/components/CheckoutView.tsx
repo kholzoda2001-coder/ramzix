@@ -12,9 +12,7 @@ import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
 import ContactFields from "./ContactFields";
-import { joinPhone, phoneValid, splitPhone, type ShipCountry } from "@/lib/phone";
 
-const CONTACTS = ["WhatsApp", "Занг"] as const;
 type Errors = Partial<Record<"name" | "phone" | "address", boolean>>;
 type Done = { code: string; link: string };
 
@@ -25,7 +23,7 @@ export default function CheckoutView() {
   const { lines, modes, ready, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
 
-  const [form, setForm] = useState<Buyer>({ name: "", phone: "", shop: "", country: "tj", address: "", comment: "", contact: "WhatsApp" });
+  const [form, setForm] = useState<Buyer>({ name: "", phone: "", address: "" });
   const [local, setLocal] = useState("");
   const [filledFromProfile, setFilled] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
@@ -34,9 +32,8 @@ export default function CheckoutView() {
   // Маълумоти профилро як бор ба шакл меорем
   useEffect(() => {
     if (!profileReady || filledFromProfile) return;
-    const ph = splitPhone(profile.phone, profile.country);
-    setForm((f) => ({ ...f, name: profile.name, shop: profile.shop, country: ph.country, address: profile.address }));
-    setLocal(ph.local);
+    setForm((f) => ({ ...f, name: profile.name, address: profile.address }));
+    setLocal(profile.phone || "+992 ");
     setFilled(true);
   }, [profileReady, filledFromProfile, profile]);
 
@@ -46,17 +43,17 @@ export default function CheckoutView() {
   };
 
   const submit = () => {
-    const err: Errors = { name: form.name.trim().length < 2, phone: !phoneValid(form.country, local), address: form.address.trim().length < 5 };
+    const err: Errors = { name: form.name.trim().length < 2, phone: local.replace(/\D/g, "").length < 9, address: form.address.trim().length < 5 };
     setErrors(err);
     if (err.name || err.phone || err.address) {
       document.querySelector(".ck-field.bad")?.scrollIntoView({ block: "center" });
       return;
     }
-    const buyer: Buyer = { ...form, name: form.name.trim(), phone: joinPhone(form.country, local), shop: form.shop.trim(), address: form.address.trim(), comment: form.comment.trim() };
+    const buyer: Buyer = { ...form, name: form.name.trim(), phone: local.trim(), address: form.address.trim() };
     const id = addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) });
     const code = orderCode(id);
     const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label }));
-    saveProfile({ name: buyer.name, phone: buyer.phone, shop: buyer.shop, country: buyer.country, address: buyer.address });
+    saveProfile({ ...profile, name: buyer.name, phone: buyer.phone, address: buyer.address });
     clear();
     setDone({ code, link });
     window.scrollTo(0, 0);
@@ -91,7 +88,7 @@ export default function CheckoutView() {
     );
   }
 
-  const field = (k: "name" | "shop", labelKey: string, opts: { req?: boolean; type?: string; mode?: "tel"; auto?: string } = {}) => (
+  const field = (k: "name", labelKey: string, opts: { req?: boolean; type?: string; mode?: "tel"; auto?: string } = {}) => (
     <label className={`ck-field ${errors[k as keyof Errors] ? "bad" : ""}`}>
       <span>{t(labelKey)}{opts.req && <i>*</i>}</span>
       <input type={opts.type ?? "text"} inputMode={opts.mode} autoComplete={opts.auto} maxLength={120} value={form[k]} onChange={(e) => set(k, e.target.value)} />
@@ -104,41 +101,27 @@ export default function CheckoutView() {
       <section className="ck-card">
         <h2><span className="ck-n">1</span><T>Маълумоти шумо</T></h2>
         {field("name", "Ном ва насаб", { req: true, auto: "name" })}
-        {field("shop", "Номи мағоза / ширкат")}
       </section>
 
       <section className="ck-card">
-        <h2><span className="ck-n">2</span><T>Расонидан</T></h2>
+        <h2><span className="ck-n">2</span><T>Тамос ва суроға</T></h2>
         <ContactFields
           required
-          value={{ country: form.country as ShipCountry, local, address: form.address }}
+          simple
+          value={{ country: "tj", local, address: form.address }}
           errors={errors}
           onChange={(v) => {
-            setForm((f) => ({ ...f, country: v.country, address: v.address }));
+            setForm((f) => ({ ...f, address: v.address }));
             setLocal(v.local);
             setErrors((e) => ({ ...e, phone: false, address: false }));
           }}
         />
-        <label className="ck-field">
-          <span><T>Эзоҳ барои менеҷер</T></span>
-          <textarea rows={3} maxLength={400} value={form.comment} onChange={(e) => set("comment", e.target.value)} />
-        </label>
       </section>
 
-      <section className="ck-card">
-        <h2><span className="ck-n">3</span><T>Тарзи тамос</T></h2>
-        <div className="ck-seg">
-          {CONTACTS.map((c) => (
-            <button key={c} className={form.contact === c ? "on" : ""} onClick={() => set("contact", c)}>
-              {c === "WhatsApp" && <Icon name="wa" size={16} />}{c === "Занг" && <Icon name="phone" size={16} />} {t(c)}
-            </button>
-          ))}
-        </div>
-        <p className="ck-note"><Icon name="shield" size={14} /> <T>Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.</T></p>
-      </section>
+      <p className="ck-note"><Icon name="shield" size={14} /> <T>Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.</T></p>
 
       <section className="ck-card">
-        <h2><span className="ck-n">4</span><T>Фармоиши шумо</T></h2>
+        <h2><span className="ck-n">3</span><T>Фармоиши шумо</T></h2>
         <div className="ck-lines">
           {order.groups.flatMap((g) => g.lines).map((l) => (
             <div className="ck-line" key={l.key}>

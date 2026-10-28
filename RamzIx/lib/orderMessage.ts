@@ -1,7 +1,7 @@
 import { COUNTRIES, fmtQty, unitOf } from "./catalog";
 import { priceOrder } from "./pricing";
 
-export type Buyer = { name: string; phone: string; shop: string; country: "tj" | "ae"; address: string; comment: string; contact: string };
+export type Buyer = { name: string; phone: string; address: string };
 
 type Fmt = {
   t: (key: string, vars?: Record<string, string | number>) => string;
@@ -16,12 +16,9 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export function buildOrderMessage(order: ReturnType<typeof priceOrder>, buyer: Buyer, id: string, { t, price, sum, label }: Fmt) {
   const rows: string[] = [`${t("Дархости нав аз RamzIx")} ${id}`, ""];
   rows.push(
-    `${t("Харидор")}: ${[buyer.name, buyer.shop].filter(Boolean).join(", ")}`,
-    `${t("Кишвар")}: ${t(buyer.country === "tj" ? "Тоҷикистон" : "Иморот")}`,
+    `${t("Харидор")}: ${buyer.name}`,
     `${t("Телефон")}: ${buyer.phone}`,
     `${t("Суроғаи пурра")}: ${buyer.address}`,
-    `${t("Тарзи тамос")}: ${t(buyer.contact)}`,
-    ...(buyer.comment ? [`${t("Эзоҳ")}: ${buyer.comment}`] : []),
     "",
   );
   let n = 1;

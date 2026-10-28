@@ -326,5 +326,6 @@ export const EN: Record<string, string> = {
   "Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.": "There is no online payment: the manager will contact you, confirm the order and tell you how to pay (Alif, DC, bank, cash). After payment the goods are shipped.",
   "Иморот": "UAE",
   "Суроғаи пурра": "Full address",
-  "Шаҳр, ноҳия, кӯча, хона": "City, district, street, house"
+  "Шаҳр, ноҳия, кӯча, хона": "City, district, street, house",
+  "Тамос ва суроға": "Phone and address"
 };

@@ -48,10 +48,11 @@ export const discountLadder = () => MARKUP_TIERS.map((t) => ({ from: t.from, off
 export const weightOf = (p: Product, qty: number) => p.weightKg * qty;
 export const volumeOf = (p: Product, qty: number) => (p.volumeM3 ?? 0) * qty;
 
-export const modesFor = (country: CountryCode): ShippingMode[] => SHIPPING[country];
-export const defaultMode = (country: CountryCode) => SHIPPING[country][0].id;
+/* Мувақатан: интихоби намуди расонидан (ҳаво/замин) хомӯш аст — танҳо намуди аввал (замин/карго) кор мекунад */
+export const modesFor = (country: CountryCode): ShippingMode[] => SHIPPING[country].slice(0, 1);
+export const defaultMode = (country: CountryCode) => modesFor(country)[0].id;
 export const getMode = (country: CountryCode, id?: string) =>
-  SHIPPING[country].find((m) => m.id === id) ?? SHIPPING[country][0];
+  modesFor(country).find((m) => m.id === id) ?? modesFor(country)[0];
 
 export type Shipping = { tjs: number; basis: "kg" | "m3" | "none"; mode: ShippingMode };
 
