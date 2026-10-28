@@ -8,11 +8,11 @@ export type ContactValue = { country: ShipCountry; local: string; address: strin
 type Errs = Partial<Record<"phone" | "address", boolean>>;
 
 /* Кишвар → рақами телефон бо код → суроғаи пурра */
-export default function ContactFields({ value, onChange, errors = {}, required }: { value: ContactValue; onChange: (v: ContactValue) => void; errors?: Errs; required?: boolean }) {
+export default function ContactFields({ value, onChange, errors = {}, required, simple }: { value: ContactValue; onChange: (v: ContactValue) => void; errors?: Errs; required?: boolean; simple?: boolean }) {
   const { t } = useT();
   return (
     <>
-      <div className="ck-field">
+      {!simple && <div className="ck-field">
         <span>{t("Кишвар")}{required && <i>*</i>}</span>
         <div className="ck-seg">
           {SHIP_COUNTRIES.map((c) => (
@@ -21,10 +21,22 @@ export default function ContactFields({ value, onChange, errors = {}, required }
             </button>
           ))}
         </div>
-      </div>
+      </div>}
 
       <label className={`ck-field ${errors.phone ? "bad" : ""}`}>
         <span>{t("Рақами телефон")}{required && <i>*</i>}</span>
+        {simple ? (
+          <input
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            className="ck-plain"
+            placeholder="+992 900 00 00 00"
+            value={value.local}
+            maxLength={20}
+            onChange={(e) => onChange({ ...value, local: e.target.value.replace(/[^\d+\s()-]/g, "") })}
+          />
+        ) : (
         <div className="ck-phone">
           <b>{codeOf(value.country)}</b>
           <input
@@ -36,6 +48,7 @@ export default function ContactFields({ value, onChange, errors = {}, required }
             onChange={(e) => onChange({ ...value, local: localDigits(e.target.value, value.country) })}
           />
         </div>
+        )}
         {errors.phone && <em><T>Ин майдонро дуруст пур кунед</T></em>}
       </label>
 

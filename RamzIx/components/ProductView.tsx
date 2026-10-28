@@ -332,7 +332,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pane">
               <table className="spec">
                 <tbody>
-                  {SHIPPING[p.country].map((m) => (
+                  {modesFor(p.country).map((m) => (
                     <tr key={m.id}>
                       <td>{t(m.label)}</td>
                       <td>
