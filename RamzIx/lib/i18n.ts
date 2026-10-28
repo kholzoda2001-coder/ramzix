@@ -12,7 +12,7 @@ export const LANGS: { id: Lang; label: string; name: string }[] = [
 export const DEFAULT_LANG: Lang = "tg";
 
 /* Калид — матни тоҷикӣ. Агар тарҷума набошад, худи матни тоҷикӣ нишон дода мешавад. */
-const DICT: Record<Lang, Record<string, string>> = { tg: {}, ru: RU, en: EN };
+const DICT: Record<Lang, Record<string, string>> = { tg: { "Асосӣ (меню)": "Асосӣ" }, ru: RU, en: EN };
 
 export function tr(lang: Lang, key: string, vars?: Record<string, string | number>): string {
   let s = DICT[lang][key] ?? key;
