@@ -1,12 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { COUNTRIES } from "./catalog";
+import { SHIPPING, USD_TO_TJS } from "./pricing-config";
 
 /* Маълумоти админ — ҳоло дар худи дастгоҳ (localStorage). Баъди пайвастани сервер ҳамин қабат ба Supabase иваз мешавад. */
 
 export type OrderStatus = "new" | "confirmed" | "bought" | "shipped" | "delivered" | "cancelled";
 export type OrderType = "pos" | "request";
-export type Item = { id: string; name: string; qty: number; unit: string; costTotal: number; markupPct: number };
+/** weightKg / volumeM3 — барои 1 воҳид */
+export type Item = { id: string; name: string; qty: number; unit: string; costTotal: number; markupPct: number; weightKg?: number; volumeM3?: number };
 export type Payment = { id: string; date: string; amount: number; method: string; note?: string };
 export type Order = {
   id: string;
@@ -17,6 +20,8 @@ export type Order = {
   items: Item[];
   shippingCharged: number;
   shippingCost: number;
+  /** Роҳи расонидан, масалан "ae:cargo" (барои ҳисоби тариф) */
+  routeKey?: string;
   status: OrderStatus;
   payments: Payment[];
   note: string;
@@ -56,6 +61,29 @@ export function totals(o: Order) {
 }
 export const PAY_LABEL = { paid: "Пардохт шуд", partial: "Қисман пардохт", unpaid: "Пардохт нашуд" } as const;
 
+/* ---------- расонидан: тариф аз рӯи вазн ва ҳаҷм ---------- */
+
+export const ROUTES = (Object.keys(SHIPPING) as (keyof typeof SHIPPING)[]).flatMap((c) =>
+  SHIPPING[c].map((m) => ({
+    key: `${c}:${m.id}`,
+    country: c,
+    mode: m,
+    label: `${COUNTRIES[c].short} · ${m.label}${m.perKgUsd > 0 ? ` — $${m.perKgUsd}/кг${m.perM3Usd ? `, $${m.perM3Usd}/м³` : ""}` : ""}`,
+  })),
+);
+export const routeOf = (key?: string) => ROUTES.find((r) => r.key === key);
+
+/** Нархи расонидан бо сомонӣ: аз вазн × нархи 1 кг ва ҳаҷм × нархи 1 м³ кадомаш зиёд бошад */
+export function routeCost(key: string | undefined, kg: number, m3: number) {
+  const r = routeOf(key);
+  if (!r) return { tjs: 0, byKgTjs: 0, byVolTjs: 0, basis: "none" as const };
+  const byKg = kg * r.mode.perKgUsd * USD_TO_TJS;
+  const byVol = r.mode.perM3Usd ? m3 * r.mode.perM3Usd * USD_TO_TJS : 0;
+  return { tjs: round(Math.max(byKg, byVol)), byKgTjs: round(byKg), byVolTjs: round(byVol), basis: byVol > byKg ? ("m3" as const) : byKg > 0 ? ("kg" as const) : ("none" as const) };
+}
+export const orderWeight = (o: Pick<Order, "items">) => round(o.items.reduce((a, i) => a + (i.weightKg ?? 0) * i.qty, 0));
+export const orderVolume = (o: Pick<Order, "items">) => Math.round(o.items.reduce((a, i) => a + (i.volumeM3 ?? 0) * i.qty, 0) * 10000) / 10000;
+
 /* ---------- нигоҳдорӣ ---------- */
 
 const KEY = "ramzix-admin-v1";
@@ -75,8 +103,9 @@ function clean(raw: unknown): Store {
     return [{
       id: o.id, code: str(o.code, 20), type: o.type === "request" ? "request" : "pos", date: str(o.date, 40),
       customer: { name: str(c.name, 120), phone: str(c.phone, 40), address: str(c.address, 300) },
-      items: (o.items as Record<string, unknown>[]).map((i) => ({ id: str(i.id, 20) || uid(), name: str(i.name, 150), qty: Math.max(0, num(i.qty)), unit: str(i.unit, 20) || "дона", costTotal: Math.max(0, num(i.costTotal)), markupPct: num(i.markupPct) })),
+      items: (o.items as Record<string, unknown>[]).map((i) => ({ id: str(i.id, 20) || uid(), name: str(i.name, 150), qty: Math.max(0, num(i.qty)), unit: str(i.unit, 20) || "дона", costTotal: Math.max(0, num(i.costTotal)), markupPct: num(i.markupPct), weightKg: num(i.weightKg) || undefined, volumeM3: num(i.volumeM3) || undefined })),
       shippingCharged: Math.max(0, num(o.shippingCharged)), shippingCost: Math.max(0, num(o.shippingCost)),
+      routeKey: str(o.routeKey, 30) || undefined,
       status: STATUSES.some((s) => s.id === o.status) ? (o.status as OrderStatus) : "new",
       payments: (Array.isArray(o.payments) ? o.payments : []).map((p: Record<string, unknown>) => ({ id: str(p.id, 20) || uid(), date: str(p.date, 40), amount: num(p.amount), method: str(p.method, 40), note: str(p.note, 200) })),
       note: str(o.note, 500),
