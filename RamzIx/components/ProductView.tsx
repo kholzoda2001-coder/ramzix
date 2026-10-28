@@ -2,7 +2,6 @@
 
 import { useMoney } from "./Currency";
 import { T, useT } from "./Lang";
-import Prefs from "./Prefs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -98,7 +97,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <Icon name="back" stroke={2.2} />
         </button>
         <span className="pd-top-title">{t(p.name)}</span>
-        <Prefs light />
         <button className="ic-round" onClick={share} aria-label={t("Фиристодан")}><Icon name="share" size={20} /></button>
         <Link href="/cart" className="ic-round" aria-label={t("Сабад")}><Icon name="cart" size={21} /><CartBadge /></Link>
       </header>

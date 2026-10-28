@@ -761,3 +761,31 @@ h1, h2, h3, p { margin: 0; }
 .pf-clear { color: var(--red); font-weight: 600; font-size: 13.5px; padding: 12px; }
 .pf-confirm { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; padding: 12px; border-radius: 14px; background: #fff0f3; }
 .pf-confirm span { flex-basis: 100%; }
+
+/* ---------- Менюи ҷонибӣ ---------- */
+.sm-wrap { position: fixed; inset: 0; z-index: 85; pointer-events: none; }
+.sm-wrap.open { pointer-events: auto; }
+.sm-bg { position: absolute; inset: 0; background: rgba(11,31,58,.5); opacity: 0; transition: opacity .25s; }
+.sm-wrap.open .sm-bg { opacity: 1; }
+.sm { position: absolute; top: 0; bottom: 0; left: max(0px, calc(50% - var(--app) / 2)); width: min(84%, 320px); background: #fff; display: flex; flex-direction: column; transform: translateX(-105%); transition: transform .3s cubic-bezier(.2,.8,.2,1); box-shadow: 8px 0 30px rgba(11,31,58,.25); }
+.sm-wrap.open .sm { transform: translateX(0); }
+.sm-head { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-3) 100%); color: #fff; padding: calc(16px + env(safe-area-inset-top)) 16px 18px; position: relative; }
+.sm-x { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; display: grid; place-items: center; }
+.sm-user { display: flex; align-items: center; gap: 12px; margin-top: 26px; color: #fff; }
+.sm-user > span:last-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sm-user b { font-size: 16px; overflow-wrap: anywhere; }
+.sm-user small { font-size: 12.5px; color: rgba(255,255,255,.7); overflow-wrap: anywhere; }
+.sm-av { width: 48px; height: 48px; border-radius: 50%; background: var(--orange); color: var(--navy); display: grid; place-items: center; font-weight: 800; font-size: 17px; flex-shrink: 0; overflow: hidden; }
+.sm-body { flex: 1; overflow-y: auto; padding: 8px 10px; display: flex; flex-direction: column; }
+.sm-body a { display: flex; align-items: center; gap: 12px; padding: 11px 10px; border-radius: 12px; color: var(--text); font-size: 15px; font-weight: 600; }
+.sm-body a.on { background: var(--orange-soft); }
+.sm-body a > span:nth-of-type(2) { flex: 1; }
+.sm-body a small { color: var(--muted); font-size: 12.5px; font-weight: 500; }
+.sm-ic { width: 34px; height: 34px; border-radius: 10px; background: #eef2fb; color: var(--navy-3); display: grid; place-items: center; flex-shrink: 0; }
+.sm-body h3 { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .4px; padding: 16px 10px 4px; }
+.sm-flag { width: 28px; height: 20px; border-radius: 4px; margin: 0 3px; flex-shrink: 0; }
+.sm-body .badge { position: static; margin-left: auto; }
+.sm-wa { display: flex; align-items: center; gap: 12px; margin: 8px 12px calc(14px + var(--safe-b)); padding: 12px 14px; border-radius: 14px; background: #e5f9ec; color: var(--green); }
+.sm-wa > span { display: flex; flex-direction: column; gap: 1px; }
+.sm-wa b { font-size: 14.5px; color: var(--text); }
+.sm-wa small { font-size: 12px; color: var(--muted); }
