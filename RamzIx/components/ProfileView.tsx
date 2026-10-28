@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { WHATSAPP, getProduct, waLink } from "@/lib/catalog";
+import { WHATSAPP, waLink } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import { CURRENCIES } from "@/lib/currency";
 import { LANGS } from "@/lib/i18n";
 import { clearProfile, saveProfile, useProfile, type Order, type Profile } from "@/lib/profile";
@@ -16,6 +17,7 @@ import { T, useT } from "./Lang";
 
 export default function ProfileView() {
   const { t, lang, setLang } = useT();
+  const { getProduct } = useCatalog();
   const { cur, setCur, sum, label } = useMoney();
   const { profile, orders, ready } = useProfile();
   const { lines, add } = useCart();

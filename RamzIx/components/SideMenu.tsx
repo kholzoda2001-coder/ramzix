@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { COUNTRIES, WHATSAPP, products, waLink, type CountryCode } from "@/lib/catalog";
+import { COUNTRIES, WHATSAPP, waLink, type CountryCode } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import { useProfile } from "@/lib/profile";
 import { CartBadge } from "./Cart";
 import Flag from "./Flag";
@@ -24,6 +25,7 @@ const LINKS = [
 /* Менюи ҷонибӣ: аз тугмаи се хат дар чапи боло кушода мешавад */
 export default function SideMenu({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useT();
+  const { products } = useCatalog();
   const path = usePathname();
   const { profile } = useProfile();
   const [mounted, setMounted] = useState(false);

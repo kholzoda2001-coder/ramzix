@@ -120,4 +120,4 @@ export function sortProducts(items: Product[], sort: Sort): Product[] {
 }
 
 export const categoryName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
-export const brandName = (slug: string) => getBrands().find((b) => b.slug === slug)?.name ?? slug;
+export const brandName = (slug: string, list: Product[] = products) => getBrands(list).find((b) => b.slug === slug)?.name ?? slug;

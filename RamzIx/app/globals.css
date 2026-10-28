@@ -990,3 +990,26 @@ h1, h2, h3, p { margin: 0; }
 .ad-cur { display: flex; background: rgba(255,255,255,.14); border-radius: 999px; padding: 2px; }
 .ad-cur button { min-width: 32px; padding: 4px 8px; border-radius: 999px; font-size: 12.5px; font-weight: 700; color: rgba(255,255,255,.8); }
 .ad-cur button.on { background: var(--orange); color: var(--navy); }
+.ad-prod { background: var(--card); border-radius: 14px; box-shadow: var(--shadow); padding: 10px; display: grid; gap: 8px; }
+.ad-prod.off { opacity: .6; }
+.ap-main { display: flex; gap: 10px; align-items: center; text-align: left; color: var(--text); }
+.ap-img { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: #f1f3f7; flex-shrink: 0; display: grid; place-items: center; font-size: 22px; position: relative; }
+.ap-img img { width: 100%; height: 100%; object-fit: cover; }
+.ap-t { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ap-t b { font-size: 14px; }
+.ap-t small { font-size: 12px; color: var(--muted); }
+.ap-t small b { font-size: 12px; color: var(--text); }
+.ap-act { display: flex; gap: 8px; align-items: center; border-top: 1px solid var(--line); padding-top: 8px; font-size: 13px; }
+.ap-act button { padding: 6px 12px; border-radius: 999px; background: #eef1f6; color: #64748b; font-weight: 700; font-size: 12.5px; }
+.ap-act button.on { background: var(--green-soft); color: var(--green); }
+.ap-act a { color: var(--navy-3); font-weight: 700; margin-left: auto; }
+.ad-imgs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.ad-img { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #f1f3f7; display: block; }
+.ad-img img { width: 100%; height: 100%; object-fit: cover; }
+.ad-img button { position: absolute; top: 3px; right: 3px; width: 22px; height: 22px; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 11px; display: grid; place-items: center; }
+.ad-img em { position: absolute; left: 0; right: 0; bottom: 0; background: rgba(11,31,58,.75); color: #fff; font-size: 10px; text-align: center; font-style: normal; padding: 2px 0; }
+.ad-img.add { display: grid; place-items: center; border: 1px dashed var(--orange-2); background: var(--orange-soft); color: var(--orange-2); font-weight: 700; cursor: pointer; }
+.ad-img.add span { display: flex; flex-direction: column; align-items: center; font-size: 20px; line-height: 1; }
+.ad-img.add small { font-size: 11px; }
+.ad-toggle { flex-direction: row !important; align-items: center; gap: 10px !important; font-size: 14px !important; color: var(--text) !important; }
+.ad-toggle input { width: 22px !important; height: 22px !important; }

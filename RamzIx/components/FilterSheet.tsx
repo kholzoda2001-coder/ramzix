@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CATEGORIES, COUNTRIES, products, type CountryCode } from "@/lib/catalog";
+import { CATEGORIES, COUNTRIES, type CountryCode } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import { EMPTY_FILTERS, UNITS, filterProducts, getBrands, type Filters } from "@/lib/filters";
 import { useMoney } from "./Currency";
 import Flag from "./Flag";
@@ -23,10 +24,11 @@ export default function FilterSheet({
 }) {
   const { cur, label, conv, toTjs } = useMoney();
   const { t } = useT();
+  const { products } = useCatalog();
   const [draft, setDraft] = useState<Filters>(initial);
   const [minTxt, setMinTxt] = useState("");
   const [maxTxt, setMaxTxt] = useState("");
-  const brands = useMemo(() => getBrands(), []);
+  const brands = useMemo(() => getBrands(products), [products]);
   const cats = CATEGORIES.filter((c) => c.id !== "all");
 
   // Ҳар дафъаи кушодан аз филтрҳои ҷорӣ оғоз мекунем
@@ -45,7 +47,7 @@ export default function FilterSheet({
     min: minTxt.trim() === "" ? undefined : Math.floor(toTjs(Number(minTxt))),
     max: maxTxt.trim() === "" ? undefined : Math.ceil(toTjs(Number(maxTxt))),
   };
-  const count = useMemo(() => filterProducts(products, withPrice).length, [withPrice.q, withPrice.category, withPrice.brand, withPrice.country, withPrice.unit, withPrice.min, withPrice.max]); // eslint-disable-line react-hooks/exhaustive-deps
+  const count = useMemo(() => filterProducts(products, withPrice).length, [products, withPrice.q, withPrice.category, withPrice.brand, withPrice.country, withPrice.unit, withPrice.min, withPrice.max]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const counts = {
     country: (c: CountryCode) => products.filter((p) => p.country === c).length,

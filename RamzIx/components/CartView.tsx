@@ -5,7 +5,8 @@ import { T, useT } from "./Lang";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
-import { COUNTRIES, fmtQty, getProduct, unitOf } from "@/lib/catalog";
+import { COUNTRIES, fmtQty, unitOf } from "@/lib/catalog";
+import { useCatalog } from "@/lib/useCatalog";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
@@ -17,15 +18,16 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export default function CartView() {
   const { price, sum, label } = useMoney();
   const { t } = useT();
+  const { getProduct, ready: catReady } = useCatalog();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
-  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes]);
+  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes, getProduct]);
 
   // Маҳсулоте, ки дигар дар каталог нест, аз сабад хориҷ мешавад (нишонаи сабад ҳам дуруст мешавад)
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || !catReady) return;
     lines.filter((l) => !getProduct(l.slug)).forEach((l) => remove(lineKey(l)));
-  }, [ready, lines, remove]);
+  }, [ready, catReady, lines, remove, getProduct]);
 
   const back = () => (history.length > 1 ? router.back() : router.push("/"));
 

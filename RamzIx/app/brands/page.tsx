@@ -1,30 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
-import BrandLogo from "@/components/BrandLogo";
-import Flag from "@/components/Flag";
+import { BrandsBody } from "@/components/HomeSections";
 import PageTop from "@/components/PageTop";
-import { getBrands } from "@/lib/filters";
-import { T } from "@/components/Lang";
 
 export const metadata: Metadata = { title: "Брендҳо — RamzIx" };
 
 export default function BrandsPage() {
-  const brands = getBrands();
   return (
     <>
-      <PageTop title="Брендҳо" sub={`${brands.length}`} />
+      <PageTop title="Брендҳо" />
       <main className="list-main">
-        <div className="brand-grid">
-          {brands.map((b) => (
-            <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-card">
-              <BrandLogo name={b.name} />
-              <b>{b.name}</b>
-              <small><T vars={{ n: b.count }}>{"{n} маҳсулот"}</T></small>
-              <span className="bc-flags">{b.countries.map((c) => <Flag key={c} code={c} className="bc-flag" />)}</span>
-            </Link>
-          ))}
-        </div>
+        <BrandsBody />
       </main>
       <BottomNav />
     </>
