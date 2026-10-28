@@ -6,6 +6,8 @@ import { useEffect, useRef, useState } from "react";
 import { waLink } from "@/lib/catalog";
 import Icon from "./Icon";
 import useDragScroll from "./useDragScroll";
+import { useT, T } from "./Lang";
+import WaLink from "./WaLink";
 
 const SLIDES = [
   { key: "earbuds" },
@@ -14,6 +16,7 @@ const SLIDES = [
 ] as const;
 
 export default function HeroSlider() {
+  const { t } = useT();
   const ref = useRef<HTMLDivElement>(null);
   useDragScroll(ref);
   const [i, setI] = useState(0);
@@ -35,30 +38,30 @@ export default function HeroSlider() {
     <div className="hero">
       <div className="hero-track" ref={ref}>
         <div className="slide slide-img">
-          <Image src="/hero-earbuds.webp" alt="Наушникҳои бесими Anker soundcore" width={780} height={480} priority className="slide-photo" />
+          <Image src="/hero-earbuds.webp" alt={t("Наушникҳои бесими Anker soundcore")} width={780} height={480} priority className="slide-photo" />
           <div className="slide-img-text">
             <span className="chip-sm">Anker · soundcore</span>
-            <h2>Наушникҳои бесим</h2>
-            <p>Аслӣ, аз Дубай, бо кафолат</p>
-            <Link href="/#popular" className="btn btn-sm btn-navy">Харид <Icon name="chevron" size={14} stroke={2.4} /></Link>
+            <h2><T>Наушникҳои бесим</T></h2>
+            <p><T>Аслӣ, аз Дубай, бо кафолат</T></p>
+            <Link href="/#popular" className="btn btn-sm btn-navy"><T>Харид</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>
           </div>
         </div>
 
         <div className="slide slide-global">
-          <span className="chip-sm light"><Icon name="globe" size={13} /> Таъминоти байналмилалӣ</span>
-          <h2>Маҳсулот аз <em>Дубай, Чин, Туркия</em> барои мағозаи шумо</h2>
-          <p>Расонидан ба тамоми Тоҷикистон</p>
-          <Link href="/#countries" className="btn btn-sm btn-orange">Дидани каталог <Icon name="chevron" size={14} stroke={2.4} /></Link>
+          <span className="chip-sm light"><Icon name="globe" size={13} /> <T>Таъминоти байналмилалӣ</T></span>
+          <h2><T>Маҳсулот аз</T> <em><T>Дубай, Чин, Туркия</T></em> <T>барои мағозаи шумо</T></h2>
+          <p><T>Расонидан ба тамоми Тоҷикистон</T></p>
+          <Link href="/#countries" className="btn btn-sm btn-orange"><T>Дидани каталог</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>
           <div className="slide-art" aria-hidden="true">
             <svg viewBox="0 0 120 90"><g fill="none" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 62h100l-12 16H22z" fill="#13325e" /><path d="M28 62V46h22v16M54 62V38h22v24M80 62V50h16v12" fill="#1d3a66" /><path d="M60 38V22l10 6-10 6" /></g><g stroke="#ffffff55" strokeWidth="2" strokeLinecap="round"><path d="M14 84h20M44 86h30M84 84h22" /></g></svg>
           </div>
         </div>
 
         <div className="slide slide-tiers">
-          <span className="chip-sm light"><Icon name="tag" size={13} /> Нархи оптовӣ</span>
-          <h2>Бештар харед, <em>арзонтар</em> пардохт кунед</h2>
-          <p>Барои фармоиши калон нархи махсус</p>
-          <a href={waLink("Салом! Барои фармоиши калон нархи оптовӣ лозим аст.")} className="btn btn-sm btn-orange"><Icon name="wa" size={16} /> Дар WhatsApp пурсед</a>
+          <span className="chip-sm light"><Icon name="tag" size={13} /> <T>Нархи оптовӣ</T></span>
+          <h2><T>Бештар харед,</T> <em><T>арзонтар</T></em> <T>пардохт кунед</T></h2>
+          <p><T>Барои фармоиши калон нархи махсус</T></p>
+          <WaLink text="Салом! Барои фармоиши калон нархи оптовӣ лозим аст." className="btn btn-sm btn-orange"><Icon name="wa" size={16} /> <T>Дар WhatsApp пурсед</T></WaLink>
         </div>
       </div>
       <div className="hero-dots">
@@ -66,7 +69,7 @@ export default function HeroSlider() {
           <button
             key={s.key}
             className={k === i ? "on" : ""}
-            aria-label={`Слайди ${k + 1}`}
+            aria-label={t("Слайди {n}", { n: k + 1 })}
             onClick={() => ref.current?.scrollTo({ left: k * ref.current.clientWidth, behavior: "smooth" })}
           />
         ))}

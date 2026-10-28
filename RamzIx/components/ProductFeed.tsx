@@ -5,6 +5,7 @@ import { COUNTRIES, type CountryCode, type Product } from "@/lib/catalog";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
+import { T } from "./Lang";
 
 const TABS: (CountryCode | "all")[] = ["all", "ae", "cn", "tr", "tj"];
 const PAGE = 10;
@@ -17,9 +18,9 @@ export default function ProductFeed({ items }: { items: Product[] }) {
   return (
     <>
       <div className="seg" role="tablist">
-        {TABS.map((t) => (
-          <button key={t} role="tab" aria-selected={tab === t} className={tab === t ? "on" : ""} onClick={() => { setTab(t); setShown(PAGE); }}>
-            {t === "all" ? "Ҳама" : <><Flag code={t} className="seg-flag" />{COUNTRIES[t].short}</>}
+        {TABS.map((x) => (
+          <button key={x} role="tab" aria-selected={tab === x} className={tab === x ? "on" : ""} onClick={() => { setTab(x); setShown(PAGE); }}>
+            {x === "all" ? <T>Ҳама</T> : <><Flag code={x} className="seg-flag" /><T>{COUNTRIES[x].short}</T></>}
           </button>
         ))}
       </div>
@@ -28,15 +29,15 @@ export default function ProductFeed({ items }: { items: Product[] }) {
           <div className="grid2">{list.slice(0, shown).map((p) => <ProductCard key={p.slug} p={p} />)}</div>
           {list.length > shown && (
             <button className="more-btn" onClick={() => setShown(shown + PAGE)}>
-              Боз нишон додан <span>{list.length - shown}</span> <Icon name="down" size={16} />
+              <T>Боз нишон додан</T> <span>{list.length - shown}</span> <Icon name="down" size={16} />
             </button>
           )}
         </>
       ) : (
         <div className="empty">
           <Icon name="box" size={34} stroke={1.5} />
-          <b>Ба наздикӣ</b>
-          <span>Маҳсулоти ватанӣ ба зудӣ илова мешавад</span>
+          <b><T>Ба наздикӣ</T></b>
+          <span><T>Маҳсулоти ватанӣ ба зудӣ илова мешавад</T></span>
         </div>
       )}
     </>

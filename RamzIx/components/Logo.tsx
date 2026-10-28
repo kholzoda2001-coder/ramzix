@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { T } from "./Lang";
 
 export function LogoMark({ size = 34 }: { size?: number }) {
   return (
@@ -13,11 +14,11 @@ export function LogoMark({ size = 34 }: { size?: number }) {
 
 export default function Logo() {
   return (
-    <Link href="/" className="logo" aria-label="RamzIx — асосӣ">
+    <Link href="/" className="logo" aria-label="RamzIx">
       <LogoMark />
       <span className="logo-text">
         <span>Ramz<b>Ix</b></span>
-        <small>Оптовӣ · Бахшоӣ · Боварӣ</small>
+        <small><T>Оптовӣ · Бахшоӣ · Боварӣ</T></small>
       </span>
     </Link>
   );

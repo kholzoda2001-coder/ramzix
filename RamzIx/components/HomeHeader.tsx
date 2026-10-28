@@ -1,28 +1,32 @@
+"use client";
+
 import Link from "next/link";
 import Logo from "./Logo";
 import Icon from "./Icon";
 import { CartBadge } from "./Cart";
-import { CurrencySwitch } from "./Currency";
+import Prefs from "./Prefs";
+import { useT, T } from "./Lang";
 
 export default function HomeHeader() {
+  const { t } = useT();
   return (
     <header className="home-header">
       <div className="hh-row">
-        <button className="ic-btn" aria-label="Меню"><Icon name="menu" /></button>
+        <button className="ic-btn" aria-label={t("Меню")}><Icon name="menu" /></button>
         <Logo />
         <div className="hh-actions">
-          <button className="ic-btn" aria-label="Огоҳиҳо"><Icon name="bell" /><span className="dot" /></button>
-          <Link href="/cart" className="ic-btn" aria-label="Сабад"><Icon name="cart" /><CartBadge /></Link>
+          <button className="ic-btn" aria-label={t("Огоҳиҳо")}><Icon name="bell" /><span className="dot" /></button>
+          <Link href="/cart" className="ic-btn" aria-label={t("Сабад")}><Icon name="cart" /><CartBadge /></Link>
         </div>
       </div>
       <form className="search" role="search" action="/catalog">
         <Icon name="search" size={20} />
-        <input name="q" placeholder="Ҷустуҷӯи маҳсулот, бренд ё артикул" aria-label="Ҷустуҷӯ" />
-        <Link href="/catalog" className="search-scan" aria-label="Филтр"><Icon name="filter" size={18} /></Link>
+        <input name="q" placeholder={t("Ҷустуҷӯи маҳсулот, бренд ё артикул")} aria-label={t("Ҷустуҷӯ")} />
+        <Link href="/catalog" className="search-scan" aria-label={t("Филтр")}><Icon name="filter" size={18} /></Link>
       </form>
       <div className="hh-meta">
-        <span><Icon name="pin" size={15} /> Расонидан ба <b>Душанбе</b> <Icon name="down" size={14} /></span>
-        <CurrencySwitch />
+        <span><Icon name="pin" size={15} /> <T>Расонидан ба</T> <b><T>Душанбе</T></b> <Icon name="down" size={14} /></span>
+        <Prefs />
       </div>
     </header>
   );

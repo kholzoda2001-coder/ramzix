@@ -5,6 +5,7 @@ import BrandLogo from "@/components/BrandLogo";
 import Flag from "@/components/Flag";
 import PageTop from "@/components/PageTop";
 import { getBrands } from "@/lib/filters";
+import { T } from "@/components/Lang";
 
 export const metadata: Metadata = { title: "Брендҳо — RamzIx" };
 
@@ -19,7 +20,7 @@ export default function BrandsPage() {
             <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-card">
               <BrandLogo name={b.name} />
               <b>{b.name}</b>
-              <small>{b.count} маҳсулот</small>
+              <small><T vars={{ n: b.count }}>{"{n} маҳсулот"}</T></small>
               <span className="bc-flags">{b.countries.map((c) => <Flag key={c} code={c} className="bc-flag" />)}</span>
             </Link>
           ))}
