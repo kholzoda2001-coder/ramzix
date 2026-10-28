@@ -5,6 +5,7 @@ import Icon from "@/components/Icon";
 import PageTop from "@/components/PageTop";
 import { CATEGORIES, products } from "@/lib/catalog";
 import { categoryCount } from "@/lib/filters";
+import { T } from "@/components/Lang";
 
 export const metadata: Metadata = { title: "Категорияҳо — RamzIx" };
 
@@ -16,7 +17,7 @@ export default function CategoriesPage() {
       <main className="list-main">
         <Link href="/catalog" className="all-card">
           <span className="ac-ic"><Icon name="grid" size={26} /></span>
-          <span><b>Ҳама маҳсулот</b><small>{products.length} маҳсулот аз ҳама кишвар</small></span>
+          <span><b><T>Ҳама маҳсулот</T></b><small><T vars={{ n: products.length }}>{"{n} маҳсулот аз ҳама кишвар"}</T></small></span>
           <Icon name="chevron" size={18} stroke={2.2} />
         </Link>
 
@@ -26,8 +27,8 @@ export default function CategoriesPage() {
             const body = (
               <>
                 <span className="cg-ic" style={{ background: c.tint }}><Icon name={c.icon} size={30} stroke={1.6} /></span>
-                <b>{c.name}</b>
-                <small>{n > 0 ? `${n} маҳсулот` : "Ба наздикӣ"}</small>
+                <b><T>{c.name}</T></b>
+                <small>{n > 0 ? <T vars={{ n }}>{"{n} маҳсулот"}</T> : <T>Ба наздикӣ</T>}</small>
               </>
             );
             return n > 0 ? (
