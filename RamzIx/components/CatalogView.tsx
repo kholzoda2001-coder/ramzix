@@ -20,7 +20,6 @@ import {
 import BottomNav from "./BottomNav";
 import { CartBadge } from "./Cart";
 import { useMoney } from "./Currency";
-import Prefs from "./Prefs";
 import FilterSheet from "./FilterSheet";
 import { T, useT } from "./Lang";
 import Icon from "./Icon";
@@ -92,7 +91,6 @@ export default function CatalogView() {
           </button>
           <Link href="/cart" className="ic-round" aria-label={t("Сабад")}><Icon name="cart" size={21} /><CartBadge /></Link>
         </div>
-        <div className="cur-row"><Prefs light /></div>
         <div className="quick-cats">
           <button className={!filters.category.length ? "on" : ""} onClick={() => go({ ...filters, category: [] })}><T>Ҳама</T></button>
           {quickCats.map((c) => (

@@ -2,7 +2,6 @@
 
 import { useMoney } from "./Currency";
 import { T, useT } from "./Lang";
-import Prefs from "./Prefs";
 import { addOrder, useProfile } from "@/lib/profile";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -206,7 +205,6 @@ function CartShell({ children, onBack, onClear }: { children: React.ReactNode; o
       <header className="cart-top">
         <button className="ic-round" onClick={onBack} aria-label={t("Бозгашт")}><Icon name="back" stroke={2.2} /></button>
         <h1><T>Сабад</T></h1>
-        <Prefs light />
         {onClear && <button className="cart-clear" onClick={onClear}><T>Тоза кардан</T></button>}
       </header>
       <main className="cart-main">{children}</main>
