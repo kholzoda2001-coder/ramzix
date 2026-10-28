@@ -33,7 +33,7 @@ export default function CheckoutView() {
   useEffect(() => {
     if (!profileReady || filledFromProfile) return;
     setForm((f) => ({ ...f, name: profile.name, address: profile.address }));
-    setLocal(profile.phone || "+992 ");
+    setLocal(profile.phone || "");
     setFilled(true);
   }, [profileReady, filledFromProfile, profile]);
 

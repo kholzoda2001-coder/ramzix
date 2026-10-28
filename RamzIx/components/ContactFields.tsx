@@ -31,7 +31,7 @@ export default function ContactFields({ value, onChange, errors = {}, required, 
             inputMode="tel"
             autoComplete="tel"
             className="ck-plain"
-            placeholder="+992 900 00 00 00"
+            placeholder="000 000 00 00"
             value={value.local}
             maxLength={20}
             onChange={(e) => onChange({ ...value, local: e.target.value.replace(/[^\d+\s()-]/g, "") })}
