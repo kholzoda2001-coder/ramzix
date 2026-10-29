@@ -767,8 +767,8 @@ h1, h2, h3, p { margin: 0; }
 .sm-wrap.open { pointer-events: auto; }
 .sm-bg { position: absolute; inset: 0; background: rgba(11,31,58,.5); opacity: 0; transition: opacity .25s; }
 .sm-wrap.open .sm-bg { opacity: 1; }
-.sm { position: absolute; top: 0; bottom: 0; left: max(0px, calc(50% - var(--app) / 2)); width: min(84%, 320px); background: #fff; display: flex; flex-direction: column; transform: translateX(-105%); transition: transform .3s cubic-bezier(.2,.8,.2,1); box-shadow: 8px 0 30px rgba(11,31,58,.25); }
-.sm-wrap.open .sm { transform: translateX(0); }
+.sm { position: absolute; top: 0; bottom: 0; left: max(0px, calc(50% - var(--app) / 2)); width: min(84%, 320px); background: #fff; display: flex; flex-direction: column; transform: translateX(-105%); visibility: hidden; transition: transform .3s cubic-bezier(.2,.8,.2,1), visibility 0s .3s; box-shadow: 8px 0 30px rgba(11,31,58,.25); }
+.sm-wrap.open .sm { transform: translateX(0); visibility: visible; transition-delay: 0s; }
 .sm-head { background: linear-gradient(135deg, var(--navy) 0%, var(--navy-3) 100%); color: #fff; padding: calc(16px + env(safe-area-inset-top)) 16px 18px; position: relative; }
 .sm-x { position: absolute; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,.14); color: #fff; display: grid; place-items: center; }
 .sm-user { display: flex; align-items: center; gap: 12px; margin-top: 26px; color: #fff; }
@@ -1013,3 +1013,31 @@ h1, h2, h3, p { margin: 0; }
 .ad-img.add small { font-size: 11px; }
 .ad-toggle { flex-direction: row !important; align-items: center; gap: 10px !important; font-size: 14px !important; color: var(--text) !important; }
 .ad-toggle input { width: 22px !important; height: 22px !important; }
+
+/* ---------- Экрани компютер ва планшет ---------- */
+@media (min-width: 768px) {
+  :root { --app: 760px; }
+  .grid2 { column-count: 3; }
+  .cat-grid, .brand-grid { grid-template-columns: repeat(3, 1fr); }
+  .slide { height: 260px; }
+  .slide h2 { font-size: 28px; }
+  .g-slide { aspect-ratio: 4 / 3; }
+  .sheet, .ad-sheet { max-width: 560px; }
+}
+@media (min-width: 1100px) {
+  :root { --app: 1120px; }
+  body { font-size: 15.5px; }
+  .app { margin: 24px auto; min-height: calc(100dvh - 48px); border-radius: 24px; }
+  .grid2 { column-count: 4; }
+  .cat-grid, .brand-grid { grid-template-columns: repeat(4, 1fr); }
+  .hero { margin: 16px 24px 0; }
+  .slide { height: 320px; padding: 32px 40px; }
+  .slide h2 { font-size: 36px; max-width: 50%; }
+  .slide p { font-size: 16px; max-width: 45%; }
+  .countries, .steps { padding: 0 24px; }
+  .cats { padding: 0 20px; gap: 20px 10px; }
+  .list-main { padding-left: 24px; padding-right: 24px; }
+  .g-slide { aspect-ratio: 16 / 9; }
+  .bottom-nav, .cart-bar, .ad-nav, .pd-top { bottom: 24px; border-radius: 0 0 24px 24px; }
+  .pd-top { bottom: auto; top: 24px; border-radius: 24px 24px 0 0; }
+}
