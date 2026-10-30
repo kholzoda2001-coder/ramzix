@@ -49,6 +49,12 @@ export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId
                   <div className="ao-top"><b>{o.code}</b><span className="ao-type">{o.type === "pos" ? "POS" : "Сайт"}</span><StatusChip status={o.status} /></div>
                   <div className="ao-who">{o.customer.name || "Бе ном"}{o.customer.phone && <small> · {o.customer.phone}</small>}</div>
                   <div className="ao-items">{o.items.map((i) => `${i.name} ×${i.qty}`).join(", ")}</div>
+                  {o.items.some((i) => i.link || i.images?.length) && (
+                    <div className="ao-req">
+                      {o.items.flatMap((i) => i.images ?? []).slice(0, 3).map((u) => /* eslint-disable-next-line @next/next/no-img-element */ <img key={u} src={u} alt="" />)}
+                      {o.items.some((i) => i.link) && <span><i className="ti ti-link" aria-hidden="true" /> пайванд</span>}
+                    </div>
+                  )}
                   <div className="ao-money"><b>{m(t.total)} {label}</b><span className="g">+{m(t.profit)}</span><PayChip order={o} /></div>
                   <PayBar order={o} />
                   <small className="ao-date">{dateStr(o.date)}{t.paid > 0 && ` · гирифта шуд ${m(t.paid)} (${t.paidPct}%)`}</small>
@@ -57,6 +63,7 @@ export default function Orders({ admin, openId, onOpen }: { admin: Admin; openId
                   <select value={o.status} aria-label="Ҳолат" onChange={(e) => admin.patchOrder(o.id, { status: e.target.value as Order["status"] })}>
                     {STATUSES.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
                   </select>
+                  {o.type === "request" && o.customer.phone && <a className="ao-call" href={`tel:${o.customer.phone.replace(/[^\d+]/g, "")}`}>📞 Занг задан</a>}
                   {t.due > 0.005 ? (
                     <>
                       <button onClick={() => admin.addPayment(o.id, { date: new Date().toISOString(), amount: t.due, method: PAY_METHODS[0] })}>✓ Пурра пардохт шуд</button>
@@ -115,6 +122,26 @@ function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onCl
         {o.customer.address && <p>📍 {o.customer.address}</p>}
         {o.note && <p className="ad-note">📝 {o.note}</p>}
       </section>
+
+      {o.items.some((i) => i.link || i.images?.length) && (
+        <section className="ad-card">
+          <h3>Дархости харидор</h3>
+          {o.items.map((i) => (
+            <div key={i.id} className="ad-req">
+              <b>{i.name}</b>
+              {i.link && <a href={i.link} target="_blank" rel="noreferrer">🔗 {i.link}</a>}
+              {!!i.images?.length && (
+                <div className="ad-req-imgs">
+                  {i.images.map((u) => (
+                    <a key={u} href={u} target="_blank" rel="noreferrer">{/* eslint-disable-next-line @next/next/no-img-element */}<img src={u} alt="" /></a>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+          {o.customer.phone && <a className="ad-primary ad-callbtn" href={`tel:${phone}`}>📞 Занг задан: {o.customer.phone}</a>}
+        </section>
+      )}
 
       <section className="ad-card">
         <h3>Маҳсулот</h3>

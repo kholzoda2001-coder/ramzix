@@ -43,3 +43,20 @@ export function tooMany(ip: string): boolean {
   r.n++; return r.n > 8;
 }
 export const clearTries = (ip: string) => tries.delete(ip);
+
+/* Қуфли умумӣ дар база (admin_settings.pin_tries): баъди 8 кӯшиши нодуруст воридшавӣ 10 дақиқа баста мешавад,
+   новобаста аз IP ва сервер — чунин ҳадси PIN-ро дар Vercel (бисёр серверҳо) ҳам манъ мекунад. */
+type Tries = { n: number; t: number };
+const WINDOW = 600_000, LIMIT = 8;
+const readTries = async (): Promise<Tries | null> => (await sb<{ value: Tries }[]>("admin_settings?key=eq.pin_tries&select=value"))[0]?.value ?? null;
+export async function loginBlocked(): Promise<boolean> {
+  const r = await readTries();
+  return !!r && Date.now() - r.t <= WINDOW && r.n >= LIMIT;
+}
+export async function recordFail() {
+  const r = await readTries();
+  const fresh = r && Date.now() - r.t <= WINDOW;
+  const value: Tries = { n: fresh ? r.n + 1 : 1, t: fresh ? r.t : Date.now() };
+  await sb("admin_settings?on_conflict=key", { method: "POST", body: { key: "pin_tries", value }, prefer: "resolution=merge-duplicates,return=minimal" });
+}
+export async function clearFails() { await sb("admin_settings?key=eq.pin_tries", { method: "DELETE" }); }

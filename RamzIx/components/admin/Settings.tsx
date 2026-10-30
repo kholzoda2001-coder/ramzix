@@ -18,7 +18,7 @@ export default function Settings({ admin, onLock }: { admin: Admin; onLock: () =
     if (v > 0) { setDefaultMarkup(v); setMsg("Фоизи пешфарз нигоҳ дошта шуд"); }
   };
   const changePin = async () => {
-    if (pins.next.length < 4) return setMsg("PIN камаш 4 рақам бошад");
+    if (pins.next.length < 6) return setMsg("PIN камаш 6 рақам бошад");
     if (!(await changePinApi(pins.old, pins.next))) return setMsg("PIN-и кӯҳна нодуруст аст");
     setPins({ old: "", next: "" });
     setMsg("PIN иваз шуд");

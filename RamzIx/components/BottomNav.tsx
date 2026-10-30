@@ -9,7 +9,7 @@ import { useT, T } from "./Lang";
 const ITEMS = [
   { href: "/", icon: "home", label: "Асосӣ (меню)" },
   { href: "/categories", icon: "grid", label: "Категорияҳо" },
-  { href: "/catalog", icon: "search", label: "Каталог" },
+  { href: "/request", icon: "doc", label: "Дархост" },
   { href: "/cart", icon: "cart", label: "Сабад", badge: true },
   { href: "/profile", icon: "user", label: "Профил" },
 ];

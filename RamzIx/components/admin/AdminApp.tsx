@@ -38,7 +38,7 @@ function Gate({ mode, onOpen }: { mode: "set" | "locked"; onOpen: () => void }) 
   const [err, setErr] = useState("");
   const submit = async () => {
     if (mode === "set") {
-      if (pin.length < 4) return setErr("PIN камаш 4 рақам бошад");
+      if (pin.length < 6) return setErr("PIN камаш 6 рақам бошад");
       if (pin !== pin2) return setErr("PIN-ҳо як хел нестанд");
       if (!(await setPin(pin))) return setErr("Сервер ҷавоб надод — дубора кӯшиш кунед");
       onOpen();
@@ -49,7 +49,7 @@ function Gate({ mode, onOpen }: { mode: "set" | "locked"; onOpen: () => void }) 
     <div className="ad-gate">
       <span className="ad-gate-ic"><Icon name="shield" size={32} /></span>
       <h1>RamzIx Админ</h1>
-      <p>{mode === "set" ? "Аввал PIN-и худро таъин кунед (камаш 4 рақам)" : "PIN-ро ворид кунед"}</p>
+      <p>{mode === "set" ? "Аввал PIN-и худро таъин кунед (камаш 6 рақам)" : "PIN-ро ворид кунед"}</p>
       <input type="password" inputMode="numeric" autoFocus placeholder="PIN" value={pin} onChange={(e) => { setP(e.target.value); setErr(""); }} onKeyDown={(e) => e.key === "Enter" && mode === "locked" && submit()} />
       {mode === "set" && <input type="password" inputMode="numeric" placeholder="PIN-ро такрор кунед" value={pin2} onChange={(e) => { setP2(e.target.value); setErr(""); }} onKeyDown={(e) => e.key === "Enter" && submit()} />}
       {err && <em>{err}</em>}

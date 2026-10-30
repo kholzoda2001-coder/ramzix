@@ -6,7 +6,7 @@ import { RATES, SHIPPING, TO_USD, onPricingApplied, type Currency } from "./pric
 export type OrderStatus = "new" | "confirmed" | "bought" | "shipped" | "delivered" | "cancelled";
 export type OrderType = "pos" | "request";
 /** weightKg / volumeM3 — барои 1 воҳид */
-export type Item = { id: string; name: string; qty: number; unit: string; costTotal: number; markupPct: number; weightKg?: number; volumeM3?: number };
+export type Item = { id: string; name: string; qty: number; unit: string; costTotal: number; markupPct: number; weightKg?: number; volumeM3?: number; /** Дархости харидор: пайванд ва аксҳо */ link?: string; images?: string[] };
 export type Payment = { id: string; date: string; amount: number; method: string; note?: string };
 export type Order = {
   id: string;
@@ -167,7 +167,7 @@ export function clean(raw: unknown): Store {
     return [{
       id: o.id, code: str(o.code, 20), type: o.type === "request" ? "request" : "pos", date: str(o.date, 40),
       customer: { name: str(c.name, 120), phone: str(c.phone, 40), address: str(c.address, 300) },
-      items: (o.items as Record<string, unknown>[]).map((i) => ({ id: str(i.id, 20) || uid(), name: str(i.name, 150), qty: Math.max(0, num(i.qty)), unit: str(i.unit, 20) || "дона", costTotal: Math.max(0, num(i.costTotal)), markupPct: num(i.markupPct), weightKg: num(i.weightKg) || undefined, volumeM3: num(i.volumeM3) || undefined })),
+      items: (o.items as Record<string, unknown>[]).map((i) => ({ id: str(i.id, 20) || uid(), name: str(i.name, 150), qty: Math.max(0, num(i.qty)), unit: str(i.unit, 20) || "дона", costTotal: Math.max(0, num(i.costTotal)), markupPct: num(i.markupPct), weightKg: num(i.weightKg) || undefined, volumeM3: num(i.volumeM3) || undefined, link: /^https?:\/\//.test(str(i.link, 400)) ? str(i.link, 400) : undefined, images: Array.isArray(i.images) ? (i.images as unknown[]).filter((u): u is string => typeof u === "string" && /^https:\/\/\S{5,300}$/.test(u)).slice(0, 4) : undefined })),
       shippingCharged: Math.max(0, num(o.shippingCharged)), shippingCost: Math.max(0, num(o.shippingCost)),
       routeKey: str(o.routeKey, 30) || undefined,
       status: STATUSES.some((s) => s.id === o.status) ? (o.status as OrderStatus) : "new",

@@ -1632,10 +1632,13 @@ body { background: #e9e9e9; }
 .sub-row .soon { opacity: .75; }
 .tab-empty { min-height: 34dvh; background: #fff; }
 
-/* Категорияҳои саҳифаи асосӣ: 2 қатор × 6 нишон */
+/* Категорияҳои саҳифаи асосӣ: слайдер дар 2 қатор. Нишонҳо андозаи муқаррарӣ доранд (на фишурда), ба паҳлу кашида мешаванд;
+   нишони ним-намоён нишон медиҳад, ки боз ҳаст */
 @media (max-width: 999px) {
-  .cat-slider { grid-auto-flow: row; grid-template-rows: none; grid-template-columns: repeat(6, minmax(0, 1fr)); grid-auto-columns: auto; gap: 12px 0; }
-  .cat-slider .cs-card { min-width: 0; }
+  .cat-slider { display: grid; grid-auto-flow: column; grid-template-rows: repeat(2, auto); grid-template-columns: none; grid-auto-columns: 76px; gap: 12px 6px; justify-content: start; padding: 2px 12px 10px; scroll-snap-type: x proximity; }
+  .cat-slider .cs-card { min-width: 0; scroll-snap-align: start; }
+  .cat-slider .cs-img { width: 64px; height: 64px; }
+  .cat-slider .cs-card b { font-size: 12px; }
 }
 
 /* Нархи оптом ва Маҳсулоти машҳур: ду блок якдигарро пайравӣ мекунанд, ҳар кадом 4 мол */
@@ -1728,3 +1731,40 @@ body { background: #e9e9e9; }
 .ad-ship > b { font-size: 15px; }
 @media (min-width: 1000px) { .ad-logos { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
 .ad-savebar { grid-column: 1 / -1; }
+
+/* Саҳифаи «Дархост» */
+.rq-lead { margin: 12px 16px 0; font-size: 13.5px; color: var(--muted); line-height: 1.45; }
+.rq-send { width: 100%; justify-content: center; }
+.rq-source { display: grid; gap: 12px; border-radius: 6px; }
+.rq-source.bad { outline: 1px solid var(--red); outline-offset: 6px; }
+.rq-err { color: var(--red); font-size: 12px; font-style: normal; }
+.rq-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rq-th { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: #f4f4f4; border: 1px dashed #c9c9c9; display: grid; place-items: center; }
+.rq-th img { width: 100%; height: 100%; object-fit: cover; }
+.rq-add { color: #777; cursor: pointer; }
+.rq-x { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; display: grid; place-items: center; }
+.rq-fail { margin: 10px 16px 0; color: var(--red); font-size: 13px; text-align: center; }
+.rq-send:disabled { opacity: .6; }
+
+/* Админ: дархостҳои харидор (пайванд, акс, занг) */
+.ao-req { display: flex; gap: 6px; align-items: center; margin-top: 2px; }
+.ao-req img { width: 38px; height: 38px; border-radius: 6px; object-fit: cover; }
+.ao-req span { font-size: 12px; color: var(--muted); }
+.ao-call { padding: 0 14px; height: 40px; display: inline-flex; align-items: center; border-radius: 10px; background: var(--orange); color: #111; font-weight: 700; font-size: 13px; }
+.ad-req { display: grid; gap: 8px; }
+.ad-req a { color: var(--navy-3); font-weight: 600; font-size: 13px; overflow-wrap: anywhere; }
+.ad-req-imgs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.ad-req-imgs img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; }
+.ad-callbtn { display: flex; align-items: center; justify-content: center; text-align: center; }
+
+/* Ҳошияи майдонҳо ва тугмаҳои интихоб: равшантар аз навиштаи дохилашон (дархост, фармоиш, профил, админ) */
+:root { --field-line: #7d8491; }
+.ck-field input, .ck-field textarea, .ck-phone, .pf-form input, .pf-form textarea, .pf-form select,
+.ck-seg button, .pf-seg button, .ad-form input, .ad-form select, .ad-form textarea,
+.ad-card input, .ad-card select, .ad-card textarea, .ad-search, .ad-gate input { border-color: var(--field-line); }
+.ck-field input, .ck-field textarea, .ck-phone, .ck-seg button { border-width: 1.5px; }
+.ck-phone b { border-right-color: var(--field-line); }
+.rq-th { border-color: var(--field-line); border-width: 1.5px; }
+.rq-add { color: #555; }
+.ck-field input:focus, .ck-field textarea:focus, .ck-phone:focus-within, .ad-form input:focus, .ad-card input:focus, .ad-card select:focus, .ad-card textarea:focus { border-color: var(--orange-2); }
+.ck-field input::placeholder, .ck-field textarea::placeholder { color: #98a0ad; }

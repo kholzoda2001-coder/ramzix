@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { checkPin, clearTries, endSession, getPin, isAdmin, savePin, startSession, tooMany } from "@/lib/server/auth";
+import { checkPin, clearFails, clearTries, endSession, getPin, isAdmin, loginBlocked, recordFail, savePin, startSession, tooMany } from "@/lib/server/auth";
 import { dbReady } from "@/lib/server/db";
 
 export const dynamic = "force-dynamic";
@@ -23,19 +23,19 @@ export async function POST(req: NextRequest) {
     switch (b.action) {
       case "setup": // танҳо вақте PIN ҳанӯз таъин нашудааст
         if (rec) return fail("exists", 403);
-        if (pin.length < 4 || pin.length > 64) return fail("short");
+        if (pin.length < 6 || pin.length > 64) return fail("short");
         await savePin(pin); await startSession();
         return Response.json({ ok: true });
       case "login": {
         const ip = ipOf(req);
-        if (tooMany(ip)) return fail("too-many", 429);
-        if (!rec || !checkPin(pin, rec)) return fail("bad-pin", 401);
-        clearTries(ip); await startSession();
+        if (tooMany(ip) || (await loginBlocked())) return fail("too-many", 429);
+        if (!rec || !checkPin(pin, rec)) { await recordFail(); return fail("bad-pin", 401); }
+        clearTries(ip); await clearFails(); await startSession();
         return Response.json({ ok: true });
       }
       case "change":
         if (!(await isAdmin()) || !rec || !checkPin(String(b.old ?? ""), rec)) return fail("bad-pin", 401);
-        if (pin.length < 4 || pin.length > 64) return fail("short");
+        if (pin.length < 6 || pin.length > 64) return fail("short");
         await savePin(pin);
         return Response.json({ ok: true });
       case "logout":
