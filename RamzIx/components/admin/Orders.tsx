@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PAY_LABEL, PAY_METHODS, STATUSES, itemProfit, itemSell, orderVolume, orderWeight, routeOf, totals, useAdmin, type Order } from "@/lib/admin";
-import { WHATSAPP } from "@/lib/catalog";
+import { CONTACT } from "@/lib/pricing-config";
 import OrderForm from "./OrderForm";
 import { PayBar, PayChip, Sheet, StatusChip, dateStr } from "./ui";
 import { useFx } from "./fx";
@@ -185,7 +185,7 @@ function Detail({ order: o, admin, onClose }: { order: Order; admin: Admin; onCl
           <button className="ad-ghost red" onClick={() => setConfirmDel(true)}>Нест кардан</button>
         )}
       </div>
-      <small className="ad-hint">Рақами WhatsApp-и корхона: +{WHATSAPP}</small>
+      <small className="ad-hint">Рақами WhatsApp-и корхона: +{CONTACT.whatsapp}</small>
     </div>
   );
 }

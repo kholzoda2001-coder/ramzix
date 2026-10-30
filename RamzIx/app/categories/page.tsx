@@ -1,17 +1,13 @@
 import type { Metadata } from "next";
 import BottomNav from "@/components/BottomNav";
-import PageTop from "@/components/PageTop";
-import { CategoriesBody } from "@/components/HomeSections";
+import CategoriesView from "@/components/CategoriesView";
 
 export const metadata: Metadata = { title: "Категорияҳо — RamzIx" };
 
 export default function CategoriesPage() {
   return (
     <>
-      <PageTop title="Категорияҳо" />
-      <main className="list-main">
-        <CategoriesBody />
-      </main>
+      <main className="c2-main"><CategoriesView /></main>
       <BottomNav />
     </>
   );

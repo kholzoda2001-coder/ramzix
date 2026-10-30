@@ -2,78 +2,75 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { waLink } from "@/lib/catalog";
+import { COUNTRIES } from "@/lib/catalog";
+import { discountLadder } from "@/lib/pricing";
+import { SHIPPING } from "@/lib/pricing-config";
+import type { HeroCfg } from "@/lib/site-config";
+import { useCatalog } from "@/lib/useCatalog";
+import { useSite } from "@/lib/useSite";
+import { BannerSlide, Slider } from "./Banners";
 import Icon from "./Icon";
-import useDragScroll from "./useDragScroll";
 import { useT, T } from "./Lang";
-import WaLink from "./WaLink";
 
-const SLIDES = [
-  { key: "earbuds" },
-  { key: "global" },
-  { key: "tiers" },
-] as const;
-
+/* Баннерҳои варақаи «Ҳама»: рӯйхат, матн, ранг ва пайвандҳо аз admin (Сайт → Саҳифаи асосӣ) меоянд */
 export default function HeroSlider() {
   const { t } = useT();
-  const ref = useRef<HTMLDivElement>(null);
-  useDragScroll(ref);
-  const [i, setI] = useState(0);
+  const { products } = useCatalog();
+  const { hero } = useSite();
 
-  // Ҳар 5 сония слайди навбатӣ; ангушт ҳам кор мекунад (scroll-snap)
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const onScroll = () => setI(Math.round(el.scrollLeft / el.clientWidth));
-    el.addEventListener("scroll", onScroll, { passive: true });
-    const t = setInterval(() => {
-      const next = (Math.round(el.scrollLeft / el.clientWidth) + 1) % SLIDES.length;
-      el.scrollTo({ left: next * el.clientWidth, behavior: "smooth" });
-    }, 5000);
-    return () => { el.removeEventListener("scroll", onScroll); clearInterval(t); };
-  }, []);
+  // Нархи карго ва тахфиф аз танзимоти зинда: дар баннер ҳамеша қимати ҳозира нишон дода мешавад
+  const cargo = (["cn", "ae"] as const).map((c) => { const m = SHIPPING[c][0]; return { name: COUNTRIES[c].short, kg: m.perKgUsd, a: m.daysMin, b: m.daysMax }; });
+  const maxOff = String(discountLadder().at(-1)?.off ?? 0).replace(".", ",");
 
-  return (
-    <div className="hero">
-      <div className="hero-track" ref={ref}>
-        <div className="slide slide-img">
-          <Image src="/hero-earbuds.webp" alt={t("Наушникҳои бесими Anker soundcore")} width={780} height={480} priority className="slide-photo" />
-          <div className="slide-img-text">
-            <span className="chip-sm">Anker · soundcore</span>
-            <h2><T>Наушникҳои бесим</T></h2>
-            <p><T>Аслӣ, аз Дубай, бо кафолат</T></p>
-            <Link href="/#popular" className="btn btn-sm btn-navy"><T>Харид</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>
-          </div>
+  const slides = hero.filter((h) => h.active).flatMap((h) => {
+    if (h.kind === "category") {
+      const list = products.filter((p) => p.category === h.category);
+      return list.length ? [{ h, list }] : [];
+    }
+    return [{ h, list: [] }];
+  });
+
+  const parts = (title: string) => title.split("*").map((s, i) => (i % 2 ? <span key={i}><em>{t(s.trim())}</em>{" "}</span> : <span key={i}>{t(s.trim())}{" "}</span>));
+
+  const render = ({ h, list }: { h: HeroCfg; list: typeof products }) => {
+    if (h.kind === "discount") {
+      return (
+        <div key={h.id} className="slide slide-big">
+          <span className="sb-tag">{t(h.tag)}</span>
+          <span className="sb-up"><T>то</T></span>
+          <b className="sb-num">{maxOff}<i>%</i></b>
+          <span className="sb-sub">{t(h.sub)}</span>
+          <Link href={h.href || "/#rfq"} className="sb-btn"><T>Харид</T></Link>
+          <Image src="/hero-earbuds.webp" alt="" width={780} height={480} className="sb-photo" />
         </div>
-
-        <div className="slide slide-global">
-          <span className="chip-sm light"><Icon name="globe" size={13} /> <T>Таъминоти байналмилалӣ</T></span>
-          <h2><T>Маҳсулот аз</T> <em><T>Дубай, Чин, Туркия</T></em> <T>барои мағозаи шумо</T></h2>
-          <p><T>Расонидан ба тамоми Тоҷикистон</T></p>
-          <Link href="/#countries" className="btn btn-sm btn-orange"><T>Дидани каталог</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>
+      );
+    }
+    if (h.kind === "global") {
+      return (
+        <div key={h.id} className="slide slide-global">
+          <span className="chip-sm light"><Icon name="globe" size={13} /> {t(h.tag)}</span>
+          <h2>{parts(h.title)}</h2>
+          <p>{h.sub ? t(h.sub) : cargo.map((c) => t("{c}: ${k}/кг, {a}–{b} рӯз", { c: t(c.name), k: String(c.kg).replace(".", ","), a: c.a, b: c.b })).join(" · ")}</p>
+          <Link href={h.href || "/catalog"} className="btn btn-sm btn-orange"><T>Дидани каталог</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>
           <div className="slide-art" aria-hidden="true">
             <svg viewBox="0 0 120 90"><g fill="none" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 62h100l-12 16H22z" fill="#13325e" /><path d="M28 62V46h22v16M54 62V38h22v24M80 62V50h16v12" fill="#1d3a66" /><path d="M60 38V22l10 6-10 6" /></g><g stroke="#ffffff55" strokeWidth="2" strokeLinecap="round"><path d="M14 84h20M44 86h30M84 84h22" /></g></svg>
           </div>
         </div>
+      );
+    }
+    if (h.kind === "category") {
+      return <BannerSlide key={h.id} title={h.title} sub={h.sub} href={h.href || `/catalog?category=${h.category}`} from={h.from} to={h.to} list={list} fill={list} />;
+    }
+    return (
+      <div key={h.id} className="slide slide-custom" style={{ background: `linear-gradient(135deg, ${h.from}, ${h.to})` }}>
+        {h.tag && <span className="chip-sm light">{t(h.tag)}</span>}
+        <h2>{parts(h.title)}</h2>
+        {h.sub && <p>{t(h.sub)}</p>}
+        {h.href && <Link href={h.href} className="btn btn-sm btn-orange"><T>Харид</T> <Icon name="chevron" size={14} stroke={2.4} /></Link>}
+      </div>
+    );
+  };
 
-        <div className="slide slide-tiers">
-          <span className="chip-sm light"><Icon name="tag" size={13} /> <T>Нархи оптовӣ</T></span>
-          <h2><T>Бештар харед,</T> <em><T>арзонтар</T></em> <T>пардохт кунед</T></h2>
-          <p><T>Барои фармоиши калон нархи махсус</T></p>
-          <WaLink text="Салом! Барои фармоиши калон нархи оптовӣ лозим аст." className="btn btn-sm btn-orange"><Icon name="wa" size={16} /> <T>Дар WhatsApp пурсед</T></WaLink>
-        </div>
-      </div>
-      <div className="hero-dots">
-        {SLIDES.map((s, k) => (
-          <button
-            key={s.key}
-            className={k === i ? "on" : ""}
-            aria-label={t("Слайди {n}", { n: k + 1 })}
-            onClick={() => ref.current?.scrollTo({ left: k * ref.current.clientWidth, behavior: "smooth" })}
-          />
-        ))}
-      </div>
-    </div>
-  );
+  if (!slides.length) return null;
+  return <Slider count={slides.length}>{slides.map(render)}</Slider>;
 }

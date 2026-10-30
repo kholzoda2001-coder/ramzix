@@ -35,6 +35,7 @@ const PATHS: Record<string, React.ReactNode> = {
   cup: <><path d="M6 4h12l-1.4 15.2a1.8 1.8 0 0 1-1.8 1.6H9.2a1.8 1.8 0 0 1-1.8-1.6z" /><path d="M6.7 10h10.6" /></>,
   filter: <><path d="M4 6h16M7 12h10M10 18h4" /></>,
   sort: <><path d="M7 4v16M7 20l-3-3M7 20l3-3M17 20V4M17 4l-3 3M17 4l3 3" /></>,
+  list: <path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" />,
   minus: <path d="M5 12h14" />,
   plus: <path d="M12 5v14M5 12h14" />,
   clock: <><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>,

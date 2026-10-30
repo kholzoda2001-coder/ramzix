@@ -25,6 +25,8 @@ import FilterSheet from "./FilterSheet";
 import { T, useT } from "./Lang";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
+import ModeSwitch, { usePriceMode } from "./PriceMode";
+import ProductRow from "./ProductRow";
 
 const PAGE = 12;
 
@@ -38,6 +40,10 @@ export default function CatalogView() {
   const [q, setQ] = useState(filters.q);
   const [sheet, setSheet] = useState(false);
   const [shown, setShown] = useState(PAGE);
+  // Намуд: агар харидор худаш интихоб накарда бошад, дар «Оптом» рӯйхат, дар «Чакана» шабака
+  const [view, setView] = useState<"grid" | "list" | null>(null);
+  const mode = usePriceMode();
+  const isList = (view ?? (mode === "whole" ? "list" : "grid")) === "list";
   const key = sp.toString();
 
   const list = useMemo(() => sortProducts(filterProducts(products, filters), filters.sort), [filters, products]);
@@ -87,10 +93,6 @@ export default function CatalogView() {
             <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("Ҷустуҷӯи маҳсулот ё бренд")} aria-label={t("Ҷустуҷӯ")} />
             {q && <button type="button" onClick={() => { setQ(""); go({ ...filters, q: "" }); }} aria-label={t("Тоза кардан")}><Icon name="close" size={16} /></button>}
           </form>
-          <button className="ic-round filter-btn" onClick={() => setSheet(true)} aria-label={t("Филтрҳо")}>
-            <Icon name="filter" size={20} />
-            {nActive > 0 && <span className="badge">{nActive}</span>}
-          </button>
           <Link href="/cart" className="ic-round" aria-label={t("Сабад")}><Icon name="cart" size={21} /><CartBadge /></Link>
         </div>
         <div className="quick-cats">
@@ -104,9 +106,13 @@ export default function CatalogView() {
       </header>
 
       <main className="cat-main">
-        <div className="cat-title">
-          <h1>{title}</h1>
-          <span>{t("{n} маҳсулот", { n: list.length })}</span>
+        <h1 className="sr-only">{title}</h1>
+        <div className="cat-bar">
+          <ModeSwitch light />
+          <div className="view-sw" role="group" aria-label={t("Намуд")}>
+            <button aria-pressed={!isList} aria-label={t("Шабака")} className={!isList ? "on" : ""} onClick={() => setView("grid")}><Icon name="grid" size={18} /></button>
+            <button aria-pressed={isList} aria-label={t("Рӯйхат")} className={isList ? "on" : ""} onClick={() => setView("list")}><Icon name="list" size={18} /></button>
+          </div>
         </div>
 
         <div className="toolbar">
@@ -120,6 +126,7 @@ export default function CatalogView() {
               {SORTS.map((s) => <option key={s.id} value={s.id}>{t(s.label)}</option>)}
             </select>
           </label>
+          <span className="tb-count">{t("{n} маҳсулот", { n: list.length })}</span>
         </div>
 
         {chips.length > 0 && (
@@ -133,7 +140,9 @@ export default function CatalogView() {
 
         {list.length > 0 ? (
           <>
-            <div className="grid2">{list.slice(0, shown).map((p) => <ProductCard key={p.slug} p={p} />)}</div>
+            {isList
+              ? <div className="prows">{list.slice(0, shown).map((p) => <ProductRow key={p.slug} p={p} />)}</div>
+              : <div className="grid2">{list.slice(0, shown).map((p) => <ProductCard key={p.slug} p={p} />)}</div>}
             {list.length > shown && (
               <button className="more-btn" onClick={() => setShown(shown + PAGE)}>
                 <T>Боз нишон додан</T> <span>{list.length - shown}</span> <Icon name="down" size={16} />

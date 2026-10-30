@@ -2,32 +2,34 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { hasPin, isUnlocked, lock, setPin, unlock, useAdmin } from "@/lib/admin";
+import { gateState, lock, setPin, unlock, useAdmin } from "@/lib/admin";
 import Icon from "../Icon";
 import Dashboard from "./Dashboard";
 import OrderForm from "./OrderForm";
 import Orders from "./Orders";
 import Products from "./Products";
 import Settings from "./Settings";
+import Site from "./Site";
 import { useFx } from "./fx";
 import { CURRENCIES } from "@/lib/currency";
 
-type Tab = "dash" | "pos" | "orders" | "products" | "settings";
+type Tab = "dash" | "pos" | "orders" | "products" | "site" | "settings";
 const TABS: { id: Tab; label: string; icon: string }[] = [
   { id: "dash", label: "Дашборд", icon: "grid" },
   { id: "pos", label: "POS", icon: "plus" },
   { id: "orders", label: "Фармоишҳо", icon: "doc" },
   { id: "products", label: "Маҳсулот", icon: "box" },
+  { id: "site", label: "Сайт", icon: "tag" },
   { id: "settings", label: "Танзимот", icon: "shield" },
 ];
 
 export default function AdminApp() {
   const [gate, setGate] = useState<"loading" | "set" | "locked" | "open">("loading");
-  useEffect(() => { setGate(isUnlocked() ? "open" : hasPin() ? "locked" : "set"); }, []);
+  useEffect(() => { gateState().then(setGate); }, []);
 
   if (gate === "loading") return <div className="ad-gate" />;
   if (gate !== "open") return <Gate mode={gate} onOpen={() => setGate("open")} />;
-  return <Panel onLock={() => { lock(); setGate("locked"); }} />;
+  return <div className="ad-app"><Panel onLock={() => { lock().then(() => setGate("locked")); }} /></div>;
 }
 
 function Gate({ mode, onOpen }: { mode: "set" | "locked"; onOpen: () => void }) {
@@ -38,10 +40,10 @@ function Gate({ mode, onOpen }: { mode: "set" | "locked"; onOpen: () => void }) 
     if (mode === "set") {
       if (pin.length < 4) return setErr("PIN камаш 4 рақам бошад");
       if (pin !== pin2) return setErr("PIN-ҳо як хел нестанд");
-      await setPin(pin);
+      if (!(await setPin(pin))) return setErr("Сервер ҷавоб надод — дубора кӯшиш кунед");
       onOpen();
     } else if (await unlock(pin)) onOpen();
-    else setErr("PIN нодуруст аст");
+    else setErr("PIN нодуруст аст ё кӯшишҳо зиёд шуданд");
   };
   return (
     <div className="ad-gate">
@@ -80,6 +82,7 @@ function Panel({ onLock }: { onLock: () => void }) {
         {tab === "pos" && <OrderForm key={"new-" + fx.cur} onDone={(id) => open(id)} />}
         {tab === "orders" && <Orders admin={admin} openId={openId} onOpen={setOpenId} />}
         {tab === "products" && <Products admin={admin} />}
+        {tab === "site" && <Site />}
         {tab === "settings" && <Settings admin={admin} onLock={onLock} />}
       </main>
       <nav className="ad-nav">

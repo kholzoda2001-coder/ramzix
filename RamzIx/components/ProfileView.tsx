@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { WHATSAPP, waLink } from "@/lib/catalog";
+import { waLink } from "@/lib/catalog";
+import { CONTACT } from "@/lib/pricing-config";
 import { useCatalog } from "@/lib/useCatalog";
 import { CURRENCIES } from "@/lib/currency";
 import { LANGS } from "@/lib/i18n";
@@ -130,7 +131,7 @@ export default function ProfileView() {
       <section className="pf-card pf-links">
         <a href={waLink(t("Салом! Савол дорам."))} target="_blank" rel="noreferrer">
           <span className="pl-ic wa"><Icon name="wa" size={20} /></span>
-          <span><b><T>Менеҷер дар WhatsApp</T></b><small>+{WHATSAPP}</small></span>
+          <span><b><T>Менеҷер дар WhatsApp</T></b><small>+{CONTACT.whatsapp}</small></span>
           <Icon name="chevron" size={16} stroke={2.4} />
         </a>
         <Link href="/cart">

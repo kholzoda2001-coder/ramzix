@@ -11,6 +11,7 @@ import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
+import ProductCard from "./ProductCard";
 import ProductImage from "./ProductImage";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -18,7 +19,7 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export default function CartView() {
   const { price, sum, label } = useMoney();
   const { t } = useT();
-  const { getProduct, ready: catReady } = useCatalog();
+  const { getProduct, products, ready: catReady } = useCatalog();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes, getProduct]);
@@ -29,9 +30,22 @@ export default function CartView() {
     lines.filter((l) => !getProduct(l.slug)).forEach((l) => remove(lineKey(l)));
   }, [ready, catReady, lines, remove, getProduct]);
 
+  // Тавсияҳо: аввал аз ҳамон категорияҳо, моли дар сабадбуда нишон дода намешавад
+  const recs = useMemo(() => {
+    const inCart = new Set(lines.map((l) => l.slug));
+    const cats = new Set(lines.flatMap((l) => { const p = getProduct(l.slug); return p ? [p.category] : []; }));
+    return products.filter((p) => !inCart.has(p.slug)).sort((a, b) => Number(cats.has(b.category)) - Number(cats.has(a.category)) || b.reviews - a.reviews).slice(0, 6);
+  }, [lines, products, getProduct]);
+  const recBlock = recs.length > 0 && (
+    <section className="cart-recs">
+      <h2><T>Шояд ба шумо писанд ояд</T></h2>
+      <div className="grid2">{recs.map((p) => <ProductCard key={p.slug} p={p} />)}</div>
+    </section>
+  );
+
   const back = () => (history.length > 1 ? router.back() : router.push("/"));
 
-  if (!ready) return <CartShell onBack={back}><div className="cart-empty" /></CartShell>;
+  if (!ready) return <CartShell onBack={back}><div className="skel-card" /><div className="skel-card short" /></CartShell>;
 
   if (order.groups.length === 0) {
     return (
@@ -42,6 +56,7 @@ export default function CartView() {
           <span><T>Маҳсулотро интихоб кунед ва ба сабад илова намоед</T></span>
           <Link href="/" className="btn btn-orange" style={{ marginTop: 14 }}><T>Ба каталог</T></Link>
         </div>
+        {recBlock}
       </CartShell>
     );
   }
@@ -75,7 +90,7 @@ export default function CartView() {
               const rfq = l.qty >= rfqFromOf(l.p);
               return (
                 <div className="cl" key={l.key}>
-                  <Link href={`/product/${l.p.slug}`} className="cl-img"><ProductImage src={l.p.images[0]} alt={t(l.p.name)} /></Link>
+                  <Link href={`/product/${l.p.slug}`} className="cl-img"><ProductImage src={l.p.images[0]} alt={t(l.p.name)} sizes="96px" /></Link>
                   <div className="cl-body">
                     <Link href={`/product/${l.p.slug}`} className="cl-name">{t(l.p.name)}</Link>
                     {(l.size || l.color) && <div className="cl-var">{[l.color && `${t("Ранг")}: ${t(l.color)}`, l.size && `${t("Андоза")}: ${l.size}`].filter(Boolean).join(" · ")}</div>}
@@ -163,6 +178,8 @@ export default function CartView() {
         <div className="est-row"><span><T>Расонидан</T></span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : t("бо тасдиқ")}</b></div>
         <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(order.total)} {label}</b></div>
       </div>
+
+      {recBlock}
 
       <div className="cart-bar">
         <div className="cb-total"><small><T>Ҷамъ</T></small><b>{sum(order.total)} {label}</b></div>

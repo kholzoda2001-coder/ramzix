@@ -1,7 +1,4 @@
-import raw from "@/data/catalog.json";
-import extra from "@/data/extra-products.json";
-import { cleanBrand } from "./brands";
-import type { Currency } from "./pricing-config";
+import { CONTACT, type Currency } from "./pricing-config";
 
 export type CountryCode = "ae" | "cn" | "tr" | "tj";
 
@@ -40,13 +37,13 @@ export type Product = {
   sizes: string[] | null;
   /** Рангҳо (вариатсия): image — индекси акс дар images */
   colors?: { name: string; hex: string; image?: number }[];
+  /** Номи аслии таъминкунанда (барои ҷустуҷӯ) */
+  nameOriginal?: string;
   description: string | null;
   sale?: Sale;
 };
 
-export const products: Product[] = [...(raw as unknown as Product[]), ...(extra as unknown as Product[])].map((p) => ({ ...p, brand: cleanBrand(p.brand) }));
-
-export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
+/* Маҳсулот дар базаи маълумот (Supabase) нигоҳ дошта мешавад — ниг. lib/server/catalog.ts ва lib/useCatalog.tsx */
 
 export const COUNTRIES: Record<CountryCode, { name: string; short: string; note: string; days: string }> = {
   ae: { name: "Аморат (Дубай)", short: "Дубай", note: "Электроника, брендҳо", days: "30–40 рӯз" },
@@ -59,8 +56,12 @@ export const CATEGORIES: { id: string; name: string; icon: string; tint: string 
   { id: "audio", name: "Наушник ва аудио", icon: "headphones", tint: "#e8eefc" },
   { id: "phones", name: "Телефон ва аксессуар", icon: "phone", tint: "#fde8f1" },
   { id: "men", name: "Либоси мардона", icon: "shirt", tint: "#e6f4fb" },
+  { id: "women", name: "Либоси занона", icon: "shirt", tint: "#fde8f1" },
+  { id: "kids", name: "Кӯдакона", icon: "baby", tint: "#fdf3e1" },
+  { id: "shoes", name: "Пояфзол", icon: "tag", tint: "#f1ecfd" },
   { id: "home", name: "Хона ва ошхона", icon: "home", tint: "#f1ecfd" },
   { id: "beauty", name: "Зебоӣ ва саломатӣ", icon: "sparkle", tint: "#fdecec" },
+  { id: "perfume", name: "Атриёт", icon: "sparkle", tint: "#f6e9fb" },
   { id: "food", name: "Озуқа ва нӯшокӣ", icon: "cup", tint: "#e7f6ee" },
   { id: "office", name: "Компютер ва офис", icon: "laptop", tint: "#fdf3e1" },
   { id: "all", name: "Ҳамаи категорияҳо", icon: "grid", tint: "#eef1f6" },
@@ -79,5 +80,4 @@ export const fmtPrice = (n: number) => {
 };
 
 /** Рақами WhatsApp бе «+» ва фосила (формати wa.me): +971 50 838 5259 */
-export const WHATSAPP = "971508385259";
-export const waLink = (text: string) => `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(text)}`;
+export const waLink = (text: string) => `https://wa.me/${CONTACT.whatsapp}?text=${encodeURIComponent(text)}`;

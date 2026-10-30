@@ -51,7 +51,7 @@ export default function Lightbox({ images, name, start, onClose }: { images: str
         }}
       >
         {images.map((src, i) => (
-          <div className="lb-slide" key={src}><ProductImage src={src} alt={`${name} — ${i + 1}`} eager /></div>
+          <div className="lb-slide" key={src}><ProductImage src={src} alt={`${name} — ${i + 1}`} eager sizes="100vw" /></div>
         ))}
       </div>
       {images.length > 1 && (

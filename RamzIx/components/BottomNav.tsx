@@ -8,8 +8,8 @@ import { useT, T } from "./Lang";
 
 const ITEMS = [
   { href: "/", icon: "home", label: "Асосӣ (меню)" },
-  { href: "/catalog", icon: "grid", label: "Каталог" },
-  { href: "/#rfq", icon: "doc", label: "Дархостҳо" },
+  { href: "/categories", icon: "grid", label: "Категорияҳо" },
+  { href: "/catalog", icon: "search", label: "Каталог" },
   { href: "/cart", icon: "cart", label: "Сабад", badge: true },
   { href: "/profile", icon: "user", label: "Профил" },
 ];

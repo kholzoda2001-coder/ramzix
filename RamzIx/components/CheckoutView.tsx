@@ -15,12 +15,14 @@ import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
 import ContactFields from "./ContactFields";
+import { useText } from "@/lib/useSite";
 
 type Errors = Partial<Record<"name" | "phone" | "address", boolean>>;
 type Done = { code: string; link: string };
 
 export default function CheckoutView() {
   const { t } = useT();
+  const tx = useText();
   const { getProduct } = useCatalog();
   const { price, sum, label } = useMoney();
   const { profile, ready: profileReady } = useProfile();
@@ -135,14 +137,14 @@ export default function CheckoutView() {
         />
       </section>
 
-      <p className="ck-note"><Icon name="shield" size={14} /> <T>Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.</T></p>
+      <p className="ck-note"><Icon name="shield" size={14} /> {tx("checkoutNote")}</p>
 
       <section className="ck-card">
         <h2><span className="ck-n">3</span><T>Фармоиши шумо</T></h2>
         <div className="ck-lines">
           {order.groups.flatMap((g) => g.lines).map((l) => (
             <div className="ck-line" key={l.key}>
-              <span className="ck-img"><ProductImage src={l.p.images[0]} alt={t(l.p.name)} /></span>
+              <span className="ck-img"><ProductImage src={l.p.images[0]} alt={t(l.p.name)} sizes="96px" /></span>
               <span className="ck-info">
                 <b>{t(l.p.name)}</b>
                 <small>

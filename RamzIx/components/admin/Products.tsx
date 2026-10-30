@@ -87,7 +87,7 @@ export default function Products({ admin }: { admin: Admin }) {
   return (
     <>
       <button className="ad-primary" onClick={() => { setErr(""); setForm(blank()); }}>+ Маҳсулоти нав</button>
-      <p className="ad-hint">Маҳсулоте, ки илова мекунед ва «Фаъол» аст, дар сайт ҳамон лаҳза пайдо мешавад (ҳоло дар ҳамин дастгоҳ; баъди пайвастани база — барои ҳама).</p>
+      <p className="ad-hint">Маҳсулоте, ки илова мекунед ва «Фаъол» аст, баъди захира дар сайт барои ҳама пайдо мешавад.</p>
 
       {admin.products.length > 4 && <input className="ad-search" placeholder="Ҷустуҷӯ" value={q} onChange={(e) => setQ(e.target.value)} />}
 
@@ -96,7 +96,7 @@ export default function Products({ admin }: { admin: Admin }) {
           {list.map((p) => (
             <div className={`ad-prod ${p.active ? "" : "off"}`} key={p.id}>
               <button className="ap-main" onClick={() => { setErr(""); setForm(fromProduct(p)); }}>
-                <span className="ap-img">{p.images[0] ? <ProductImage src={p.images[0]} alt="" /> : "📦"}</span>
+                <span className="ap-img">{p.images[0] ? <ProductImage src={p.images[0]} alt="" sizes="96px" /> : "📦"}</span>
                 <span className="ap-t">
                   <b>{p.name}</b>
                   <small>{COUNTRIES[p.country].short} · {CATEGORIES.find((c) => c.id === p.category)?.name} · {p.unit}</small>
@@ -120,7 +120,7 @@ export default function Products({ admin }: { admin: Admin }) {
               <div className="ad-imgs">
                 {form.images.map((src, i) => (
                   <span className="ad-img" key={i}>
-                    <ProductImage src={src} alt="" />
+                    <ProductImage src={src} alt="" sizes="96px" />
                     <button onClick={() => set({ images: form.images.filter((_, k) => k !== i) })} aria-label="Хориҷ">✕</button>
                     {i === 0 && <em>Асосӣ</em>}
                   </span>

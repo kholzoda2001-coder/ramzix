@@ -1,4 +1,4 @@
-import { CATEGORIES, COUNTRIES, products, unitOf, type CountryCode, type Product } from "./catalog";
+import { CATEGORIES, COUNTRIES, unitOf, type CountryCode, type Product } from "./catalog";
 import { listUnitPrice } from "./pricing";
 
 /* ---------- бренд ---------- */
@@ -7,7 +7,7 @@ export const brandSlug = (b: string) => b.toLowerCase().replace(/[^\p{L}\p{N}]+/
 
 export type Brand = { slug: string; name: string; count: number; countries: CountryCode[] };
 
-export function getBrands(list: Product[] = products): Brand[] {
+export function getBrands(list: Product[] = []): Brand[] {
   const map = new Map<string, Brand>();
   for (const p of list) {
     if (!p.brand) continue;
@@ -20,7 +20,27 @@ export function getBrands(list: Product[] = products): Brand[] {
   return [...map.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
 }
 
-export const categoryCount = (id: string, list: Product[] = products) => list.filter((p) => p.category === id).length;
+export const categoryCount = (id: string, list: Product[] = []) => list.filter((p) => p.category === id).length;
+
+/* Маҳсулоте, ки категорияро беҳтар нишон медиҳад (аз рӯи ном) — барои акси муқова */
+const COVER_HINT: Record<string, RegExp> = {
+  audio: /earbud|headphone|earphone/i,
+  phones: /charger|power bank|smart ?watch/i,
+  men: /jacket|sweater|hoodie|t-shirt/i,
+  home: /lamp|towel|faucet/i,
+  beauty: /hair dryer|comb|makeup|massag/i,
+  office: /desk|mouse|laptop/i,
+};
+
+/** Акси муқова барои категория: маҳсулоти мувофиқ ба ном, баъд машҳуртарин (бо баҳо/шарҳ) */
+export function categoryCover(id: string, list: Product[] = []): string | null {
+  const hint = COVER_HINT[id];
+  const score = (p: Product) => (hint?.test(p.name) ? 1e6 : 0) + (p.source !== "cjdropshipping" ? 1e4 : 0) + (p.reviews ?? 0) * 10 + (p.rating ?? 0);
+  const best = list
+    .filter((p) => p.category === id && p.images[0] && !p.images[0].endsWith("placeholder.svg"))
+    .sort((a, b) => score(b) - score(a))[0];
+  return best?.images[0] ?? null;
+}
 
 /* ---------- филтрҳо ---------- */
 
@@ -91,14 +111,25 @@ export const basePrice = (p: Product) => listUnitPrice(p);
 
 const norm = (s: string) => s.toLowerCase();
 
+/* Калимаҳои ҷустуҷӯ, ки як гурӯҳи молро дарбар мегиранд (барои нишонҳои саҳифаи асосӣ) */
+const SYNONYMS: Record<string, string[]> = {
+  "нӯшокӣ": ["нӯшокӣ", "нӯшокии", "monster", "оби минералӣ", "чойи"],
+  "ошхона": ["ошхона", "миксер"],
+};
+
 export function filterProducts(items: Product[], f: Filters): Product[] {
   const q = norm(f.q.trim());
+  const terms = SYNONYMS[q] ?? [q];
   return items.filter((p) => {
     if (f.category.length && !f.category.includes(p.category)) return false;
     if (f.brand.length && !(p.brand && f.brand.includes(brandSlug(p.brand)))) return false;
     if (f.country.length && !f.country.includes(p.country)) return false;
     if (f.unit.length && !f.unit.includes(unitOf(p))) return false;
-    if (q && !norm(`${p.name} ${p.subtitle ?? ""} ${p.brand ?? ""} ${p.slug}`).includes(q)) return false;
+    if (q) {
+      // Барои гурӯҳҳо танҳо ном: зеретитри «Хона ва ошхона» дар ҳамаи молҳои хона ҳаст
+      const hay = norm(SYNONYMS[q] ? `${p.name} ${p.nameOriginal ?? ""}` : `${p.name} ${p.nameOriginal ?? ""} ${p.subtitle ?? ""} ${p.brand ?? ""} ${p.slug}`);
+      if (!terms.some((t) => hay.includes(t))) return false;
+    }
     if (f.min !== undefined || f.max !== undefined) {
       const price = basePrice(p);
       if (f.min !== undefined && price < f.min) return false;
@@ -120,4 +151,4 @@ export function sortProducts(items: Product[], sort: Sort): Product[] {
 }
 
 export const categoryName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
-export const brandName = (slug: string, list: Product[] = products) => getBrands(list).find((b) => b.slug === slug)?.name ?? slug;
+export const brandName = (slug: string, list: Product[] = []) => getBrands(list).find((b) => b.slug === slug)?.name ?? slug;

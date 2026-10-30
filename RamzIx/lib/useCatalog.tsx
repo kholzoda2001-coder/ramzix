@@ -1,29 +1,33 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { toStorefront, readAdminProducts } from "./admin";
-import { products as staticProducts, type Product } from "./catalog";
+import { toStorefront, type AdminProduct } from "./admin-core";
+import type { Product } from "./catalog";
 import { cleanBrand } from "./brands";
 
-/* Каталоги сайт = маҳсулоти доимӣ + маҳсулоти фаъоли админ (ҳоло аз ҳамин дастгоҳ; баъд аз база) */
+/* Каталоги сайт = маҳсулоти фаъол аз база. `initial` аз сервер меояд (бе вахти холӣ), баъд дар клиент нав мешавад. */
 type Ctx = { products: Product[]; getProduct: (slug: string) => Product | undefined; ready: boolean };
-const Cat = createContext<Ctx>({ products: staticProducts, getProduct: (s) => staticProducts.find((p) => p.slug === s), ready: false });
+const Cat = createContext<Ctx>({ products: [], getProduct: () => undefined, ready: false });
 export const useCatalog = () => useContext(Cat);
 
-export function CatalogProvider({ children }: { children: React.ReactNode }) {
-  const [extra, setExtra] = useState<Product[]>([]);
-  const [ready, setReady] = useState(false);
+export function CatalogProvider({ children, initial = [] }: { children: React.ReactNode; initial?: Product[] }) {
+  const [all, setExtra] = useState<Product[]>(initial);
+  const [ready, setReady] = useState(initial.length > 0);
   useEffect(() => {
-    const load = () => setExtra(readAdminProducts().filter((p) => p.active && p.name && p.cost > 0).map((p) => { const x = toStorefront(p); return { ...x, brand: cleanBrand(x.brand) }; }));
-    load(); setReady(true);
-    window.addEventListener("ramzix-admin-change", load);
-    window.addEventListener("storage", load);
-    return () => { window.removeEventListener("ramzix-admin-change", load); window.removeEventListener("storage", load); };
+    let alive = true;
+    const load = () => fetch("/api/products").then((r) => r.json()).then((d: { products?: AdminProduct[] }) => {
+      if (!alive) return;
+      setExtra((d.products ?? []).filter((p) => p.active && p.name && p.cost > 0).map((p) => { const x = toStorefront(p); return { ...x, brand: cleanBrand(x.brand) }; }));
+    }).catch(() => {}).finally(() => alive && setReady(true));
+    load();
+    // Баъди тағйироти admin (дар ҳамин браузер) каталог аз нав гирифта мешавад
+    const t = { id: 0 as unknown as ReturnType<typeof setTimeout> };
+    const onChange = () => { clearTimeout(t.id); t.id = setTimeout(load, 800); };
+    window.addEventListener("ramzix-admin-change", onChange);
+    return () => { alive = false; clearTimeout(t.id); window.removeEventListener("ramzix-admin-change", onChange); };
   }, []);
   const value = useMemo<Ctx>(() => {
-    const slugs = new Set(staticProducts.map((p) => p.slug));
-    const all = [...extra.filter((p) => !slugs.has(p.slug)), ...staticProducts];
     return { products: all, getProduct: (slug) => all.find((p) => p.slug === slug), ready };
-  }, [extra, ready]);
+  }, [all, ready]);
   return <Cat.Provider value={value}>{children}</Cat.Provider>;
 }

@@ -31,7 +31,8 @@ const make = (cur: CurrencyId, setCur: (c: CurrencyId) => void): Money => {
     const r = Math.round(n * 10) / 10;
     return (Number.isInteger(r) ? String(r) : r.toFixed(1)).replace(".", ",");
   };
-  const sum = (tjs: number) => (cur === "TJS" ? space(conv(tjs)) : dec(conv(tjs)));
+  // Маблағ бо дирам/сент то 1000 — то ҷамъ бо қисмҳо дар ҳамаи асъорҳо баробар бошад
+  const sum = (tjs: number) => dec(conv(tjs));
   return { cur, label, setCur, price, sum, toTjs: (n) => toTjs(n, cur), conv };
 };
 

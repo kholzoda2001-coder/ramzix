@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { PAY_METHODS, ROUTES, adminCostTjs, STATUSES, itemProfit, itemSell, newId, orderVolume, orderWeight, round, routeCost, routeOf, totals, useAdmin, type Item, type Order, type OrderType } from "@/lib/admin";
-import { COUNTRIES, products as catalog, unitOf } from "@/lib/catalog";
+import { COUNTRIES, unitOf } from "@/lib/catalog";
 import { costPerUnit } from "@/lib/pricing";
 import ProductImage from "../ProductImage";
 import { getDefaultMarkup } from "./settings-store";
@@ -40,10 +40,6 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
   const all: Hit[] = useMemo(
     () => [
       ...admin.products.map((p) => ({ key: "a" + p.id, name: p.name, sub: ["Маҳсулоти ман", COUNTRIES[p.country].short].join(" · "), unit: p.unit, unitCost: adminCostTjs(p), markup: p.markupPct, weight: p.weightKg || undefined, vol: p.volumeM3 || undefined, country: p.country, image: p.images[0] })),
-      ...catalog.map((p) => ({
-        key: p.slug, name: p.name, sub: [p.brand, COUNTRIES[p.country].short].filter(Boolean).join(" · "), unit: unitOf(p),
-        unitCost: costPerUnit(p), weight: p.weightKg, vol: p.volumeM3, country: p.country, image: p.images[0],
-      })),
     ],
     [admin.products],
   );
@@ -118,7 +114,7 @@ export default function OrderForm({ initial, onDone }: { initial?: Order; onDone
             <div className="ad-hits">
               {hits.map((h) => (
                 <button key={h.key} onClick={() => addHit(h)}>
-                  <span className="ad-hit-img">{h.image ? <ProductImage src={h.image} alt="" /> : "📦"}</span>
+                  <span className="ad-hit-img">{h.image ? <ProductImage src={h.image} alt="" sizes="96px" /> : "📦"}</span>
                   <span className="ad-hit-t"><b>{h.name}</b><small>{h.sub} · {m(h.unitCost)} {label}/{h.unit}</small></span>
                   <span className="ad-hit-add">+</span>
                 </button>
