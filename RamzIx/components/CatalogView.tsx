@@ -28,7 +28,7 @@ import ProductCard from "./ProductCard";
 import ModeSwitch from "./PriceMode";
 import ProductRow from "./ProductRow";
 
-const PAGE = 12;
+const PAGE = 60;
 
 export default function CatalogView() {
   const { label, conv } = useMoney();
