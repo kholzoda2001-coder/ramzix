@@ -11,8 +11,8 @@ const PAGE = 10;
 
 export default function ProductFeed({ items }: { items: Product[] }) {
   const [tab, setTab] = useState<CountryCode | "all">("all");
-  // Танҳо кишварҳое, ки дар admin фаъоланд
-  const TABS: (CountryCode | "all")[] = ["all", ...shownCountries()];
+  // Танҳо кишварҳое, ки дар admin фаъоланд ва мол доранд
+  const TABS: (CountryCode | "all")[] = ["all", ...shownCountries().filter((c) => items.some((p) => p.country === c))];
   const [shown, setShown] = useState(PAGE);
   const cur = TABS.includes(tab) ? tab : "all";
   const list = cur === "all" ? items : items.filter((p) => p.country === cur);

@@ -35,7 +35,7 @@ export function Countries() {
     <section className="block" id="countries">
       <div className="sec-head"><h2><T>Харид аз рӯи кишвар</T></h2></div>
       <div className="countries">
-        {shownCountries().map((c) => {
+        {shownCountries().filter((c) => products.some((p) => p.country === c)).map((c) => {
           const n = products.filter((p) => p.country === c).length;
           return (
             <Link key={c} href={`/catalog?country=${c}`} className="country">

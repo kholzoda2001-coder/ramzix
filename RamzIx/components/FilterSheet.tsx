@@ -75,7 +75,7 @@ export default function FilterSheet({
           <section>
             <h3><T>Кишвар</T></h3>
             <div className="fchips">
-              {shownCountries().map((c) => (
+              {shownCountries().filter((c) => counts.country(c) > 0 || draft.country.includes(c)).map((c) => (
                 <button key={c} className={draft.country.includes(c) ? "on" : ""} onClick={() => setDraft({ ...draft, country: toggle(draft.country, c) })}>
                   <Flag code={c} className="fc-flag" />{t(COUNTRIES[c].short)}<em>{counts.country(c)}</em>
                 </button>
