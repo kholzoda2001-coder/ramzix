@@ -214,6 +214,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
                     </span>
                   </button>
                 ))}
+                <a href={waLink(waText)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={20} /><T>Менеҷер дар WhatsApp</T></a>
               </div>
             )}
           </div>
