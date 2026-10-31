@@ -180,6 +180,7 @@ export const EN: Record<string, string> = {
   "Интихоби андоза ё ранг": "Choose size or color",
   "Иваз кардани асъор": "Change currency",
   "Хона": "Home",
+  "Ошхона": "Kitchen",
   "Нӯшокӣ": "Drinks",
   "Кроссовка, туфли, мӯза": "Sneakers, shoes, boots",
   "Зебоӣ": "Beauty",
