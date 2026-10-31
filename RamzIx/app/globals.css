@@ -1790,3 +1790,6 @@ body { background: #e9e9e9; }
 .pd-video.slide .pv-play { display: block; width: 100%; height: 100%; }
 .pd-video.slide .pv-play img { object-fit: contain; opacity: 1; }
 .pd-video.slide video { object-fit: contain; }
+/* Плеер дар слайд: ҳамеша тамоми слайдро пур мекунад */
+.pd-video.slide { position: relative; }
+.pd-video.slide iframe, .pd-video.slide video, .pd-video.slide .pv-play { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; margin: 0 !important; }
