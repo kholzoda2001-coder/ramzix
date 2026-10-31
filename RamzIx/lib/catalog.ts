@@ -65,7 +65,7 @@ export type CategoryMeta = { id: string; name: string; icon: string; tint: strin
 
 /* Қиматҳои пешфарз; дар сайт аз admin («Сайт») иваз мешаванд — ниг. applyCatalogMeta */
 export const DEFAULT_COUNTRIES: Record<string, CountryMeta> = {
-  ae: { name: "Аморат (Дубай)", short: "Дубай", note: "Электроника, брендҳо", days: "30–40 рӯз", show: true },
+  ae: { name: "Аморат (Дубай)", short: "Иморот", note: "Электроника, брендҳо", days: "30–40 рӯз", show: true },
   cn: { name: "Чин", short: "Чин", note: "Ҳама навъ, нархи паст", days: "10–20 рӯз", show: true },
   tr: { name: "Туркия", short: "Туркия", note: "Либос, хона, косметика", days: "10–18 рӯз", show: true },
   tj: { name: "Тоҷикистон", short: "Ватанӣ", note: "Истеҳсоли ватанӣ", days: "1–3 рӯз", show: true },
