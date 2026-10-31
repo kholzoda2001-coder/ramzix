@@ -5,7 +5,6 @@ import { fmtQty, unitOf, type Product } from "@/lib/catalog";
 import { listUnitPrice, shownTiers } from "@/lib/pricing";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
-import Flag from "./Flag";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import { usePriceMode } from "./PriceMode";
@@ -27,7 +26,6 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
       <div className="pcard-img">
         <ProductImage src={p.images[0]} alt={t(p.name)} />
-        <Flag code={p.country} className="pcard-flag" />
         {!compact && !p.sizes?.length && !p.colors?.length && (
           <button className="pcard-add" aria-label={t("Ба сабад")} onClick={(e) => { e.preventDefault(); e.stopPropagation(); add({ slug: p.slug, qty: min }, t("{q} ба сабад илова шуд", { q: `${fmtQty(min)} ${unit}` })); }}>
             <Icon name="cart" size={19} />

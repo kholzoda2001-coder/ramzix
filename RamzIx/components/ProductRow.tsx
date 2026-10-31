@@ -5,7 +5,6 @@ import { fmtQty, unitOf, type Product } from "@/lib/catalog";
 import { listUnitPrice, shownTiers } from "@/lib/pricing";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
-import Flag from "./Flag";
 import Icon from "./Icon";
 import { useT } from "./Lang";
 import ProductImage from "./ProductImage";
@@ -28,7 +27,6 @@ export default function ProductRow({ p }: { p: Product }) {
     <article className="prow">
       <Link href={`/product/${p.slug}`} className="prow-img">
         <ProductImage src={p.images[0]} alt={t(p.name)} sizes="96px" />
-        <Flag code={p.country} className="pcard-flag" />
       </Link>
       <div className="prow-body">
         <Link href={`/product/${p.slug}`} className="prow-name">{t(p.name)}</Link>

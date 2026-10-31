@@ -5,7 +5,6 @@ import { useState } from "react";
 import { CATEGORIES, COUNTRIES, type CountryCode } from "@/lib/catalog";
 import { brandSlug, categoryCount, getBrands } from "@/lib/filters";
 import { useCatalog } from "@/lib/useCatalog";
-import Flag from "./Flag";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
@@ -54,7 +53,7 @@ export default function CategoriesView() {
           <div className="c2-grid">
             {countries.map(({ c, p }) => (
               <Link key={c} href={`${all}&country=${c}`} className="c2-tile">
-                <span className="c2-img"><ProductImage src={p.images[0]} alt="" sizes="96px" /><Flag code={c} className="cs-flag" /></span>
+                <span className="c2-img"><ProductImage src={p.images[0]} alt="" sizes="96px" /></span>
                 <span><T>{COUNTRIES[c].short}</T></span>
               </Link>
             ))}
