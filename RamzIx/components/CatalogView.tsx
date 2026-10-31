@@ -25,7 +25,7 @@ import FilterSheet from "./FilterSheet";
 import { T, useT } from "./Lang";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
-import ModeSwitch, { usePriceMode } from "./PriceMode";
+import ModeSwitch from "./PriceMode";
 import ProductRow from "./ProductRow";
 
 const PAGE = 12;
@@ -40,10 +40,9 @@ export default function CatalogView() {
   const [q, setQ] = useState(filters.q);
   const [sheet, setSheet] = useState(false);
   const [shown, setShown] = useState(PAGE);
-  // Намуд: агар харидор худаш интихоб накарда бошад, дар «Оптом» рӯйхат, дар «Чакана» шабака
-  const [view, setView] = useState<"grid" | "list" | null>(null);
-  const mode = usePriceMode();
-  const isList = (view ?? (mode === "whole" ? "list" : "grid")) === "list";
+  // Намуд: пешфарз ҳамеша шабака (колеҷ); рӯйхат танҳо вақте ки харидор худаш интихоб кунад
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const isList = view === "list";
   const key = sp.toString();
 
   const list = useMemo(() => sortProducts(filterProducts(products, filters), filters.sort), [filters, products]);
