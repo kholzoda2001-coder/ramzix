@@ -7,6 +7,7 @@ type Info = { name: string; bg: string; fg: string; mark?: string; site?: string
 
 const BRANDS: Record<string, Info> = {
   eurolux: { name: "Eurolux", bg: "#ffffff", fg: "#111111", mark: "EU", logo: "/brands/eurolux.svg" },
+  bergamo: { name: "Bergamo", bg: "#ffffff", fg: "#111111", mark: "BG", logo: "/brands/bergamo.png" },
 };
 
 /* Номҳое, ки бренд нестанд */
