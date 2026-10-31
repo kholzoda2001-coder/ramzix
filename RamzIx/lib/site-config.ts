@@ -72,9 +72,6 @@ const H = (id: string, kind: HeroKind, o: Partial<HeroCfg>): HeroCfg => ({ id, k
 
 /* Матнҳои таҳриршаванда: ҳамаи ваъдаҳо, қадамҳо ва усулҳои пардохт. Қимати аввал — пешфарз. */
 export const TEXT_FIELDS: { key: string; label: string; group: string; def: string; long?: boolean }[] = [
-  { key: "warrantyWholesale", group: "Саҳифаи маҳсулот", label: "Кафолат: молҳои оптомӣ (картон, кило)", def: "Бо сана ва сертификат" },
-  { key: "warrantyAudio", group: "Саҳифаи маҳсулот", label: "Кафолат: наушник ва аудио", def: "12 моҳ" },
-  { key: "warrantyDefault", group: "Саҳифаи маҳсулот", label: "Кафолат: молҳои дигар", def: "Ивази нуқсон 14 рӯз" },
   { key: "termsDocsTitle", group: "Саҳифаи маҳсулот", label: "Шарти 1: сарлавҳа", def: "Фактура ва ҳуҷҷат" },
   { key: "termsDocsText", group: "Саҳифаи маҳсулот", label: "Шарти 1: матн", def: "Барои ҳисоби бизнес: фактура, шартнома, ҳуҷҷатҳои гумрукӣ", long: true },
   { key: "termsDeferTitle", group: "Саҳифаи маҳсулот", label: "Шарти 2: сарлавҳа", def: "Пардохт бо боварӣ" },

@@ -340,8 +340,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
                     p.weightKg > 0 && <tr><td><T>Вазн (бо қуттӣ)</T></td><td>{p.weightKg} {t("кг")}</td></tr>
                   )}
                   {p.sizes && <tr><td><T>Андозаҳо</T></td><td>{p.sizes.join(", ")}</td></tr>}
-                  {/* Маҳсулоти dropship (CJ) кафолати худи мо надорад — ваъда намедиҳем */}
-                  {!dropship && <tr><td><T>Кафолат</T></td><td>{sale ? tx("warrantyWholesale") : p.category === "audio" ? tx("warrantyAudio") : tx("warrantyDefault")}</td></tr>}
                   {p.nameOriginal && <tr><td><T>Модел</T></td><td>{p.nameOriginal}</td></tr>}
                 </tbody>
               </table>
