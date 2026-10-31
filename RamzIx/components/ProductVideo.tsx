@@ -5,14 +5,14 @@ import { parseVideo } from "@/lib/video";
 import { useT } from "./Lang";
 
 /* Видеои маҳсулот. Плеер танҳо баъди пахш бор мешавад, то саҳифа сабук монад. */
-export default function ProductVideo({ url, name }: { url: string; name: string }) {
+export default function ProductVideo({ url, name, slide }: { url: string; name: string; slide?: boolean }) {
   const { t } = useT();
   const v = parseVideo(url);
   const [on, setOn] = useState(false);
   if (!v) return null;
 
   return (
-    <section className="pd-video" aria-label={t("Видео")}>
+    <section className={`pd-video${slide ? " slide" : ""}`} aria-label={t("Видео")}>
       {v.kind === "file" ? (
         <video src={v.url} controls playsInline preload="none" title={name} />
       ) : on ? (

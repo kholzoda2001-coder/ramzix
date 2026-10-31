@@ -1780,3 +1780,13 @@ body { background: #e9e9e9; }
 .pd-video .pv-play { all: unset; cursor: pointer; display: block; width: 100%; height: 100%; position: relative; }
 .pd-video .pv-play img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: .85; }
 .pd-video .pv-btn { position: absolute; inset: 0; margin: auto; width: 58px; height: 58px; border-radius: 50%; background: rgba(0,0,0,.65); color: #fff; display: grid; place-items: center; font-size: 22px; padding-left: 4px; }
+
+/* Видео ҳамчун слайди галерея (дар ҳамон ҷои расмҳо) */
+.pd-video.slide { margin: 0; border-radius: 0; aspect-ratio: auto; width: 100%; height: 100%; }
+.g-slide.g-video { background: #000; display: block; }
+.g-vidchip { position: absolute; left: 12px; bottom: 34px; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 16px; border: 0; cursor: pointer; }
+.g-dots button.vid { border-radius: 2px; }
+.pd-video.slide { display: block; }
+.pd-video.slide .pv-play { display: block; width: 100%; height: 100%; }
+.pd-video.slide .pv-play img { object-fit: contain; opacity: 1; }
+.pd-video.slide video { object-fit: contain; }

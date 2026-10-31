@@ -20,6 +20,7 @@ import useDragScroll from "./useDragScroll";
 import Lightbox from "./Lightbox";
 import BrandLogo from "./BrandLogo";
 import ProductVideo from "./ProductVideo";
+import { parseVideo } from "@/lib/video";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -86,6 +87,9 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const points = useMemo(() => splitDescription(t(p.description ?? "")), [p.description, t]);
 
   const setQ = (v: number) => setQty(Math.min(99999, Math.max(minQty, round2(Math.round((v || minQty) / step) * step))));
+  const hasVideo = !!parseVideo(p.video);
+  const videoAt = p.images.length;
+  const nSlides = p.images.length + (hasVideo ? 1 : 0);
   const goImg = (k: number) => track.current?.scrollTo({ left: k * track.current.clientWidth, behavior: "smooth" });
 
   const waText = `${t("Салом! Маҳсулот:")} ${t(p.name)}${colorName ? `, ${t("ранг")} ${t(colorName)}` : ""}${size ? `, ${t("андоза")} ${size}` : ""}. ${t("Миқдор:")} ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${t(sale?.perLabel ?? "")})` : ""}. ${t("Нархи оптовиро гуфта метавонед?")}`;
@@ -138,18 +142,18 @@ export default function ProductView({ p, related, other }: { p: Product; related
             {p.images.map((src, k) => (
               <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src} onClick={() => setZoom(true)}><ProductImage src={src} alt={`${t(p.name)} — ${k + 1}`} eager={k === 0} sizes="(max-width: 480px) 100vw, 480px" /></div>
             ))}
+            {hasVideo && <div className="g-slide g-video" key="video"><ProductVideo slide url={p.video!} name={t(p.name)} /></div>}
           </div>
-          {p.images.length > 1 && <span className="g-count">{img + 1}/{p.images.length}</span>}
-          {p.images.length > 1 && (
+          {nSlides > 1 && <span className="g-count">{img + 1}/{nSlides}</span>}
+          {hasVideo && img !== videoAt && <button type="button" className="g-vidchip" onClick={() => goImg(videoAt)}>▶ <T>Видео</T></button>}
+          {nSlides > 1 && (
             <div className="g-dots" role="tablist" aria-label={t("Расмҳо")}>
-              {p.images.map((src, k) => (
-                <button key={src} role="tab" aria-selected={k === img} className={k === img ? "on" : ""} onClick={() => goImg(k)} aria-label={t("Сурати {n}", { n: k + 1 })} />
+              {Array.from({ length: nSlides }, (_, k) => (
+                <button key={k} role="tab" aria-selected={k === img} className={`${k === img ? "on" : ""} ${k === videoAt ? "vid" : ""}`} onClick={() => goImg(k)} aria-label={k === videoAt ? t("Видео") : t("Сурати {n}", { n: k + 1 })} />
               ))}
             </div>
           )}
         </div>
-
-        {p.video && <ProductVideo url={p.video} name={t(p.name)} />}
 
         <div className="pd-body">
           {/* Рангҳо (вариатсия) */}
