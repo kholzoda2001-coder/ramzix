@@ -198,7 +198,7 @@ export function mergeSite(raw: unknown): SiteConfig {
   for (const id of bannerIds) {
     const src = Array.isArray(rb[id]) ? (rb[id] as unknown[]) : null;
     if (!src) { if (DEFAULT_SITE.banners[id]) banners[id] = DEFAULT_SITE.banners[id]; continue; }
-    banners[id] = src.slice(0, 12).map((x, i) => {
+    banners[id] = src.slice(0, 40).map((x, i) => {
       const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
       return {
         id: str(o.id, 20, `b${i}`) || `b${i}`, label: str(o.label, 24), title: str(o.title, 40), sub: str(o.sub, 50),
@@ -207,7 +207,7 @@ export function mergeSite(raw: unknown): SiteConfig {
     }).filter((b) => b.title || b.label);
   }
   const homeCats = Array.isArray(r.homeCats)
-    ? (r.homeCats as unknown[]).slice(0, 24).map((x, i) => {
+    ? (r.homeCats as unknown[]).slice(0, 40).map((x, i) => {
         const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
         return { id: str(o.id, 20, `c${i}`) || `c${i}`, name: str(o.name, 24), ids: idList(o.ids), q: str(o.q, 40).toLowerCase(), show: o.show !== false };
       }).filter((c) => c.name && c.ids.length)
