@@ -200,17 +200,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
                   <b>{price(unitPrice)}</b><span>{label} / {unit}</span>
                   {unitPrice < listPrice - 0.005 && <s>{price(listPrice)}</s>}
                 </div>
-                {w1 && (
-                  <button className="pm-hint" onClick={() => { setPriceMode("whole"); setQ(w1.minQty); }}>
-                    <span style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", columnGap: 18, rowGap: 2 }}>
-                      <T>Оптом</T>
-                      <b>{price(w1.unit)}</b>
-                      {w2 && <b>{price(w2.unit)}</b>}
-                      {w3 && <b>{price(w3.unit)}</b>}
-                    </span>
-                    <Icon name="chevron" size={16} stroke={2.4} />
-                  </button>
-                )}
               </div>
             ) : (
               <div className="pm-tiers">
