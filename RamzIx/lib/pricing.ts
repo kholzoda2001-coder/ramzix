@@ -108,7 +108,8 @@ export function shippingCost(country: CountryCode, modeId: string | undefined, k
   // Нархи собит то flatKg, баъд барои ҳар кг иловагӣ
   const byKg = mode.flatUsd ? mode.flatUsd + Math.max(0, kg - (mode.flatKg ?? 0)) * mode.perKgUsd : kg * mode.perKgUsd;
   const byVol = mode.perM3Usd ? m3 * mode.perM3Usd : 0;
-  const usd = kg > 0 || m3 > 0 ? Math.max(byKg, byVol) : 0;
+  // Нархи собит (курьер) бе вазн ҳам ҳисоб мешавад; дигар намудҳо бе вазн/ҳаҷм — «бо тасдиқ»
+  const usd = mode.flatUsd || kg > 0 || m3 > 0 ? Math.max(byKg, byVol) : 0;
   return {
     tjs: round2(usd * RATES.usdToTjs),
     basis: usd === 0 ? "none" : byVol > byKg ? "m3" : "kg",

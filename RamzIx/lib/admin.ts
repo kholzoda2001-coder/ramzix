@@ -103,7 +103,9 @@ export function useAdmin() {
       const id = p.id ?? uid();
       const others = s.products.filter((x) => x.id !== id).map((x) => x.slug);
       const slug = p.slug ?? makeSlug(p.name, others);
-      const full: AdminProduct = { ...p, id, slug };
+      // Артикули мо: RX-0001, RX-0002… (рақами навбатӣ ба ҳар маҳсулоти нав)
+      const sku = p.extra?.sku ?? s.products.find((x) => x.id === id)?.extra?.sku ?? nextSku(s.products);
+      const full: AdminProduct = { ...p, id, slug, extra: { ...p.extra, sku } };
       return { ...s, products: s.products.some((x) => x.id === id) ? s.products.map((x) => (x.id === id ? full : x)) : [full, ...s.products] };
     }),
     toggleProduct: (id: string) => mutate((s) => ({ ...s, products: s.products.map((x) => (x.id === id ? { ...x, active: !x.active } : x)) })),
@@ -133,4 +135,10 @@ export async function lock() { await post({ action: "logout" }); cache = empty()
 /** Дархости чекаути сайт ба база меравад (endpoint-и ошкор, танҳо иловаи фармоиши нав) */
 export function pushWebOrder(o: Omit<Order, "id" | "date" | "type" | "status" | "payments" | "note"> & { code: string; note?: string }) {
   api("/api/orders", { method: "POST", body: JSON.stringify({ ...o, id: uid() }), keepalive: true });
+}
+
+/** Рақами навбатии артикул: RX-0001 */
+export function nextSku(products: { extra?: { sku?: string } }[]) {
+  const max = products.reduce((m, p) => Math.max(m, Number(p.extra?.sku?.match(/^RX-(\d+)$/)?.[1] ?? 0)), 0);
+  return "RX-" + String(max + 1).padStart(4, "0");
 }

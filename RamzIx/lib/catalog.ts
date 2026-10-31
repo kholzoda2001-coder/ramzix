@@ -43,6 +43,8 @@ export type Product = {
   sale?: Sale;
   /** true — нархи оптовӣ надорад: ҳамеша бо нархи дона, ба тахфифи сабад ворид намешавад */
   noWholesale?: boolean;
+  /** Артикули мо: RX-0001 (ҳар маҳсулот ягона рақам дорад) */
+  sku?: string;
 };
 
 /* Маҳсулот дар базаи маълумот (Supabase) нигоҳ дошта мешавад — ниг. lib/server/catalog.ts ва lib/useCatalog.tsx */

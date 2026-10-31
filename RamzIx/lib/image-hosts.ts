@@ -4,6 +4,7 @@ export const IMAGE_HOSTS = [
   "cf.cjdropshipping.com",
   "oss-cf.cjdropshipping.com",
   "cdn.shopify.com",
+  "eurolux.az",
   "f.nooncdn.com",
   "cdn.dsmcdn.com",
   "img.ltwebstatic.com",

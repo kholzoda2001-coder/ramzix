@@ -134,6 +134,7 @@ export default function Products({ admin }: { admin: Admin }) {
                 <span className="ap-img">{p.images[0] ? <ProductImage src={p.images[0]} alt="" sizes="96px" /> : "📦"}</span>
                 <span className="ap-t">
                   <b>{p.name}</b>
+                  {p.extra?.sku && <small>{p.extra.sku}</small>}
                   <small>{COUNTRIES[p.country].short} · {CATEGORIES.find((c) => c.id === p.category)?.name} · {p.unit}</small>
                   <small>Харид: <b>{m(adminCostTjs(p))}</b> {label} · фоидаи POS {p.markupPct}%</small>
                 </span>
@@ -177,6 +178,7 @@ export default function Products({ admin }: { admin: Admin }) {
             <section className="ad-card">
               <h3>Асосӣ</h3>
               <label><span>Ном *</span><input value={form.name} onChange={(e) => set({ name: e.target.value })} /></label>
+              {form.extra?.sku && <label><span>Артикул (худкор, тағйир намеёбад)</span><input value={form.extra.sku} readOnly disabled /></label>}
               <label><span>Тавсифи кӯтоҳ</span><input value={form.subtitle} onChange={(e) => set({ subtitle: e.target.value })} /></label>
               <div className="ad-grid2">
                 <label><span>Бренд</span><input value={form.brand} onChange={(e) => set({ brand: e.target.value })} /></label>

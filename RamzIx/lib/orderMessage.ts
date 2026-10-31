@@ -25,7 +25,7 @@ export function buildOrderMessage(order: ReturnType<typeof priceOrder>, buyer: B
   for (const g of order.groups) {
     rows.push(`📦 ${t(COUNTRIES[g.country].name)}:`);
     for (const l of g.lines) {
-      rows.push(`${n++}) ${t(l.p.name)}${l.color ? `, ${t(l.color)}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${t(unitOf(l.p))} × ${price(l.unit)} = ${sum(l.goods)} ${label}`);
+      rows.push(`${n++}) ${l.p.sku ? l.p.sku + " " : ""}${t(l.p.name)}${l.color ? `, ${t(l.color)}` : ""}${l.size ? `, ${l.size}` : ""} — ${fmtQty(l.qty)} ${t(unitOf(l.p))} × ${price(l.unit)} = ${sum(l.goods)} ${label}`);
     }
     rows.push(`   ${t("Расонидан")} (${t(g.shipping.mode.label)}, ${fmtQty(round2(g.kg))} ${t("кг")}): ${g.shipping.tjs > 0 ? sum(g.shipping.tjs) + " " + label : t("бо тасдиқ")}`, "");
   }

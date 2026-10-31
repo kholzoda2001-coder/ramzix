@@ -1770,4 +1770,6 @@ body { background: #e9e9e9; }
 .ck-field input::placeholder, .ck-field textarea::placeholder { color: #98a0ad; }
 
 /* Зинаҳои нархи оптом: хати гирдашон равшан */
+.pd-sku { margin: 2px 0 0; font-size: 13px; color: var(--muted, #64748b); }
+.pd-sku b { color: var(--text, #111827); letter-spacing: .02em; }
 .pm-tiers > button:not(.on) { background: #fff; box-shadow: inset 0 0 0 1.5px #8d94a1; }

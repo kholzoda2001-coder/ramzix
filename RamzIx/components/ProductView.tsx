@@ -225,6 +225,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
           {/* Номи маҳсулот */}
           {p.brand && <Link href={`/catalog?brand=${brandSlug(p.brand)}`} className="pd-brand"><span>{p.brand}</span><Icon name="chevron" size={14} stroke={2.4} /></Link>}
           <h1 className="pd-title">{t(p.name)}</h1>
+          {p.sku && <p className="pd-sku">{t("Артикул")}: <b>{p.sku}</b></p>}
           {p.subtitle && <p className="pd-sub">{t(p.subtitle)}</p>}
           {p.rating && (
             <div className="pd-rating">
