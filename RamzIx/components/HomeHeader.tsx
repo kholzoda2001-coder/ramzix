@@ -50,7 +50,7 @@ export default function HomeHeader() {
           <Link href="/cart" className="ic-btn" aria-label={t("Сабад")}><Icon name="cart" /><CartBadge /></Link>
         </div>
       </div>
-      {SHOW_TABS && (
+      {SHOW_TABS && tabs.length > 1 && (
         <nav className="hh-tabs" aria-label={t("Категорияҳо")}>
           {tabs.map((x) => <button key={x.id} className={x.id === tab ? "on" : ""} aria-pressed={x.id === tab} onClick={() => setHomeTab(x.id)}><T>{x.label}</T></button>)}
         </nav>
