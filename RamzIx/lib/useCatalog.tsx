@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { toStorefront, type AdminProduct } from "./admin-core";
 import type { Product } from "./catalog";
 import { cleanBrand } from "./brands";
+import { registerTexts } from "./i18n";
 import { isVisible } from "./site-config";
 import { useSite } from "./useSite";
 
@@ -32,6 +33,13 @@ export function CatalogProvider({ children, initial = [] }: { children: React.Re
   const site = useSite();
   const value = useMemo<Ctx>(() => {
     const shown = all.filter((p) => isVisible(p, site));
+    // Номи маҳсулот ва тавсиф ба забонҳои дигар: t(p.name) ва ғайра худаш кор мекунад
+    for (const p of shown) {
+      for (const l of ["ru", "en"] as const) {
+        const x = p.i18n?.[l];
+        if (x) registerTexts(l, [[p.name, x.name], [p.subtitle, x.subtitle], [p.description, x.description]]);
+      }
+    }
     return { products: shown, getProduct: (slug) => shown.find((p) => p.slug === slug), ready };
   }, [all, ready, site]);
   return <Cat.Provider value={value}>{children}</Cat.Provider>;

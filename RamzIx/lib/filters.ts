@@ -127,7 +127,7 @@ export function filterProducts(items: Product[], f: Filters): Product[] {
     if (f.unit.length && !f.unit.includes(unitOf(p))) return false;
     if (q) {
       // Барои гурӯҳҳо танҳо ном: зеретитри «Хона ва ошхона» дар ҳамаи молҳои хона ҳаст
-      const hay = norm(SYNONYMS[q] ? `${p.name} ${p.nameOriginal ?? ""}` : `${p.name} ${p.nameOriginal ?? ""} ${p.subtitle ?? ""} ${p.brand ?? ""} ${p.slug} ${p.sku ?? ""}`);
+      const hay = norm(SYNONYMS[q] ? `${p.name} ${p.nameOriginal ?? ""}` : `${p.name} ${p.nameOriginal ?? ""} ${p.subtitle ?? ""} ${p.brand ?? ""} ${p.slug} ${p.sku ?? ""} ${p.i18n?.ru?.name ?? ""} ${p.i18n?.en?.name ?? ""}`);
       if (!terms.some((t) => hay.includes(t))) return false;
     }
     if (f.min !== undefined || f.max !== undefined) {

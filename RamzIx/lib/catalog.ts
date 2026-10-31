@@ -45,6 +45,8 @@ export type Product = {
   noWholesale?: boolean;
   /** Артикули мо: RX-0001 (ҳар маҳсулот ягона рақам дорад) */
   sku?: string;
+  /** Номи маҳсулот, зерсарлавҳа ва тавсиф ба русӣ ва англисӣ (матни асосӣ — тоҷикӣ) */
+  i18n?: Partial<Record<"ru" | "en", { name: string; subtitle?: string; description?: string }>>;
 };
 
 /* Маҳсулот дар базаи маълумот (Supabase) нигоҳ дошта мешавад — ниг. lib/server/catalog.ts ва lib/useCatalog.tsx */

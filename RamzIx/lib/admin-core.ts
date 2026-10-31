@@ -23,7 +23,7 @@ export type Order = {
   payments: Payment[];
   note: string;
 };
-export type ProductExtra = { /** Артикул: RX-0001 */ sku?: string; /** true — нархи оптовӣ надорад */ noWholesale?: boolean; nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
+export type ProductExtra = { /** Артикул: RX-0001 */ sku?: string; /** Тарҷумаи ном ва тавсиф (ru, en) */ i18n?: Product["i18n"]; /** true — нархи оптовӣ надорад */ noWholesale?: boolean; nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
 
 /** Маҳсулоти админ: ҳамон сохтори сайт + идора (фаъол/пинҳон) */
 export type AdminProduct = {
@@ -83,6 +83,7 @@ export function toStorefront(p: AdminProduct): Product {
     sale: p.extra?.sale ? ({ ...p.extra.sale, ...sale } as Product["sale"]) : sale,
     ...(p.extra?.noWholesale ? { noWholesale: true } : {}),
     ...(p.extra?.sku ? { sku: p.extra.sku } : {}),
+    ...(p.extra?.i18n ? { i18n: p.extra.i18n } : {}),
     ...(p.extra?.source ? { source: p.extra.source } : {}),
     ...(p.extra?.rating !== undefined ? { rating: p.extra.rating } : {}),
     ...(p.extra?.reviews ? { reviews: p.extra.reviews } : {}),
