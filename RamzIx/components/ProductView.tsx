@@ -19,6 +19,7 @@ import ProductImage from "./ProductImage";
 import useDragScroll from "./useDragScroll";
 import Lightbox from "./Lightbox";
 import BrandLogo from "./BrandLogo";
+import ProductVideo from "./ProductVideo";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 
@@ -147,6 +148,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
             </div>
           )}
         </div>
+
+        {p.video && <ProductVideo url={p.video} name={t(p.name)} />}
 
         <div className="pd-body">
           {/* Рангҳо (вариатсия) */}

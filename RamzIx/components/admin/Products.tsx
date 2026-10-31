@@ -10,6 +10,7 @@ import ProductImage from "../ProductImage";
 import { getDefaultMarkup } from "./settings-store";
 import { useFx } from "./fx";
 import { Sheet } from "./ui";
+import { parseVideo } from "@/lib/video";
 
 type Admin = ReturnType<typeof useAdmin>;
 const n = (s: string) => (Number.isFinite(parseFloat(s.replace(",", "."))) ? parseFloat(s.replace(",", ".")) : 0);
@@ -227,6 +228,7 @@ export default function Products({ admin }: { admin: Admin }) {
 
             <label className="ad-toggle"><input type="checkbox" checked={form.active} onChange={(e) => set({ active: e.target.checked })} /> <span>Дар сайт нишон дода шавад</span></label>
             <label className="ad-toggle"><input type="checkbox" checked={form.wholesale} onChange={(e) => set({ wholesale: e.target.checked })} /> <span>Нархи оптовӣ дорад (аз ҳисоби зинаҳои 13% · 8% · 5%). Хомӯш бошад — ҳамеша нархи дона, ба тахфифи сабад ҳисоб намешавад</span></label>
+            <label><span>Видео (истиноди YouTube, Vimeo ё файли .mp4)</span><input inputMode="url" placeholder="https://www.youtube.com/watch?v=…" value={form.extra?.video ?? ""} onChange={(e) => { const { video: _v, ...rest } = form.extra ?? {}; const v = e.target.value.trim(); set({ extra: v ? { ...rest, video: v } : rest }); }} />{form.extra?.video && !parseVideo(form.extra.video) && <small className="ad-err">Истинод нодуруст аст (бояд https:// бошад)</small>}</label>
             <label><span>Эзоҳи дохилӣ (барои худатон)</span><input value={form.note} onChange={(e) => set({ note: e.target.value })} /></label>
 
             {err && <p className="ad-err">{err}</p>}
