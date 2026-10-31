@@ -6,7 +6,7 @@ import HomeSwitch from "@/components/HomeTabs";
 import Icon from "@/components/Icon";
 import { T } from "@/components/Lang";
 import WaLink from "@/components/WaLink";
-import { HowSteps, PayList, TrustRow } from "@/components/HomeInfo";
+import { HowSteps, PayList, TrustRow, Tx } from "@/components/HomeInfo";
 import { BrandRow, CategoryGrid, FoodRow, DealsPair, ForYouFeed, PromoStrip, TierLadder } from "@/components/HomeSections";
 
 export default function Home() {
@@ -33,8 +33,8 @@ export default function Home() {
         <section className="tiers-card" id="rfq">
           <div className="tc-head">
             <span className="chip-sm light"><Icon name="tag" size={13} /> <T>Нархи оптовӣ</T></span>
-            <h2><T>Сабад калонтар — нарх арзонтар</T></h2>
-            <p><T>Тахфиф худ ба худ дар сабад ҳисоб мешавад, барои ҳамаи мол. Барои фармоиши калон нархи махсусро дар WhatsApp пурсед.</T></p>
+            <h2><Tx k="tierTitle" /></h2>
+            <p><Tx k="tierText" /></p>
           </div>
           <TierLadder />
           <WaLink text="Салом! Барои фармоиши калон нархи оптовӣ лозим аст." className="tc-rfq">
@@ -52,7 +52,7 @@ export default function Home() {
           <div className="foot-links">
             <Link href="/#rfq"><T>Шартҳои оптовӣ</T></Link><Link href="/categories"><T>Категорияҳо</T></Link><Link href="/brands"><T>Брендҳо</T></Link><WaLink text="Салом! Савол дорам."><T>Тамос</T></WaLink>
           </div>
-          <p><T>© 2026 RamzIx · Душанбе, Тоҷикистон</T></p>
+          <p><Tx k="footer" /></p>
         </footer>
         </HomeSwitch>
       </main>

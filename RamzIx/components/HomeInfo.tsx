@@ -50,3 +50,9 @@ export function PayList() {
     </div>
   );
 }
+
+/** Як матни таҳриршаванда аз admin (Сайт → Матнҳо) */
+export function Tx({ k }: { k: string }) {
+  const tx = useText();
+  return <>{tx(k)}</>;
+}

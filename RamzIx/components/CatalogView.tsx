@@ -155,6 +155,7 @@ export default function CatalogView() {
             <b><T>Ҳеҷ чиз ёфт нашуд</T></b>
             <span><T>Филтрҳоро тағйир диҳед ё ҷустуҷӯро тоза кунед</T></span>
             <button className="btn btn-orange btn-sm" style={{ marginTop: 10 }} onClick={() => go(EMPTY_FILTERS)}><T>Тоза кардани филтрҳо</T></button>
+            <Link href="/request" style={{ marginTop: 12, fontWeight: 700, textDecoration: "underline" }}><T>Мол наёфтед? Дархост диҳед</T></Link>
           </div>
         )}
       </main>

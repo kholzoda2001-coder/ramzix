@@ -18,7 +18,9 @@ export default function ProductRow({ p }: { p: Product }) {
   const unit = t(unitOf(p));
   const min = p.sale?.min ?? 1;
   const qty = (q: number) => `${fmtQty(q)} ${unit}`;
-  const cells = [{ unit: listUnitPrice(p), minQty: min }, ...shownTiers(p)];
+  // Танҳо нархҳои оптом (нархи асосӣ дар таби «Чакана» аст); агар зина набошад, нархи асосӣ мемонад
+  const tiers = shownTiers(p);
+  const cells = tiers.length ? tiers : [{ unit: listUnitPrice(p), minQty: min }];
   // Маҳсулот бо андоза ё ранг бе интихоб ба сабад намеравад
   const needsChoice = !!(p.sizes?.length || p.colors?.length);
 
@@ -36,7 +38,7 @@ export default function ProductRow({ p }: { p: Product }) {
         </span>
         <div className="prow-prices">
           {cells.map((c, k) => (
-            <span key={c.minQty} className={k ? "w" : ""}>
+            <span key={c.minQty} className={tiers.length || k ? "w" : ""}>
               <b>{price(c.unit)}</b>
               <small>{t("аз {q}", { q: fmtQty(c.minQty) })}</small>
             </span>

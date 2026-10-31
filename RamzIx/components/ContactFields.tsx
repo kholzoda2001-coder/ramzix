@@ -8,15 +8,15 @@ export type ContactValue = { country: ShipCountry; local: string; address: strin
 type Errs = Partial<Record<"phone" | "address", boolean>>;
 
 /* Кишвар → рақами телефон бо код → суроғаи пурра */
-export default function ContactFields({ value, onChange, errors = {}, required, simple }: { value: ContactValue; onChange: (v: ContactValue) => void; errors?: Errs; required?: boolean; simple?: boolean }) {
+export default function ContactFields({ value, onChange, errors = {}, required, simple, pickCountry }: { value: ContactValue; onChange: (v: ContactValue) => void; errors?: Errs; required?: boolean; simple?: boolean; pickCountry?: boolean }) {
   const { t } = useT();
   return (
     <>
-      {!simple && <div className="ck-field">
+      {(!simple || pickCountry) && <div className="ck-field">
         <span>{t("Кишвар")}{required && <i>*</i>}</span>
         <div className="ck-seg">
           {SHIP_COUNTRIES.map((c) => (
-            <button key={c.id} type="button" className={value.country === c.id ? "on" : ""} onClick={() => onChange({ ...value, country: c.id, local: localDigits(value.local, c.id) })}>
+            <button key={c.id} type="button" className={value.country === c.id ? "on" : ""} onClick={() => onChange({ ...value, country: c.id, local: simple ? value.local : localDigits(value.local, c.id) })}>
               <Flag code={c.id} className="seg-flag" /> {t(c.name)}
             </button>
           ))}

@@ -9,7 +9,8 @@ import { useMoney } from "./Currency";
 import { T, useT } from "./Lang";
 import { LogoMark } from "./Logo";
 import SideMenu from "./SideMenu";
-import { HOME_TABS, setHomeTab, useHomeTab } from "./HomeTabs";
+import { useSite } from "@/lib/useSite";
+import { setHomeTab, useHomeTab } from "./HomeTabs";
 
 // Варақаҳои сарлавҳа (false — пинҳон)
 const SHOW_TABS = true;
@@ -22,7 +23,7 @@ export default function HomeHeader() {
   const [solid, setSolid] = useState(false);
   const step = discountLadder()[1];
   const tab = useHomeTab();
-  const tabs = HOME_TABS;
+  const tabs = useSite().tabs.filter((x) => x.show);
 
   useEffect(() => {
     const onScroll = () => setSolid(window.scrollY > 170);

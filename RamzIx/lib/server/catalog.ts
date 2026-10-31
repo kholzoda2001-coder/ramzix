@@ -1,7 +1,9 @@
 import { toStorefront, type AdminProduct } from "../admin-core";
 import { cleanBrand } from "../brands";
 import type { Product } from "../catalog";
+import { isVisible } from "../site-config";
 import { dbReady, rowToProduct } from "./db";
+import { loadSite } from "./site";
 
 const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
@@ -16,6 +18,7 @@ export async function loadStorefront(): Promise<Product[]> {
     });
     if (!r.ok) return [];
     const rows = (await r.json()) as Record<string, unknown>[];
-    return rows.map(rowToProduct).filter((p: AdminProduct) => p.name).map((p) => { const x = toStorefront({ ...p, note: "", markupPct: 0 }); return { ...x, brand: cleanBrand(x.brand) }; });
+    const site = await loadSite();
+    return rows.map(rowToProduct).filter((p: AdminProduct) => p.name).map((p) => { const x = toStorefront({ ...p, note: "", markupPct: 0 }); return { ...x, brand: cleanBrand(x.brand) }; }).filter((p) => isVisible(p, site));
   } catch { return []; }
 }

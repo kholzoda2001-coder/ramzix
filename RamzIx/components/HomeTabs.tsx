@@ -16,14 +16,7 @@ import { setPriceMode } from "./PriceMode";
 import ProductImage from "./ProductImage";
 import ProductRow from "./ProductRow";
 
-/* Варақаҳои болои саҳифаи асосӣ: мундариҷа дар ҳамин саҳифа иваз мешавад, на бо гузариш ба каталог */
-export const HOME_TABS = [
-  { id: "all", label: "Ҳама" },
-  { id: "men", label: "Мардона" },
-  { id: "women", label: "Занона" },
-  { id: "kids", label: "Кӯдакона" },
-  { id: "shoes", label: "Пояфзол" },
-];
+/* Варақаҳои болои саҳифаи асосӣ (аз admin: Сайт → Варақаҳо): мундариҷа дар ҳамин саҳифа иваз мешавад, на бо гузариш ба каталог */
 
 // Маҷмӯаҳо ва молҳои тамғадор барои акси баннер мувофиқ нестанд
 const NOT_FOR_BANNER = /маҷмӯи|парчам|рӯймол/i;
@@ -83,7 +76,9 @@ export const useHomeTab = () => useSyncExternalStore(subscribe, () => current, (
 
 export default function HomeSwitch({ children }: { children: React.ReactNode }) {
   const tab = useHomeTab();
-  if (tab === "all") return <>{children}</>;
+  const { tabs } = useSite();
+  // Варақа пинҳон ё нест шуд → саҳифаи асосӣ
+  if (tab === "all" || !tabs.some((x) => x.id === tab && x.show)) return <>{children}</>;
   return tab === "whole" ? <WholesaleHome /> : <CategoryHome id={tab} />;
 }
 

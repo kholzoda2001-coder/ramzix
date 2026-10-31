@@ -6,6 +6,7 @@ import { fmtQty, unitOf, waLink } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
 import { buildOrderMessage, type Buyer } from "@/lib/orderMessage";
 import { priceOrder } from "@/lib/pricing";
+import { setDest, useDest } from "@/lib/useDest";
 import { addOrder, orderCode, saveProfile, useProfile } from "@/lib/profile";
 import { ROUTES, pushWebOrder } from "@/lib/admin";
 import { costPerUnit } from "@/lib/pricing";
@@ -27,7 +28,8 @@ export default function CheckoutView() {
   const { price, sum, label } = useMoney();
   const { profile, ready: profileReady } = useProfile();
   const { lines, modes, ready, clear } = useCart();
-  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes, getProduct]);
+  const dest = useDest();
+  const order = useMemo(() => priceOrder(lines, modes, getProduct, dest), [lines, modes, getProduct, dest]);
 
   const [form, setForm] = useState<Buyer>({ name: "", phone: "", address: "" });
   const [local, setLocal] = useState("");
@@ -59,7 +61,7 @@ export default function CheckoutView() {
     const id = addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) });
     const code = orderCode(id);
     const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label }));
-    saveProfile({ ...profile, name: buyer.name, phone: buyer.phone, address: buyer.address });
+    saveProfile({ ...profile, country: dest, name: buyer.name, phone: buyer.phone, address: buyer.address });
     // Дархост ба рӯйхати фармоишҳои админ ҳам меравад (то пайвастани сервер — дар ҳамин дастгоҳ)
     const first = order.groups[0];
     pushWebOrder({
@@ -127,9 +129,11 @@ export default function CheckoutView() {
         <ContactFields
           required
           simple
-          value={{ country: "tj", local, address: form.address }}
+          pickCountry
+          value={{ country: dest, local, address: form.address }}
           errors={errors}
           onChange={(v) => {
+            if (v.country !== dest) setDest(v.country);
             setForm((f) => ({ ...f, address: v.address }));
             setLocal(v.local);
             setErrors((e) => ({ ...e, phone: false, address: false }));

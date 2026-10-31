@@ -33,6 +33,7 @@ export const discountFor = (pct: number) => Math.round((1 - (1 + pct / 100) / (1
 
 /** Нархҳои оптовии дар саҳифаи маҳсулот нишондодашаванда */
 export function wholesalePrices(p: Product) {
+  if (p.noWholesale) return [];
   return SHOWN_WHOLESALE_PCTS.flatMap((pct) => {
     const tier = MARKUP_TIERS.find((t) => t.pct === pct);
     if (!tier) return [];
@@ -56,7 +57,8 @@ export function qtyTiers(p: Product): QtyTier[] {
   const min = p.sale?.min ?? 1;
   const step = p.sale?.step ?? 1;
   const out: QtyTier[] = [];
-  for (const t of MARKUP_TIERS) {
+  // Моли бе нархи оптовӣ (аз admin): танҳо зинаи аввал — нархи дона
+  for (const t of p.noWholesale ? MARKUP_TIERS.slice(0, 1) : MARKUP_TIERS) {
     const need = list > 0 ? t.from / list : 0;
     const minQty = Math.max(min, Math.round(Math.ceil(need / step - 1e-9) * step * 100) / 100);
     const tier = { from: t.from, pct: t.pct, minQty, unit: cost * (1 + t.pct / 100), off: discountFor(t.pct) };
@@ -79,19 +81,34 @@ const round2 = (n: number) => Math.round(n * 100) / 100;
 export const weightOf = (p: Product, qty: number) => p.weightKg * qty;
 export const volumeOf = (p: Product, qty: number) => (p.volumeM3 ?? 0) * qty;
 
-/* Мувақатан: интихоби намуди расонидан (ҳаво/замин) хомӯш аст — танҳо намуди аввал (замин/карго) кор мекунад */
-export const modesFor = (country: CountryCode): ShippingMode[] => SHIPPING[country].slice(0, 1);
-export const defaultMode = (country: CountryCode) => modesFor(country)[0].id;
-export const getMode = (country: CountryCode, id?: string) =>
-  modesFor(country).find((m) => m.id === id) ?? modesFor(country)[0];
+/** Харидор дар куҷост: Тоҷикистон ё Иморот */
+export type Dest = "tj" | "ae";
+const isLocal = (m: ShippingMode) => m.id === "local";
+
+/* Мувақатан: интихоби намуди расонидан (ҳаво/замин) хомӯш аст — танҳо як намуд кор мекунад.
+   Харидор дар Иморот ва мол аз Дубай: курьери дохили Иморот. Мол аз кишвари дигар ба Иморот: нарх аз менеҷер (0, «бо тасдиқ»). */
+export const modesFor = (country: CountryCode, dest: Dest = "tj"): ShippingMode[] => {
+  const main = SHIPPING[country].filter((m) => !isLocal(m)).slice(0, 1);
+  if (dest !== "ae") return main.length ? main : SHIPPING[country].slice(0, 1);
+  if (country === "ae") {
+    const local = SHIPPING.ae.filter(isLocal);
+    if (local.length) return local.slice(0, 1);
+  }
+  const base = main[0] ?? SHIPPING[country][0];
+  return [{ ...base, id: "quote", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, assumed: true, note: "Менеҷер нархро тасдиқ мекунад" }];
+};
+export const defaultMode = (country: CountryCode, dest: Dest = "tj") => modesFor(country, dest)[0].id;
+export const getMode = (country: CountryCode, id?: string, dest: Dest = "tj") =>
+  modesFor(country, dest).find((m) => m.id === id) ?? modesFor(country, dest)[0];
 
 export type Shipping = { tjs: number; basis: "kg" | "m3" | "none"; mode: ShippingMode };
 
-export function shippingCost(country: CountryCode, modeId: string | undefined, kg: number, m3: number): Shipping {
-  const mode = getMode(country, modeId);
-  const byKg = kg * mode.perKgUsd;
+export function shippingCost(country: CountryCode, modeId: string | undefined, kg: number, m3: number, dest: Dest = "tj"): Shipping {
+  const mode = getMode(country, modeId, dest);
+  // Нархи собит то flatKg, баъд барои ҳар кг иловагӣ
+  const byKg = mode.flatUsd ? mode.flatUsd + Math.max(0, kg - (mode.flatKg ?? 0)) * mode.perKgUsd : kg * mode.perKgUsd;
   const byVol = mode.perM3Usd ? m3 * mode.perM3Usd : 0;
-  const usd = Math.max(byKg, byVol);
+  const usd = kg > 0 || m3 > 0 ? Math.max(byKg, byVol) : 0;
   return {
     tjs: round2(usd * RATES.usdToTjs),
     basis: usd === 0 ? "none" : byVol > byKg ? "m3" : "kg",
@@ -145,20 +162,21 @@ export function priceOrder(
   lines: CartLine[],
   modes: Partial<Record<CountryCode, string>>,
   lookup: (slug: string) => Product | undefined,
+  dest: Dest = "tj",
 ): PricedOrder {
   const found = lines.flatMap((l) => {
     const p = lookup(l.slug);
     return p ? [{ p, qty: l.qty, size: l.size, color: l.color, cost: costPerUnit(p) }] : [];
   });
 
-  // Тахфиф аз маблағи фармоиш бо нархи асосӣ муайян мешавад
-  const listAmount = found.reduce((s, l) => s + l.cost * (1 + basePct() / 100) * l.qty, 0);
+  // Тахфиф аз маблағи фармоиш бо нархи асосӣ муайян мешавад; моли бе нархи оптовӣ ба ин ҳисоб намеравад
+  const listAmount = found.reduce((s, l) => s + (l.p.noWholesale ? 0 : l.cost * (1 + basePct() / 100) * l.qty), 0);
   const pct = markupPct(listAmount);
 
   const byCountry = new Map<CountryCode, PricedLine[]>();
   for (const l of found) {
     const listUnit = l.cost * (1 + basePct() / 100);
-    const unit = l.cost * (1 + pct / 100);
+    const unit = l.p.noWholesale ? listUnit : l.cost * (1 + pct / 100);
     const row: PricedLine = {
       key: `${l.p.slug}|${l.size ?? ""}|${l.color ?? ""}`,
       size: l.size,
@@ -181,7 +199,7 @@ export function priceOrder(
       goods: rows.reduce((s, r) => s + r.goods, 0),
       kg,
       m3,
-      shipping: shippingCost(country, modes[country], kg, m3),
+      shipping: shippingCost(country, modes[country], kg, m3, dest),
     };
   });
 

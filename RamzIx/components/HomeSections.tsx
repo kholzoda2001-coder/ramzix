@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useRef } from "react";
-import { CATEGORIES, COUNTRIES, fmtQty, unitOf, type CountryCode, type Product } from "@/lib/catalog";
+import { CATEGORIES, COUNTRIES, fmtQty, shownCountries, unitOf, type Product } from "@/lib/catalog";
 import { brandLogo, FEATURED_BRANDS } from "@/lib/brands";
 import { type Brand, brandSlug, categoryCover, EMPTY_FILTERS, filterProducts, getBrands } from "@/lib/filters";
 import { useCatalog } from "@/lib/useCatalog";
@@ -35,7 +35,7 @@ export function Countries() {
     <section className="block" id="countries">
       <div className="sec-head"><h2><T>Харид аз рӯи кишвар</T></h2></div>
       <div className="countries">
-        {(Object.keys(COUNTRIES) as CountryCode[]).map((c) => {
+        {shownCountries().map((c) => {
           const n = products.filter((p) => p.country === c).length;
           return (
             <Link key={c} href={`/catalog?country=${c}`} className="country">

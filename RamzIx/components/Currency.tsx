@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { currencyFromCountry, getCountry, langFromBrowser } from "@/lib/geo";
 import { CURRENCIES, DEFAULT_CURRENCY, fromTjs, toTjs, type CurrencyId } from "@/lib/currency";
 
 const KEY = "ramzix-currency";
@@ -42,10 +43,16 @@ export const useMoney = () => useContext(Ctx);
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [cur, setCurState] = useState<CurrencyId>(DEFAULT_CURRENCY);
   useEffect(() => {
-    try {
-      const s = localStorage.getItem(KEY);
-      if (s && CURRENCIES.some((c) => c.id === s)) setCurState(s as CurrencyId);
-    } catch {}
+    let saved: string | null = null;
+    try { saved = localStorage.getItem(KEY); } catch {}
+    if (saved && CURRENCIES.some((c) => c.id === saved)) return setCurState(saved as CurrencyId);
+    // Харидор худаш интихоб накардааст: асъор аз рӯи кишвар (Тоҷикистон — смн, Аморат — AED, дигар — $). Нигоҳ дошта намешавад.
+    let alive = true;
+    getCountry().then((c) => {
+      const cur = currencyFromCountry(c) ?? (langFromBrowser() === "tg" ? "TJS" : null);
+      if (alive && cur) setCurState(cur);
+    });
+    return () => { alive = false; };
   }, []);
   const setCur = useCallback((c: CurrencyId) => {
     setCurState(c);

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
+import { useDest } from "@/lib/useDest";
 import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf } from "@/lib/pricing";
 import { setPriceMode, usePriceMode } from "./PriceMode";
 import { brandSlug } from "@/lib/filters";
@@ -35,6 +36,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const [img, setImg] = useState(0);
   const [colorName, setColorName] = useState<string | null>(p.colors?.[0]?.name ?? null);
   const [size, setSize] = useState<string | null>(p.sizes?.[2] ?? p.sizes?.[0] ?? null);
+  const dest = useDest();
   const [modeId, setModeId] = useState(defaultMode(p.country));
   const [more, setMore] = useState(false);
   const [zoom, setZoom] = useState(false);
@@ -63,16 +65,18 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const tiers = useMemo(() => qtyTiers(p), [p]);
   const tier = tierAt(tiers, qty);
   const unitPrice = tier.unit;
-  const [w1, w2] = shownTiers(p);
-  const mode = usePriceMode();
+  const [w1, w2, w3] = shownTiers(p);
+  const savedMode = usePriceMode();
+  // Моли бе нархи оптовӣ (аз admin) — ҳамеша чакана
+  const mode = p.noWholesale ? "retail" : savedMode;
   const goods = round2(unitPrice * qty);
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
-  const ship = shippingCost(p.country, modeId, weight, volumeOf(p, qty));
+  const ship = shippingCost(p.country, modeId, weight, volumeOf(p, qty), dest);
   const total = round2(goods + ship.tjs);
   const bigOrder = qty >= rfqFromOf(p);
   const country = COUNTRIES[p.country];
-  const modeList = modesFor(p.country);
+  const modeList = modesFor(p.country, dest);
   // Мӯҳлати расонидан як бор нишон дода мешавад: дар тугмаи интихоб (агар якчанд намуд бошад), вагарна дар сатр
   const shipNote = [
     modeList.length === 1 ? `${t(ship.mode.label)}, ${t("{a}–{b} рӯз", { a: ship.mode.daysMin, b: ship.mode.daysMax })}` : null,
@@ -84,7 +88,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const goImg = (k: number) => track.current?.scrollTo({ left: k * track.current.clientWidth, behavior: "smooth" });
 
   const waText = `${t("Салом! Маҳсулот:")} ${t(p.name)}${colorName ? `, ${t("ранг")} ${t(colorName)}` : ""}${size ? `, ${t("андоза")} ${size}` : ""}. ${t("Миқдор:")} ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${t(sale?.perLabel ?? "")})` : ""}. ${t("Нархи оптовиро гуфта метавонед?")}`;
-  const wholesaleLink = waLink(waText);
 
   const addToCart = () => {
     setMode(p.country, modeId);
@@ -145,13 +148,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
           )}
         </div>
 
-        {w1 && (
-          <button className="pd-promo" onClick={() => { setPriceMode("whole"); setQ(w1.minQty); }}>
-            <b><T>Нархи оптом</T></b>
-            <span>{t("−{p}% аз {q}", { p: String(w1.off).replace(".", ","), q: `${fmtQty(w1.minQty)} ${unit}` })}</span>
-          </button>
-        )}
-
         <div className="pd-body">
           {/* Рангҳо (вариатсия) */}
           {p.colors && p.colors.length > 0 && (
@@ -184,10 +180,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Нарх */}
           <div className="price-box">
-            <div className="pm-tabs" role="tablist" aria-label={t("Тарзи харид")}>
-              <button role="tab" aria-selected={mode === "retail"} className={mode === "retail" ? "on" : ""} onClick={() => setPriceMode("retail")}><T>Чакана</T></button>
-              <button role="tab" aria-selected={mode === "whole"} className={mode === "whole" ? "on" : ""} onClick={() => setPriceMode("whole")}><T>Оптом</T></button>
-            </div>
+            {!p.noWholesale && (
+              <div className="pm-tabs" role="tablist" aria-label={t("Тарзи харид")}>
+                <button role="tab" aria-selected={mode === "retail"} className={mode === "retail" ? "on" : ""} onClick={() => setPriceMode("retail")}><T>Чакана</T></button>
+                <button role="tab" aria-selected={mode === "whole"} className={mode === "whole" ? "on" : ""} onClick={() => setPriceMode("whole")}><T>Оптом</T></button>
+              </div>
+            )}
 
             {mode === "retail" ? (
               <div className="pm-retail">
@@ -197,9 +195,11 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 </div>
                 {w1 && (
                   <button className="pm-hint" onClick={() => { setPriceMode("whole"); setQ(w1.minQty); }}>
-                    <span>
-                      <T>Оптом арзонтар:</T> <b>{price(w1.unit)}</b> {t("аз {q}", { q: `${fmtQty(w1.minQty)} ${unit}` })}
-                      {w2 && <>, <b>{price(w2.unit)}</b> {t("аз {q}", { q: `${fmtQty(w2.minQty)} ${unit}` })}</>}
+                    <span style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", columnGap: 18, rowGap: 2 }}>
+                      <T>Оптом</T>
+                      <b>{price(w1.unit)}</b>
+                      {w2 && <b>{price(w2.unit)}</b>}
+                      {w3 && <b>{price(w3.unit)}</b>}
                     </span>
                     <Icon name="chevron" size={16} stroke={2.4} />
                   </button>
@@ -208,27 +208,18 @@ export default function ProductView({ p, related, other }: { p: Product; related
             ) : (
               <div className="pm-tiers">
                 <span className="pm-cap">{t("Нарх барои 1 {u} аз рӯи миқдор", { u: unit })}</span>
-                {tiers.map((x, k) => (
+                {tiers.filter((x) => x.from > 0).map((x, k, ws) => (
                   <button key={x.pct} className={x === tier ? "on" : ""} onClick={() => setQ(x.minQty)}>
                     <span>
-                      <b>{k < tiers.length - 1 ? `${fmtQty(x.minQty)}–${fmtQty(round2(tiers[k + 1].minQty - step))} ${unit}` : t("аз {q}", { q: `${fmtQty(x.minQty)} ${unit}` })}</b>
-                      <small>{x.from > 0 ? t("ё сабад аз {s}", { s: `${sum(x.from)} ${label}` }) : t("Нархи асосӣ")}</small>
+                      <b>{k < ws.length - 1 ? `${fmtQty(x.minQty)}–${fmtQty(round2(ws[k + 1].minQty - step))} ${unit}` : t("аз {q}", { q: `${fmtQty(x.minQty)} ${unit}` })}</b>
                     </span>
                     <span>
                       <b>{price(x.unit)} {label}</b>
-                      <small className="off">{x.from > 0 ? `−${String(x.off).replace(".", ",")}%` : "—"}</small>
                     </span>
                   </button>
                 ))}
-                <span className="pm-note"><T>Тахфиф аз маблағи умумии сабад ҳисоб мешавад — моли дигар ҳам ба он илова мешавад.</T></span>
               </div>
             )}
-
-            <a className="wa-cta" href={wholesaleLink} target="_blank" rel="noreferrer">
-              <span className="wa-ic"><Icon name="wa" size={24} /></span>
-              <span className="wa-txt"><b><T>Дар WhatsApp пурсед</T></b><small><T>Барои миқдори калон нархи махсус</T></small></span>
-              <Icon name="chevron" size={18} stroke={2.4} />
-            </a>
           </div>
 
           {/* Номи маҳсулот */}
@@ -361,7 +352,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pane terms">
               <div><Icon name="box" size={20} /><span><b><T>Ҳадди ақал</T></b>{sale ? t("Аз {q}. Нарх бо {u} ҳисоб мешавад", { q: `${fmtQty(minQty)} ${unit}`, u: unit }) : t("Чакана аз 1 дона, нархи оптовӣ аз {q}", { q: `${fmtQty(w1?.minQty ?? minQty)} ${unit}` })}</span></div>
               <div><Icon name="doc" size={20} /><span><b>{tx("termsDocsTitle")}</b>{tx("termsDocsText")}</span></div>
-              <div><Icon name="card" size={20} /><span><b>{tx("termsDeferTitle")}</b>{tx("termsDeferText")}</span></div>
+              <div><Icon name="card" size={20} /><span><b>{tx("termsDeferTitle")}</b></span></div>
               <div><Icon name="tag" size={20} /><span><b>{tx("termsRfqTitle")}</b>{tx("termsRfqText")}</span></div>
             </div>
           )}
@@ -371,7 +362,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pane">
               <table className="spec">
                 <tbody>
-                  {modesFor(p.country).map((m) => (
+                  {modeList.map((m) => (
                     <tr key={m.id}>
                       <td>{t(m.label)}</td>
                       <td>

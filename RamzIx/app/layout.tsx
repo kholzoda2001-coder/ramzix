@@ -37,13 +37,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <LangProvider>
           <CurrencyProvider>
             <PricingProvider initial={pricing}>
-            <CatalogProvider initial={products}>
-              <SiteProvider initial={site}>
+            <SiteProvider initial={site}>
+              <CatalogProvider initial={products}>
                 <CartProvider>
                   <div className="app">{children}</div>
                 </CartProvider>
-              </SiteProvider>
-            </CatalogProvider>
+              </CatalogProvider>
+            </SiteProvider>
             </PricingProvider>
           </CurrencyProvider>
         </LangProvider>

@@ -14,6 +14,7 @@ import Icon from "./Icon";
 import ContactFields from "./ContactFields";
 import { joinPhone, splitPhone } from "@/lib/phone";
 import { T, useT } from "./Lang";
+import { setDest } from "@/lib/useDest";
 
 
 export default function ProfileView() {
@@ -32,7 +33,7 @@ export default function ProfileView() {
   const spent = orders.reduce((a, o) => a + o.totalTjs, 0);
 
   const startEdit = () => { setDraft(profile); setLocal(splitPhone(profile.phone, profile.country).local); setEditing(true); };
-  const save = () => { saveProfile({ ...draft, phone: joinPhone(draft.country, local) }); setEditing(false); };
+  const save = () => { saveProfile({ ...draft, phone: joinPhone(draft.country, local) }); setDest(draft.country); setEditing(false); };
 
   const repeat = (o: Order) => {
     const ok = o.lines.filter((l) => getProduct(l.slug));
@@ -78,7 +79,7 @@ export default function ProfileView() {
         </section>
       )}
 
-      {!editing && filled && (
+      {!editing && filled && (profile.shop || profile.phone || profile.address) && (
         <section className="pf-card pf-info">
           {profile.shop && <div><Icon name="store" size={18} /><span>{profile.shop}</span></div>}
           {profile.phone && <div><Icon name="phone" size={18} /><span>{profile.phone}</span></div>}
@@ -146,7 +147,7 @@ export default function ProfileView() {
         </Link>
       </section>
 
-      <p className="pf-note"><Icon name="shield" size={14} /> <T>Маълумот танҳо дар ин дастгоҳ нигоҳ дошта мешавад. Баъди пайвастани сервер ҳисоби шумо дар ҳамаи дастгоҳҳо кор мекунад.</T></p>
+      <p className="pf-note"><Icon name="shield" size={14} /> <T>Маълумот танҳо дар ин дастгоҳ нигоҳ дошта мешавад.</T></p>
 
       {(filled || orders.length > 0) && (
         confirmClear ? (

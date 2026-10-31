@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { CATEGORIES, COUNTRIES, type CountryCode } from "@/lib/catalog";
+import { COUNTRIES, shownCategories, shownCountries, type CountryCode } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
 import { EMPTY_FILTERS, UNITS, filterProducts, getBrands, type Filters } from "@/lib/filters";
 import { useMoney } from "./Currency";
@@ -29,7 +29,7 @@ export default function FilterSheet({
   const [minTxt, setMinTxt] = useState("");
   const [maxTxt, setMaxTxt] = useState("");
   const brands = useMemo(() => getBrands(products), [products]);
-  const cats = CATEGORIES.filter((c) => c.id !== "all");
+  const cats = shownCategories();
 
   // Ҳар дафъаи кушодан аз филтрҳои ҷорӣ оғоз мекунем
   useEffect(() => {
@@ -41,6 +41,14 @@ export default function FilterSheet({
     return () => { document.body.style.overflow = ""; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, initial, cur]);
+
+  // Бо Esc пӯшида мешавад
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
 
   const withPrice: Filters = {
     ...draft,
@@ -67,7 +75,7 @@ export default function FilterSheet({
           <section>
             <h3><T>Кишвар</T></h3>
             <div className="fchips">
-              {(Object.keys(COUNTRIES) as CountryCode[]).map((c) => (
+              {shownCountries().map((c) => (
                 <button key={c} className={draft.country.includes(c) ? "on" : ""} onClick={() => setDraft({ ...draft, country: toggle(draft.country, c) })}>
                   <Flag code={c} className="fc-flag" />{t(COUNTRIES[c].short)}<em>{counts.country(c)}</em>
                 </button>

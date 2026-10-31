@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { toStorefront, type AdminProduct } from "./admin-core";
 import type { Product } from "./catalog";
 import { cleanBrand } from "./brands";
+import { isVisible } from "./site-config";
+import { useSite } from "./useSite";
 
 /* Каталоги сайт = маҳсулоти фаъол аз база. `initial` аз сервер меояд (бе вахти холӣ), баъд дар клиент нав мешавад. */
 type Ctx = { products: Product[]; getProduct: (slug: string) => Product | undefined; ready: boolean };
@@ -26,8 +28,11 @@ export function CatalogProvider({ children, initial = [] }: { children: React.Re
     window.addEventListener("ramzix-admin-change", onChange);
     return () => { alive = false; clearTimeout(t.id); window.removeEventListener("ramzix-admin-change", onChange); };
   }, []);
+  // Молҳои категория ё кишвари пинҳоншуда (аз admin) дар сайт нишон дода намешаванд
+  const site = useSite();
   const value = useMemo<Ctx>(() => {
-    return { products: all, getProduct: (slug) => all.find((p) => p.slug === slug), ready };
-  }, [all, ready]);
+    const shown = all.filter((p) => isVisible(p, site));
+    return { products: shown, getProduct: (slug) => shown.find((p) => p.slug === slug), ready };
+  }, [all, ready, site]);
   return <Cat.Provider value={value}>{children}</Cat.Provider>;
 }

@@ -65,7 +65,7 @@ export default function Pricing() {
         <p className="ad-hint">Аз «Аз» сомонӣ сар карда фоидаи шумо ҳамин фоиз болои нархи харид аст. Зинаи якум ҳамеша аз 0 сар мешавад ва нархи асосии корт аст. Ҳар қадар сабад калон, фоида камтар.</p>
         {cfg.markupTiers.map((t, i) => (
           <div key={i} className="ad-grid2 ad-tier">
-            <Num label={i === 0 ? "Аз (смн)" : "Аз (смн)"} value={t.from} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, from: i === 0 ? 0 : n } : x)) })} />
+            <Num label="Аз (смн)" hint={t.from > 0 ? `≈ ${Math.round(t.from / (cfg.usdToTjs || 1)).toLocaleString("ru-RU")} $` : "Нархи асосӣ (дона)"} value={t.from} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, from: i === 0 ? 0 : n } : x)) })} />
             <div className="ad-row-h" style={{ alignItems: "end" }}>
               <Num label="Фоида, %" value={t.pct} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, pct: n } : x)) })} />
               {i > 0 && <button className="ad-mv red" onClick={() => up({ markupTiers: cfg.markupTiers.filter((_, k) => k !== i) })} aria-label="Нест кардан">✕</button>}
@@ -76,7 +76,7 @@ export default function Pricing() {
         <div>
           <p className="ad-hint">Кадом зинаҳо дар саҳифаи маҳсулот ҳамчун «нархи оптовӣ» нишон дода мешаванд:</p>
           <div className="ad-chips wrap">
-            {pcts.map((p) => {
+            {pcts.filter((p) => p !== cfg.markupTiers[0]?.pct).map((p) => {
               const on = cfg.shownWholesalePcts.includes(p);
               return <button key={p} className={on ? "on" : ""} onClick={() => up({ shownWholesalePcts: on ? cfg.shownWholesalePcts.filter((x) => x !== p) : [...cfg.shownWholesalePcts, p] })}>{p}%</button>;
             })}
@@ -95,7 +95,7 @@ export default function Pricing() {
 
       <section className="ad-card">
         <h3>Расонидан (карго)</h3>
-        <p className="ad-hint">Нарх — доллар барои 1 кг. Агар «м³» пур бошад, аз вазн ва ҳаҷм кадомаш зиёд бошад, ҳамон ҳисоб мешавад. Дар сайт ва сабад танҳо намуди аввали ҳар кишвар истифода мешавад.</p>
+        <p className="ad-hint">Нарх — доллар барои 1 кг. Агар «м³» пур бошад, аз вазн ва ҳаҷм кадомаш зиёд бошад, ҳамон ҳисоб мешавад. Дар сайт ва сабад танҳо намуди аввали ҳар кишвар истифода мешавад. Намуди «Дар Иморот» барои харидори Иморот ва моли Дубай аст: «$ собит» то «кг-и собит», баъд «$ / кг» барои ҳар кг иловагӣ.</p>
         {COUNTRY_KEYS.map((c) => (
           <div key={c} className="ad-ship">
             <b>{COUNTRIES[c].short}</b>
@@ -103,12 +103,14 @@ export default function Pricing() {
               <div key={m.id + i} className="ad-item">
                 <div className="ad-row-h">
                   <label className="ad-check"><input type="checkbox" checked={!!m.assumed} onChange={(e) => setMode(c, i, { assumed: e.target.checked })} /> Нарх тахминӣ аст</label>
-                  {cfg.shipping[c].length > 1 && <button className="ad-mv red" onClick={() => up({ shipping: { ...cfg.shipping, [c]: cfg.shipping[c].filter((_, k) => k !== i) } })} aria-label="Нест кардан">✕</button>}
+                  {cfg.shipping[c].length > 1 && m.id !== "local" && <button className="ad-mv red" onClick={() => up({ shipping: { ...cfg.shipping, [c]: cfg.shipping[c].filter((_, k) => k !== i) } })} aria-label="Нест кардан">✕</button>}
                 </div>
                 <label><span>Ном</span><input value={m.label} maxLength={40} onChange={(e) => setMode(c, i, { label: e.target.value })} /></label>
                 <div className="ad-grid2">
                   <Num label="$ / кг" value={m.perKgUsd} onChange={(n) => setMode(c, i, { perKgUsd: n })} />
                   <Num label="$ / м³ (ихтиёрӣ)" value={m.perM3Usd ?? 0} onChange={(n) => setMode(c, i, { perM3Usd: n > 0 ? n : undefined })} />
+                  <Num label={`$ собит (≈ ${Math.round((m.flatUsd ?? 0) * cfg.aedPerUsd * 10) / 10} AED)`} value={m.flatUsd ?? 0} onChange={(n) => setMode(c, i, { flatUsd: n > 0 ? n : undefined, flatKg: n > 0 ? m.flatKg ?? 5 : undefined })} />
+                  <Num label="То чанд кг собит" value={m.flatKg ?? 0} onChange={(n) => setMode(c, i, { flatKg: n > 0 ? n : undefined })} />
                   <Num label="Рӯз аз" value={m.daysMin} onChange={(n) => setMode(c, i, { daysMin: n })} />
                   <Num label="Рӯз то" value={m.daysMax} onChange={(n) => setMode(c, i, { daysMax: n })} />
                 </div>

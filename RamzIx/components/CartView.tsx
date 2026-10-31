@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo } from "react";
 import { COUNTRIES, fmtQty, unitOf } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
+import { useDest } from "@/lib/useDest";
 import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
@@ -22,7 +23,8 @@ export default function CartView() {
   const { getProduct, products, ready: catReady } = useCatalog();
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
-  const order = useMemo(() => priceOrder(lines, modes, getProduct), [lines, modes, getProduct]);
+  const dest = useDest();
+  const order = useMemo(() => priceOrder(lines, modes, getProduct, dest), [lines, modes, getProduct, dest]);
 
   // Маҳсулоте, ки дигар дар каталог нест, аз сабад хориҷ мешавад (нишонаи сабад ҳам дуруст мешавад)
   useEffect(() => {
@@ -73,7 +75,7 @@ export default function CartView() {
     <CartShell onBack={back} onClear={clear}>
       {order.groups.map((g) => {
         const country = COUNTRIES[g.country];
-        const modeList = modesFor(g.country);
+        const modeList = modesFor(g.country, dest);
         return (
           <section className="cart-group" key={g.country}>
             <div className="cg-head">

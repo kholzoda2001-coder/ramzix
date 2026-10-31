@@ -2,6 +2,8 @@
    нишонҳои категория дар саҳифаи асосӣ ва брендҳои пинҳоншуда.
    Дар база (admin_settings, key = "site") нигоҳ дошта мешавад; агар набошад — ҳамин қиматҳои пешфарз. */
 
+import { DEFAULT_CATEGORIES, DEFAULT_COUNTRIES, type CategoryMeta, type CountryCode, type CountryMeta, type Product } from "./catalog";
+
 export type BannerCfg = {
   id: string;
   /** Номи зеркатегория дар қатори болои баннер */
@@ -14,6 +16,9 @@ export type BannerCfg = {
   q: string;
   active: boolean;
 };
+
+/** Варақаи сарлавҳа: id = "all" (Ҳама), "whole" (Оптом) ё id-и категория */
+export type TabCfg = { id: string; label: string; show: boolean };
 
 export type HomeCatCfg = {
   id: string;
@@ -42,6 +47,12 @@ export type HeroCfg = {
 };
 
 export type SiteConfig = {
+  /** Варақаҳои сарлавҳаи саҳифаи асосӣ */
+  tabs: TabCfg[];
+  /** Категорияҳои маҳсулот (ном, нишона, нишон/пинҳон) */
+  categories: CategoryMeta[];
+  /** Кишварҳо (ном, мӯҳлат, нишон/пинҳон) */
+  countries: Record<CountryCode, CountryMeta>;
   /** Баннерҳои варақаи «Ҳама» */
   hero: HeroCfg[];
   /** Матнҳои таҳриршаванда (калид → матн) */
@@ -66,8 +77,7 @@ export const TEXT_FIELDS: { key: string; label: string; group: string; def: stri
   { key: "warrantyDefault", group: "Саҳифаи маҳсулот", label: "Кафолат: молҳои дигар", def: "Ивази нуқсон 14 рӯз" },
   { key: "termsDocsTitle", group: "Саҳифаи маҳсулот", label: "Шарти 1: сарлавҳа", def: "Фактура ва ҳуҷҷат" },
   { key: "termsDocsText", group: "Саҳифаи маҳсулот", label: "Шарти 1: матн", def: "Барои ҳисоби бизнес: фактура, шартнома, ҳуҷҷатҳои гумрукӣ", long: true },
-  { key: "termsDeferTitle", group: "Саҳифаи маҳсулот", label: "Шарти 2: сарлавҳа", def: "Пардохт бо мӯҳлат" },
-  { key: "termsDeferText", group: "Саҳифаи маҳсулот", label: "Шарти 2: матн", def: "Барои мизоҷони доимӣ: 30% пешпардохт, боқимонда то 14 рӯз", long: true },
+  { key: "termsDeferTitle", group: "Саҳифаи маҳсулот", label: "Шарти 2: сарлавҳа", def: "Пардохт бо боварӣ" },
   { key: "termsRfqTitle", group: "Саҳифаи маҳсулот", label: "Шарти 3: сарлавҳа", def: "Нархи оптовӣ" },
   { key: "termsRfqText", group: "Саҳифаи маҳсулот", label: "Шарти 3: матн", def: "Барои миқдори калон нархи махсус: дар WhatsApp пурсед, ҷавоб то 2 соат", long: true },
   { key: "pickup", group: "Саҳифаи маҳсулот", label: "Худ гирифтан (ҷой)", def: "Анбори Душанбе" },
@@ -89,12 +99,26 @@ export const TEXT_FIELDS: { key: string; label: string; group: string; def: stri
   { key: "step3Text", group: "Саҳифаи асосӣ: «Чӣ тавр кор мекунем»", label: "Қадам 3: матн", def: "Алиф, DC, бонк" },
   { key: "step4Title", group: "Саҳифаи асосӣ: «Чӣ тавр кор мекунем»", label: "Қадам 4: сарлавҳа", def: "Расонидан" },
   { key: "step4Text", group: "Саҳифаи асосӣ: «Чӣ тавр кор мекунем»", label: "Қадам 4: матн", def: "То дари мағоза" },
+  { key: "tierTitle", group: "Саҳифаи асосӣ: нархи оптовӣ", label: "Сарлавҳаи блоки нархи оптовӣ", def: "Сабад калонтар — нарх арзонтар" },
+  { key: "tierText", group: "Саҳифаи асосӣ: нархи оптовӣ", label: "Матни блоки нархи оптовӣ", def: "Тахфиф худ ба худ дар сабад ҳисоб мешавад, барои ҳамаи мол. Барои фармоиши калон нархи махсусро дар WhatsApp пурсед.", long: true },
+  { key: "footer", group: "Саҳифаи асосӣ: поёни сайт", label: "Сатри поёни сайт", def: "© 2026 RamzIx · Душанбе, Тоҷикистон" },
   { key: "payments", group: "Пардохт", label: "Усулҳои пардохт дар поёни сайт (бо вергул)", def: "Алиф, DC Pay, Эсхата, Visa / MC, Интиқоли бонкӣ, Нақд", long: true },
   { key: "checkoutNote", group: "Пардохт", label: "Эзоҳ дар саҳифаи фармоиш", def: "Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоишро тасдиқ мекунад ва тарзи пардохтро (Алиф, DC, бонк, нақд) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.", long: true },
 ];
 export const DEFAULT_TEXTS: Record<string, string> = Object.fromEntries(TEXT_FIELDS.map((f) => [f.key, f.def]));
 
+export const DEFAULT_TABS: TabCfg[] = [
+  { id: "all", label: "Ҳама", show: true },
+  { id: "men", label: "Мардона", show: true },
+  { id: "women", label: "Занона", show: true },
+  { id: "kids", label: "Кӯдакона", show: true },
+  { id: "shoes", label: "Пояфзол", show: true },
+];
+
 export const DEFAULT_SITE: SiteConfig = {
+  tabs: DEFAULT_TABS,
+  categories: DEFAULT_CATEGORIES,
+  countries: DEFAULT_COUNTRIES,
   hero: [
     H("h1", "discount", { tag: "Тахфифи ҳаҷм", sub: "Сабад калонтар — нарх арзонтар", href: "/#rfq" }),
     H("h2", "global", { tag: "Таъминоти байналмилалӣ", title: "Маҳсулот аз *Дубай, Чин, Туркия* барои мағозаи шумо", href: "/catalog" }),
@@ -155,6 +179,13 @@ export const BANNER_TABS: { id: string; label: string }[] = [
   { id: "shoes", label: "Пояфзол" },
 ];
 
+/** Нишонаҳои дастрас барои категория (мувофиқ ба components/Icon.tsx) */
+export const CATEGORY_ICONS = ["headphones", "phone", "shirt", "baby", "tag", "home", "sparkle", "cup", "laptop", "grid", "box", "store", "globe", "bolt", "star", "heart", "truck", "card", "headset"];
+
+/** Мол дар сайт нишон дода мешавад, агар категория ва кишвараш пинҳон набошад */
+export const isVisible = (p: Pick<Product, "category" | "country">, site: Pick<SiteConfig, "categories" | "countries">) =>
+  site.categories.find((c) => c.id === p.category)?.show !== false && site.countries[p.country]?.show !== false;
+
 const str = (v: unknown, max: number, fb = "") => (typeof v === "string" ? v.trim().slice(0, max) : fb);
 const color = (v: unknown, fb: string) => (typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v) ? v : fb);
 const idList = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && /^[\w-]{1,30}$/.test(x)).slice(0, 6) : []);
@@ -164,10 +195,11 @@ export function mergeSite(raw: unknown): SiteConfig {
   const r = (raw && typeof raw === "object" ? raw : {}) as Partial<Record<keyof SiteConfig, unknown>>;
   const banners: SiteConfig["banners"] = {};
   const rb = (r.banners && typeof r.banners === "object" ? r.banners : {}) as Record<string, unknown>;
-  for (const t of BANNER_TABS) {
-    const src = Array.isArray(rb[t.id]) ? (rb[t.id] as unknown[]) : null;
-    if (!src) { banners[t.id] = DEFAULT_SITE.banners[t.id]; continue; }
-    banners[t.id] = src.slice(0, 12).map((x, i) => {
+  const bannerIds = [...new Set([...BANNER_TABS.map((t) => t.id), ...Object.keys(rb).filter((k) => /^[\w-]{1,30}$/.test(k) && k !== "all")])];
+  for (const id of bannerIds) {
+    const src = Array.isArray(rb[id]) ? (rb[id] as unknown[]) : null;
+    if (!src) { if (DEFAULT_SITE.banners[id]) banners[id] = DEFAULT_SITE.banners[id]; continue; }
+    banners[id] = src.slice(0, 12).map((x, i) => {
       const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
       return {
         id: str(o.id, 20, `b${i}`) || `b${i}`, label: str(o.label, 24), title: str(o.title, 40), sub: str(o.sub, 50),
@@ -197,5 +229,39 @@ export function mergeSite(raw: unknown): SiteConfig {
   const rl = (r.brandLogos && typeof r.brandLogos === "object" ? r.brandLogos : {}) as Record<string, unknown>;
   const brandLogos: Record<string, string> = {};
   for (const [k, v] of Object.entries(rl).slice(0, 60)) if (typeof v === "string" && /^data:image\/(png|webp|jpeg|svg\+xml);base64,[A-Za-z0-9+/=]+$/.test(v) && v.length <= 140_000) brandLogos[k.slice(0, 40)] = v;
-  return { hero, texts, brandLogos, banners, homeCats, hiddenBrands };
+  // Категорияҳо: категорияҳои асосӣ ҳамеша мемонанд (метавон пинҳон кард), навҳо илова мешаванд
+  const catRaw = Array.isArray(r.categories) ? (r.categories as unknown[]) : [];
+  const categories: CategoryMeta[] = [];
+  for (const x of catRaw.slice(0, 40)) {
+    const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
+    const id = str(o.id, 30);
+    const def = DEFAULT_CATEGORIES.find((c) => c.id === id);
+    if (!/^[\w-]{1,30}$/.test(id) || id === "all" || categories.some((c) => c.id === id)) continue;
+    const name = str(o.name, 30, def?.name ?? "");
+    if (!name) continue;
+    const icon = str(o.icon, 20, def?.icon ?? "tag");
+    categories.push({ id, name, icon: CATEGORY_ICONS.includes(icon) ? icon : "tag", tint: color(o.tint, def?.tint ?? "#eef1f6"), show: o.show !== false });
+  }
+  for (const d of DEFAULT_CATEGORIES) if (!categories.some((c) => c.id === d.id)) categories.push(d);
+  const rcn = (r.countries && typeof r.countries === "object" ? r.countries : {}) as Record<string, unknown>;
+  const countries = {} as Record<CountryCode, CountryMeta>;
+  for (const code of Object.keys(DEFAULT_COUNTRIES) as CountryCode[]) {
+    const d = DEFAULT_COUNTRIES[code];
+    const o = (rcn[code] && typeof rcn[code] === "object" ? rcn[code] : {}) as Record<string, unknown>;
+    countries[code] = { name: str(o.name, 40, d.name) || d.name, short: str(o.short, 16, d.short) || d.short, note: str(o.note, 60, d.note), days: str(o.days, 20, d.days), show: o.show !== false };
+  }
+  const tabRaw = Array.isArray(r.tabs) ? (r.tabs as unknown[]) : null;
+  let tabs: TabCfg[] = DEFAULT_TABS;
+  if (tabRaw) {
+    tabs = [];
+    for (const x of tabRaw.slice(0, 12)) {
+      const o = (x && typeof x === "object" ? x : {}) as Record<string, unknown>;
+      const id = str(o.id, 30);
+      const label = str(o.label, 16);
+      if (!/^[\w-]{1,30}$/.test(id) || !label || tabs.some((t) => t.id === id)) continue;
+      tabs.push({ id, label, show: id === "all" ? true : o.show !== false });
+    }
+    if (!tabs.some((t) => t.id === "all")) tabs.unshift(DEFAULT_TABS[0]);
+  }
+  return { tabs, categories, countries, hero, texts, brandLogos, banners, homeCats, hiddenBrands };
 }

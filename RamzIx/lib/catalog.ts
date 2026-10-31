@@ -41,31 +41,51 @@ export type Product = {
   nameOriginal?: string;
   description: string | null;
   sale?: Sale;
+  /** true — нархи оптовӣ надорад: ҳамеша бо нархи дона, ба тахфифи сабад ворид намешавад */
+  noWholesale?: boolean;
 };
 
 /* Маҳсулот дар базаи маълумот (Supabase) нигоҳ дошта мешавад — ниг. lib/server/catalog.ts ва lib/useCatalog.tsx */
 
-export const COUNTRIES: Record<CountryCode, { name: string; short: string; note: string; days: string }> = {
-  ae: { name: "Аморат (Дубай)", short: "Дубай", note: "Электроника, брендҳо", days: "30–40 рӯз" },
-  cn: { name: "Чин", short: "Чин", note: "Ҳама навъ, нархи паст", days: "10–20 рӯз" },
-  tr: { name: "Туркия", short: "Туркия", note: "Либос, хона, косметика", days: "10–18 рӯз" },
-  tj: { name: "Тоҷикистон", short: "Ватанӣ", note: "Истеҳсоли ватанӣ", days: "1–3 рӯз" },
+export type CountryMeta = { name: string; short: string; note: string; days: string; /** false — кишвар дар сайт нишон дода намешавад (молҳояш ҳам) */ show: boolean };
+export type CategoryMeta = { id: string; name: string; icon: string; tint: string; /** false — категория ва молҳояш дар сайт нишон дода намешаванд */ show: boolean };
+
+/* Қиматҳои пешфарз; дар сайт аз admin («Сайт») иваз мешаванд — ниг. applyCatalogMeta */
+export const DEFAULT_COUNTRIES: Record<CountryCode, CountryMeta> = {
+  ae: { name: "Аморат (Дубай)", short: "Дубай", note: "Электроника, брендҳо", days: "30–40 рӯз", show: true },
+  cn: { name: "Чин", short: "Чин", note: "Ҳама навъ, нархи паст", days: "10–20 рӯз", show: true },
+  tr: { name: "Туркия", short: "Туркия", note: "Либос, хона, косметика", days: "10–18 рӯз", show: true },
+  tj: { name: "Тоҷикистон", short: "Ватанӣ", note: "Истеҳсоли ватанӣ", days: "1–3 рӯз", show: true },
 };
 
-export const CATEGORIES: { id: string; name: string; icon: string; tint: string }[] = [
-  { id: "audio", name: "Наушник ва аудио", icon: "headphones", tint: "#e8eefc" },
-  { id: "phones", name: "Телефон ва аксессуар", icon: "phone", tint: "#fde8f1" },
-  { id: "men", name: "Либоси мардона", icon: "shirt", tint: "#e6f4fb" },
-  { id: "women", name: "Либоси занона", icon: "shirt", tint: "#fde8f1" },
-  { id: "kids", name: "Кӯдакона", icon: "baby", tint: "#fdf3e1" },
-  { id: "shoes", name: "Пояфзол", icon: "tag", tint: "#f1ecfd" },
-  { id: "home", name: "Хона ва ошхона", icon: "home", tint: "#f1ecfd" },
-  { id: "beauty", name: "Зебоӣ ва саломатӣ", icon: "sparkle", tint: "#fdecec" },
-  { id: "perfume", name: "Атриёт", icon: "sparkle", tint: "#f6e9fb" },
-  { id: "food", name: "Озуқа ва нӯшокӣ", icon: "cup", tint: "#e7f6ee" },
-  { id: "office", name: "Компютер ва офис", icon: "laptop", tint: "#fdf3e1" },
-  { id: "all", name: "Ҳамаи категорияҳо", icon: "grid", tint: "#eef1f6" },
+export const DEFAULT_CATEGORIES: CategoryMeta[] = [
+  { id: "audio", name: "Наушник ва аудио", icon: "headphones", tint: "#e8eefc", show: true },
+  { id: "phones", name: "Телефон ва аксессуар", icon: "phone", tint: "#fde8f1", show: true },
+  { id: "men", name: "Либоси мардона", icon: "shirt", tint: "#e6f4fb", show: true },
+  { id: "women", name: "Либоси занона", icon: "shirt", tint: "#fde8f1", show: true },
+  { id: "kids", name: "Кӯдакона", icon: "baby", tint: "#fdf3e1", show: true },
+  { id: "shoes", name: "Пояфзол", icon: "tag", tint: "#f1ecfd", show: true },
+  { id: "home", name: "Хона ва ошхона", icon: "home", tint: "#f1ecfd", show: true },
+  { id: "beauty", name: "Зебоӣ ва саломатӣ", icon: "sparkle", tint: "#fdecec", show: true },
+  { id: "perfume", name: "Атриёт", icon: "sparkle", tint: "#f6e9fb", show: true },
+  { id: "food", name: "Озуқа ва нӯшокӣ", icon: "cup", tint: "#e7f6ee", show: true },
+  { id: "office", name: "Компютер ва офис", icon: "laptop", tint: "#fdf3e1", show: true },
 ];
+const ALL_CATEGORY: CategoryMeta = { id: "all", name: "Ҳамаи категорияҳо", icon: "grid", tint: "#eef1f6", show: true };
+
+/* Рӯйхатҳои зинда: SiteProvider онҳоро пеш аз render аз танзимоти сайт пур мекунад (ҳамин тавр pricing-config) */
+export const COUNTRIES: Record<CountryCode, CountryMeta> = {
+  ae: { ...DEFAULT_COUNTRIES.ae }, cn: { ...DEFAULT_COUNTRIES.cn }, tr: { ...DEFAULT_COUNTRIES.tr }, tj: { ...DEFAULT_COUNTRIES.tj },
+};
+export const CATEGORIES: CategoryMeta[] = [...DEFAULT_CATEGORIES.map((c) => ({ ...c })), { ...ALL_CATEGORY }];
+
+export function applyCatalogMeta(cats: CategoryMeta[], countries: Record<CountryCode, CountryMeta>) {
+  CATEGORIES.splice(0, CATEGORIES.length, ...cats.map((c) => ({ ...c })), { ...ALL_CATEGORY });
+  for (const c of Object.keys(COUNTRIES) as CountryCode[]) Object.assign(COUNTRIES[c], countries[c]);
+}
+/** Категорияҳо ва кишварҳое, ки дар сайт нишон дода мешаванд */
+export const shownCategories = () => CATEGORIES.filter((c) => c.id !== "all" && c.show);
+export const shownCountries = () => (Object.keys(COUNTRIES) as CountryCode[]).filter((c) => COUNTRIES[c].show);
 
 export const unitOf = (p: Product) => p.sale?.unit ?? "дона";
 export const fmtQty = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, ""));

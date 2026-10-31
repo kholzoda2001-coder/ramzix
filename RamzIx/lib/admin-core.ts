@@ -23,7 +23,7 @@ export type Order = {
   payments: Payment[];
   note: string;
 };
-export type ProductExtra = { nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
+export type ProductExtra = { /** true — нархи оптовӣ надорад */ noWholesale?: boolean; nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
 
 /** Маҳсулоти админ: ҳамон сохтори сайт + идора (фаъол/пинҳон) */
 export type AdminProduct = {
@@ -81,6 +81,7 @@ export function toStorefront(p: AdminProduct): Product {
     images: p.images.length ? p.images : ["/products/placeholder.svg"], rating: null, reviews: 0, sizes: p.sizes.length ? p.sizes : null,
     description: p.description || null,
     sale: p.extra?.sale ? ({ ...p.extra.sale, ...sale } as Product["sale"]) : sale,
+    ...(p.extra?.noWholesale ? { noWholesale: true } : {}),
     ...(p.extra?.source ? { source: p.extra.source } : {}),
     ...(p.extra?.rating !== undefined ? { rating: p.extra.rating } : {}),
     ...(p.extra?.reviews ? { reviews: p.extra.reviews } : {}),
@@ -145,7 +146,8 @@ export const routeOf = (key?: string) => ROUTES.find((r) => r.key === key);
 export function routeCost(key: string | undefined, kg: number, m3: number) {
   const r = routeOf(key);
   if (!r) return { tjs: 0, byKgTjs: 0, byVolTjs: 0, basis: "none" as const };
-  const byKg = kg * r.mode.perKgUsd * RATES.usdToTjs;
+  const m = r.mode;
+  const byKg = (m.flatUsd ? m.flatUsd + Math.max(0, kg - (m.flatKg ?? 0)) * m.perKgUsd : kg * m.perKgUsd) * RATES.usdToTjs;
   const byVol = r.mode.perM3Usd ? m3 * r.mode.perM3Usd * RATES.usdToTjs : 0;
   return { tjs: round(Math.max(byKg, byVol)), byKgTjs: round(byKg), byVolTjs: round(byVol), basis: byVol > byKg ? ("m3" as const) : byKg > 0 ? ("kg" as const) : ("none" as const) };
 }

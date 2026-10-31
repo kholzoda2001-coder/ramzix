@@ -20,6 +20,9 @@ export type ShippingMode = {
   perKgUsd: number;
   /** Нархи 1 м³ (доллар): агар ҳаҷм аз вазн гаронтар бошад, ҳамин истифода мешавад */
   perM3Usd?: number;
+  /** Нархи собит (доллар) то flatKg кило; аз болои он — perKgUsd барои ҳар кг. Барои расонидан дар дохили шаҳр/кишвар */
+  flatUsd?: number;
+  flatKg?: number;
   daysMin: number;
   daysMax: number;
   /** Нарх тахминӣ аст, ҳанӯз аз ширкати интиқол тасдиқ нашудааст */
@@ -51,6 +54,9 @@ export type PricingConfig = {
   shipping: Record<CountryKey, ShippingMode[]>;
 };
 
+/** Расонидан дар дохили Иморот: id = "local" (ба харидори Иморот ва моли Дубай татбиқ мешавад) */
+export const LOCAL_UAE: ShippingMode = { id: "local", label: "Дар Иморот (курьер)", perKgUsd: 0.55, flatUsd: 8.17, flatKg: 5, daysMin: 1, daysMax: 2 };
+
 export const DEFAULT_PRICING: PricingConfig = {
   usdToTjs: 9.224,
   aedPerUsd: 3.6725, // AED ба доллар баста шудааст
@@ -58,13 +64,13 @@ export const DEFAULT_PRICING: PricingConfig = {
   cnyPerUsd: 7.14, // тахминӣ: бо қурби воқеӣ иваз кунед
   ratesDate: "27.10.2026",
   markupTiers: [
-    { from: 0, pct: 13 },
-    { from: 3000, pct: 10 },
-    { from: 5000, pct: 8 },
-    { from: 20000, pct: 5 },
-    { from: 50000, pct: 3 },
+    { from: 0, pct: 20 }, // нархи асосӣ (дона)
+    // Ҳадҳо бо доллар гирд: 300 $, 1 000 $, 5 000 $ (бо қурби 9,224). Қурб иваз шавад, инҳоро низ иваз кунед.
+    { from: 2767.2, pct: 13 }, // 300 $: оптом сар мешавад
+    { from: 9224, pct: 8 }, // 1 000 $
+    { from: 46120, pct: 5 }, // 5 000 $
   ],
-  shownWholesalePcts: [8, 3],
+  shownWholesalePcts: [13, 8, 5],
   rfqFrom: 100,
   quoteHours: 24,
   whatsapp: "971508385259",
@@ -72,6 +78,8 @@ export const DEFAULT_PRICING: PricingConfig = {
     ae: [
       { id: "cargo", label: "Мошин (карго)", perKgUsd: 1.5, daysMin: 30, daysMax: 40 },
       { id: "avia", label: "Ҳаво (авиа)", perKgUsd: 6, daysMin: 3, daysMax: 7 },
+      // Харидор дар Иморот: курьер дар дохили Иморот (OTO). 30 AED то 5 кг, баъд 2 AED барои ҳар кг. Бо қурби 3,6725
+      LOCAL_UAE,
     ],
     cn: [{ id: "cargo", label: "Карго", perKgUsd: 2.6, perM3Usd: 250, daysMin: 10, daysMax: 20 }],
     tr: [{ id: "cargo", label: "Карго", perKgUsd: 3, daysMin: 10, daysMax: 18, assumed: true }],
@@ -134,10 +142,14 @@ export function mergePricing(raw: unknown): PricingConfig {
       const mode: ShippingMode = { id, label: text(o.label, 40, "Карго"), perKgUsd: num(o.perKgUsd, 0, 1000, 0), daysMin: num(o.daysMin, 0, 365, 1), daysMax: num(o.daysMax, 0, 365, 3) };
       const m3 = num(o.perM3Usd, 0, 100000, 0);
       if (m3 > 0) mode.perM3Usd = m3;
+      const flat = num(o.flatUsd, 0, 100000, 0);
+      if (flat > 0) { mode.flatUsd = flat; mode.flatKg = num(o.flatKg, 0, 100000, 0); }
       if (o.assumed === true) mode.assumed = true;
       const note = text(o.note, 120); if (note) mode.note = note;
       return mode;
     });
+    // Намуди «Дар Иморот» ҳамеша мемонад (дар базаи кӯҳна набуд)
+    if (k === "ae" && !modes.some((m) => m.id === LOCAL_UAE.id)) modes.push(clone(LOCAL_UAE));
     if (modes.length) shipping[k] = modes;
   }
   const pcts = Array.isArray(r.shownWholesalePcts) ? (r.shownWholesalePcts as unknown[]).map((x) => num(x, 0, 500, -1)).filter((x) => x >= 0 && markupTiers.some((t) => t.pct === x)) : [];

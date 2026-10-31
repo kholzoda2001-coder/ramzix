@@ -16,17 +16,30 @@ const n = (s: string) => (Number.isFinite(parseFloat(s.replace(",", "."))) ? par
 const CURS: Currency[] = ["USD", "AED", "CNY", "TJS"];
 const UNITS = ["дона", "картон", "кг"];
 
+/** extra бо аломати «нархи оптовӣ нест»; агар хол бошад — ҳеҷ чиз нигоҳ дошта намешавад */
+const withWholesale = (extra: AdminProduct["extra"], wholesale: boolean): AdminProduct["extra"] => {
+  const { noWholesale: _drop, ...rest } = extra ?? {};
+  void _drop;
+  const out = wholesale ? rest : { ...rest, noWholesale: true };
+  return Object.keys(out).length ? out : undefined;
+};
+
 type Form = {
   id?: string; slug?: string; name: string; subtitle: string; brand: string; category: string; country: CountryCode;
   cost: string; costCurrency: Currency; weight: string; vol: string; images: string[]; description: string; sizes: string;
   unit: string; per: string; perLabel: string; min: string; step: string; markup: string; active: boolean; note: string;
+  /** false — нархи оптовӣ надорад */
+  wholesale: boolean;
+  /** Майдонҳои иловагии маҳсулот (рейтинг, рангҳо…) — ҳангоми таҳрир гум намешаванд */
+  extra?: AdminProduct["extra"];
 };
-const blank = (): Form => ({ name: "", subtitle: "", brand: "", category: "home", country: "ae", cost: "", costCurrency: "AED", weight: "", vol: "", images: [], description: "", sizes: "", unit: "дона", per: "", perLabel: "дона", min: "", step: "", markup: String(getDefaultMarkup()), active: true, note: "" });
+const blank = (): Form => ({ name: "", subtitle: "", brand: "", category: "home", country: "ae", cost: "", costCurrency: "AED", weight: "", vol: "", images: [], description: "", sizes: "", unit: "дона", per: "", perLabel: "дона", min: "", step: "", markup: String(getDefaultMarkup()), active: true, note: "", wholesale: true });
 const fromProduct = (p: AdminProduct): Form => ({
   id: p.id, slug: p.slug, name: p.name, subtitle: p.subtitle, brand: p.brand, category: p.category, country: p.country,
   cost: String(p.cost), costCurrency: p.costCurrency, weight: p.weightKg ? String(p.weightKg) : "", vol: p.volumeM3 ? String(p.volumeM3) : "",
   images: p.images, description: p.description, sizes: p.sizes.join(", "), unit: p.unit, per: p.per ? String(p.per) : "", perLabel: p.perLabel || "дона",
   min: p.min ? String(p.min) : "", step: p.step ? String(p.step) : "", markup: String(p.markupPct), active: p.active, note: p.note,
+  wholesale: !p.extra?.noWholesale, extra: p.extra,
 });
 
 /* Акс аз дастгоҳ: хурд карда мешавад, то хотира пур нашавад */
@@ -50,10 +63,19 @@ export default function Products({ admin }: { admin: Admin }) {
   const [err, setErr] = useState("");
   const [url, setUrl] = useState("");
   const [q, setQ] = useState("");
+  const [fCat, setFCat] = useState("");
+  const [fCountry, setFCountry] = useState("");
+  const [fState, setFState] = useState("");
   useEffect(() => setForm(null), [cur]);
 
   const set = (patch: Partial<Form>) => setForm((f) => (f ? { ...f, ...patch } : f));
-  const list = useMemo(() => admin.products.filter((p) => !q.trim() || `${p.name} ${p.brand}`.toLowerCase().includes(q.toLowerCase())), [admin.products, q]);
+  const list = useMemo(() => admin.products.filter((p) =>
+    (!q.trim() || `${p.name} ${p.brand}`.toLowerCase().includes(q.toLowerCase())) &&
+    (!fCat || p.category === fCat) &&
+    (!fCountry || p.country === fCountry) &&
+    (!fState || (fState === "on" ? p.active : fState === "off" ? !p.active : fState === "whole" ? !p.extra?.noWholesale : !!p.extra?.noWholesale))),
+  [admin.products, q, fCat, fCountry, fState]);
+  const toggleWholesale = (p: AdminProduct) => admin.saveProduct({ ...p, extra: withWholesale(p.extra, !!p.extra?.noWholesale) });
 
   const toAdmin = (f: Form): Omit<AdminProduct, "id" | "slug"> => ({
     name: f.name.trim(), subtitle: f.subtitle.trim(), brand: f.brand.trim(), category: f.category, country: f.country,
@@ -61,6 +83,7 @@ export default function Products({ admin }: { admin: Admin }) {
     description: f.description.trim(), sizes: f.sizes.split(",").map((x) => x.trim()).filter(Boolean),
     unit: f.unit, per: f.unit === "картон" ? n(f.per) : 0, perLabel: f.unit === "картон" ? f.perLabel.trim() || "дона" : "",
     min: n(f.min), step: n(f.step), markupPct: n(f.markup), active: f.active, note: f.note.trim(),
+    extra: withWholesale(f.extra, f.wholesale),
   });
 
   const save = () => {
@@ -89,7 +112,19 @@ export default function Products({ admin }: { admin: Admin }) {
       <button className="ad-primary" onClick={() => { setErr(""); setForm(blank()); }}>+ Маҳсулоти нав</button>
       <p className="ad-hint">Маҳсулоте, ки илова мекунед ва «Фаъол» аст, баъди захира дар сайт барои ҳама пайдо мешавад.</p>
 
-      {admin.products.length > 4 && <input className="ad-search" placeholder="Ҷустуҷӯ" value={q} onChange={(e) => setQ(e.target.value)} />}
+      {admin.products.length > 4 && (
+        <>
+          <input className="ad-search" placeholder="Ҷустуҷӯ" value={q} onChange={(e) => setQ(e.target.value)} />
+          <div className="ad-grid2" style={{ gridTemplateColumns: "1fr 1fr 1fr" }}>
+            <select value={fCat} onChange={(e) => setFCat(e.target.value)} aria-label="Категория"><option value="">Ҳама категорияҳо</option>{CATEGORIES.filter((c) => c.id !== "all").map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+            <select value={fCountry} onChange={(e) => setFCountry(e.target.value)} aria-label="Кишвар"><option value="">Ҳама кишварҳо</option>{(Object.keys(COUNTRIES) as CountryCode[]).map((c) => <option key={c} value={c}>{COUNTRIES[c].short}</option>)}</select>
+            <select value={fState} onChange={(e) => setFState(e.target.value)} aria-label="Ҳолат">
+              <option value="">Ҳама</option><option value="on">Дар сайт</option><option value="off">Пинҳон</option><option value="whole">Бо нархи оптом</option><option value="nowhole">Бе нархи оптом</option>
+            </select>
+          </div>
+          <p className="ad-hint">{list.length} аз {admin.products.length} мол</p>
+        </>
+      )}
 
       {admin.products.length === 0 ? <p className="ad-empty">Ҳоло маҳсулот нест</p> : (
         <div className="ad-list">
@@ -100,11 +135,12 @@ export default function Products({ admin }: { admin: Admin }) {
                 <span className="ap-t">
                   <b>{p.name}</b>
                   <small>{COUNTRIES[p.country].short} · {CATEGORIES.find((c) => c.id === p.category)?.name} · {p.unit}</small>
-                  <small>Харид: <b>{m(adminCostTjs(p))}</b> {label} · фоида {p.markupPct}%</small>
+                  <small>Харид: <b>{m(adminCostTjs(p))}</b> {label} · фоидаи POS {p.markupPct}%</small>
                 </span>
               </button>
               <div className="ap-act">
                 <button className={p.active ? "on" : ""} onClick={() => admin.toggleProduct(p.id)}>{p.active ? "● Дар сайт" : "○ Пинҳон"}</button>
+                <button className={p.extra?.noWholesale ? "" : "on"} onClick={() => toggleWholesale(p)}>{p.extra?.noWholesale ? "○ Бе оптом" : "● Оптом"}</button>
                 {p.active && <Link href={`/product/${p.slug}`} target="_blank">Дидан ↗</Link>}
               </div>
             </div>
@@ -188,6 +224,7 @@ export default function Products({ admin }: { admin: Admin }) {
             </section>
 
             <label className="ad-toggle"><input type="checkbox" checked={form.active} onChange={(e) => set({ active: e.target.checked })} /> <span>Дар сайт нишон дода шавад</span></label>
+            <label className="ad-toggle"><input type="checkbox" checked={form.wholesale} onChange={(e) => set({ wholesale: e.target.checked })} /> <span>Нархи оптовӣ дорад (аз ҳисоби зинаҳои 13% · 8% · 5%). Хомӯш бошад — ҳамеша нархи дона, ба тахфифи сабад ҳисоб намешавад</span></label>
             <label><span>Эзоҳи дохилӣ (барои худатон)</span><input value={form.note} onChange={(e) => set({ note: e.target.value })} /></label>
 
             {err && <p className="ad-err">{err}</p>}
