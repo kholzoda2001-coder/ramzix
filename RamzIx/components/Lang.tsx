@@ -19,11 +19,10 @@ export function LangProvider({ children }: { children: React.ReactNode }) {
     let saved: string | null = null;
     try { saved = localStorage.getItem(KEY); } catch {}
     if (saved && LANGS.some((l) => l.id === saved)) return setLangState(saved as Lang);
-    // Харидор худаш интихоб накардааст: забони браузер, вагарна аз рӯи кишвар. Интихоби худкор нигоҳ дошта намешавад.
-    const b = langFromBrowser();
-    if (b) return setLangState(b);
+    // Харидор худаш интихоб накардааст: аввал аз рӯи кишвар (Иморот — англисӣ, Тоҷикистон — тоҷикӣ…), вагарна забони браузер.
+    // Интихоби худкор нигоҳ дошта намешавад.
     let alive = true;
-    getCountry().then((c) => { const l = langFromCountry(c); if (alive && l) setLangState(l); });
+    getCountry().then((c) => { const l = langFromCountry(c) ?? langFromBrowser(); if (alive && l) setLangState(l); });
     return () => { alive = false; };
   }, []);
   useEffect(() => { document.documentElement.lang = lang; }, [lang]);

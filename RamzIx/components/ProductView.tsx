@@ -372,7 +372,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
                       </td>
                     </tr>
                   ))}
-                  <tr><td><T>Худ гирифтан</T></td><td>{tx("pickup")}</td></tr>
                 </tbody>
               </table>
               <p className="est-note" style={{ marginTop: 10 }}><T>Расонидан аз рӯи вазн ҳисоб мешавад ва аз ҷониби харидор пардохта мешавад. Нарх дар сабад нишон дода мешавад.</T></p>

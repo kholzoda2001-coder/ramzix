@@ -80,7 +80,6 @@ export const TEXT_FIELDS: { key: string; label: string; group: string; def: stri
   { key: "termsDeferTitle", group: "Саҳифаи маҳсулот", label: "Шарти 2: сарлавҳа", def: "Пардохт бо боварӣ" },
   { key: "termsRfqTitle", group: "Саҳифаи маҳсулот", label: "Шарти 3: сарлавҳа", def: "Нархи оптовӣ" },
   { key: "termsRfqText", group: "Саҳифаи маҳсулот", label: "Шарти 3: матн", def: "Барои миқдори калон нархи махсус: дар WhatsApp пурсед, ҷавоб то 2 соат", long: true },
-  { key: "pickup", group: "Саҳифаи маҳсулот", label: "Худ гирифтан (ҷой)", def: "Анбори Душанбе" },
   { key: "sellerTrust", group: "Саҳифаи маҳсулот", label: "Ҷадвали фурӯшанда (молҳои худӣ)", def: "Санҷидашуда · Ҷавоб < 1 соат" },
   { key: "sellerTrustDrop", group: "Саҳифаи маҳсулот", label: "Ҷадвали фурӯшанда (молҳои CJ)", def: "Ҷавоб < 1 соат" },
   { key: "trust1Title", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 1: сарлавҳа", def: "Пардохт" },

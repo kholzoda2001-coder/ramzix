@@ -55,7 +55,7 @@ export type PricingConfig = {
 };
 
 /** Расонидан дар дохили Иморот: id = "local" (ба харидори Иморот ва моли Дубай татбиқ мешавад) */
-export const LOCAL_UAE: ShippingMode = { id: "local", label: "Дар Иморот (курьер)", perKgUsd: 0.55, flatUsd: 8.17, flatKg: 5, daysMin: 1, daysMax: 2 };
+export const LOCAL_UAE: ShippingMode = { id: "local", label: "Дар Иморот (курьер)", perKgUsd: 0.55, flatUsd: 6.81, flatKg: 5, daysMin: 1, daysMax: 2 };
 
 export const DEFAULT_PRICING: PricingConfig = {
   usdToTjs: 9.224,
@@ -78,7 +78,7 @@ export const DEFAULT_PRICING: PricingConfig = {
     ae: [
       { id: "cargo", label: "Мошин (карго)", perKgUsd: 1.5, daysMin: 30, daysMax: 40 },
       { id: "avia", label: "Ҳаво (авиа)", perKgUsd: 6, daysMin: 3, daysMax: 7 },
-      // Харидор дар Иморот: курьер дар дохили Иморот (OTO). 30 AED то 5 кг, баъд 2 AED барои ҳар кг. Бо қурби 3,6725
+      // Харидор дар Иморот: курьер дар дохили Иморот (OTO). 25 AED то 5 кг, баъд 2 AED барои ҳар кг. Бо қурби 3,6725
       LOCAL_UAE,
     ],
     cn: [{ id: "cargo", label: "Карго", perKgUsd: 2.6, perM3Usd: 250, daysMin: 10, daysMax: 20 }],
