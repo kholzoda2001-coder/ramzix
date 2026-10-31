@@ -1,6 +1,8 @@
 import { CONTACT, type Currency } from "./pricing-config";
 
-export type CountryCode = "ae" | "cn" | "tr" | "tj";
+/** Кишварҳои асосӣ + кишварҳои нав, ки аз admin илова мешаванд (рамзи 2 ҳарфа: kz, ru, uz…) */
+export type CountryCode = string;
+export const DEFAULT_COUNTRY_CODES = ["ae", "cn", "tr", "tj"];
 
 /* Воҳиди фурӯш: картон, кг, бастабандӣ… (агар набошад — дона) */
 export type Sale = {
@@ -53,11 +55,16 @@ export type Product = {
 
 /* Маҳсулот дар базаи маълумот (Supabase) нигоҳ дошта мешавад — ниг. lib/server/catalog.ts ва lib/useCatalog.tsx */
 
-export type CountryMeta = { name: string; short: string; note: string; days: string; /** false — кишвар дар сайт нишон дода намешавад (молҳояш ҳам) */ show: boolean };
+export type CountryMeta = {
+  name: string; short: string; note: string; days: string;
+  /** false — кишвар дар сайт нишон дода намешавад (молҳояш ҳам) */ show: boolean;
+  /** true — кишвари нав, ки аз admin илова шудааст */ custom?: boolean;
+  /** Расонидан аз ин кишвар (барои кишварҳои нав): доллар барои 1 кг ва мӯҳлат дар рӯз */ ship?: { perKgUsd: number; daysMin: number; daysMax: number };
+};
 export type CategoryMeta = { id: string; name: string; icon: string; tint: string; /** false — категория ва молҳояш дар сайт нишон дода намешаванд */ show: boolean };
 
 /* Қиматҳои пешфарз; дар сайт аз admin («Сайт») иваз мешаванд — ниг. applyCatalogMeta */
-export const DEFAULT_COUNTRIES: Record<CountryCode, CountryMeta> = {
+export const DEFAULT_COUNTRIES: Record<string, CountryMeta> = {
   ae: { name: "Аморат (Дубай)", short: "Дубай", note: "Электроника, брендҳо", days: "30–40 рӯз", show: true },
   cn: { name: "Чин", short: "Чин", note: "Ҳама навъ, нархи паст", days: "10–20 рӯз", show: true },
   tr: { name: "Туркия", short: "Туркия", note: "Либос, хона, косметика", days: "10–18 рӯз", show: true },
@@ -80,18 +87,19 @@ export const DEFAULT_CATEGORIES: CategoryMeta[] = [
 const ALL_CATEGORY: CategoryMeta = { id: "all", name: "Ҳамаи категорияҳо", icon: "grid", tint: "#eef1f6", show: true };
 
 /* Рӯйхатҳои зинда: SiteProvider онҳоро пеш аз render аз танзимоти сайт пур мекунад (ҳамин тавр pricing-config) */
-export const COUNTRIES: Record<CountryCode, CountryMeta> = {
+export const COUNTRIES: Record<string, CountryMeta> = {
   ae: { ...DEFAULT_COUNTRIES.ae }, cn: { ...DEFAULT_COUNTRIES.cn }, tr: { ...DEFAULT_COUNTRIES.tr }, tj: { ...DEFAULT_COUNTRIES.tj },
 };
 export const CATEGORIES: CategoryMeta[] = [...DEFAULT_CATEGORIES.map((c) => ({ ...c })), { ...ALL_CATEGORY }];
 
-export function applyCatalogMeta(cats: CategoryMeta[], countries: Record<CountryCode, CountryMeta>) {
+export function applyCatalogMeta(cats: CategoryMeta[], countries: Record<string, CountryMeta>) {
   CATEGORIES.splice(0, CATEGORIES.length, ...cats.map((c) => ({ ...c })), { ...ALL_CATEGORY });
-  for (const c of Object.keys(COUNTRIES) as CountryCode[]) Object.assign(COUNTRIES[c], countries[c]);
+  for (const c of Object.keys(COUNTRIES)) if (!DEFAULT_COUNTRY_CODES.includes(c)) delete COUNTRIES[c];
+  for (const [c, m] of Object.entries(countries)) { if (COUNTRIES[c]) Object.assign(COUNTRIES[c], m); else COUNTRIES[c] = { ...m }; }
 }
 /** Категорияҳо ва кишварҳое, ки дар сайт нишон дода мешаванд */
 export const shownCategories = () => CATEGORIES.filter((c) => c.id !== "all" && c.show);
-export const shownCountries = () => (Object.keys(COUNTRIES) as CountryCode[]).filter((c) => COUNTRIES[c].show);
+export const shownCountries = () => Object.keys(COUNTRIES).filter((c) => COUNTRIES[c].show);
 
 export const unitOf = (p: Product) => p.sale?.unit ?? "дона";
 export const fmtQty = (n: number) => (Number.isInteger(n) ? String(n) : n.toFixed(1).replace(/\.0$/, ""));

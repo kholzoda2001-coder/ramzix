@@ -1,4 +1,4 @@
-import type { CountryCode, Product } from "./catalog";
+import { COUNTRIES, type CountryCode, type Product } from "./catalog";
 import {
   MARKUP_TIERS,
   SHOWN_WHOLESALE_PCTS,
@@ -87,14 +87,22 @@ const isLocal = (m: ShippingMode) => m.id === "local";
 
 /* Мувақатан: интихоби намуди расонидан (ҳаво/замин) хомӯш аст — танҳо як намуд кор мекунад.
    Харидор дар Иморот ва мол аз Дубай: курьери дохили Иморот. Мол аз кишвари дигар ба Иморот: нарх аз менеҷер (0, «бо тасдиқ»). */
+/** Роҳҳои расонидан аз кишвар: барои кишварҳои асосӣ аз танзимоти нарх, барои кишвари нав аз худи кишвар (admin → Сайт) */
+const shipOf = (country: CountryCode): ShippingMode[] => {
+  const fixed = (SHIPPING as Record<string, ShippingMode[] | undefined>)[country];
+  if (fixed?.length) return fixed;
+  const s = COUNTRIES[country]?.ship;
+  return [{ id: "cargo", label: "Карго", perKgUsd: s?.perKgUsd ?? 3, daysMin: s?.daysMin ?? 10, daysMax: s?.daysMax ?? 20, assumed: !s }];
+};
 export const modesFor = (country: CountryCode, dest: Dest = "tj"): ShippingMode[] => {
-  const main = SHIPPING[country].filter((m) => !isLocal(m)).slice(0, 1);
-  if (dest !== "ae") return main.length ? main : SHIPPING[country].slice(0, 1);
+  const all = shipOf(country);
+  const main = all.filter((m) => !isLocal(m)).slice(0, 1);
+  if (dest !== "ae") return main.length ? main : all.slice(0, 1);
   if (country === "ae") {
     const local = SHIPPING.ae.filter(isLocal);
     if (local.length) return local.slice(0, 1);
   }
-  const base = main[0] ?? SHIPPING[country][0];
+  const base = main[0] ?? all[0];
   return [{ ...base, id: "quote", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, assumed: true, note: "Менеҷер нархро тасдиқ мекунад" }];
 };
 export const defaultMode = (country: CountryCode, dest: Dest = "tj") => modesFor(country, dest)[0].id;

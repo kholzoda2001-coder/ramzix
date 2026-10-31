@@ -1,25 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import { COUNTRIES, type CountryCode, type Product } from "@/lib/catalog";
+import { COUNTRIES, shownCountries, type CountryCode, type Product } from "@/lib/catalog";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
 import { T } from "./Lang";
 
-const TABS: (CountryCode | "all")[] = ["all", "ae", "cn", "tr", "tj"];
 const PAGE = 10;
 
 export default function ProductFeed({ items }: { items: Product[] }) {
   const [tab, setTab] = useState<CountryCode | "all">("all");
+  // Танҳо кишварҳое, ки дар admin фаъоланд
+  const TABS: (CountryCode | "all")[] = ["all", ...shownCountries()];
   const [shown, setShown] = useState(PAGE);
-  const list = tab === "all" ? items : items.filter((p) => p.country === tab);
+  const cur = TABS.includes(tab) ? tab : "all";
+  const list = cur === "all" ? items : items.filter((p) => p.country === cur);
 
   return (
     <>
       <div className="seg" role="tablist">
         {TABS.map((x) => (
-          <button key={x} role="tab" aria-selected={tab === x} className={tab === x ? "on" : ""} onClick={() => { setTab(x); setShown(PAGE); }}>
+          <button key={x} role="tab" aria-selected={cur === x} className={cur === x ? "on" : ""} onClick={() => { setTab(x); setShown(PAGE); }}>
             {x === "all" ? <T>Ҳама</T> : <><Flag code={x} className="seg-flag" /><T>{COUNTRIES[x].short}</T></>}
           </button>
         ))}

@@ -241,10 +241,23 @@ export function mergeSite(raw: unknown): SiteConfig {
   for (const d of DEFAULT_CATEGORIES) if (!categories.some((c) => c.id === d.id)) categories.push(d);
   const rcn = (r.countries && typeof r.countries === "object" ? r.countries : {}) as Record<string, unknown>;
   const countries = {} as Record<CountryCode, CountryMeta>;
-  for (const code of Object.keys(DEFAULT_COUNTRIES) as CountryCode[]) {
+  for (const code of Object.keys(DEFAULT_COUNTRIES)) {
     const d = DEFAULT_COUNTRIES[code];
     const o = (rcn[code] && typeof rcn[code] === "object" ? rcn[code] : {}) as Record<string, unknown>;
     countries[code] = { name: str(o.name, 40, d.name) || d.name, short: str(o.short, 16, d.short) || d.short, note: str(o.note, 60, d.note), days: str(o.days, 20, d.days), show: o.show !== false };
+  }
+  // Кишварҳои нав (admin): рамзи 2 ҳарфа, то 12 адад
+  let extra = 0;
+  for (const [code, v] of Object.entries(rcn)) {
+    if (code in countries || !/^[a-z]{2}$/.test(code) || extra >= 12 || !v || typeof v !== "object") continue;
+    const o = v as Record<string, unknown>;
+    const name = str(o.name, 40);
+    if (!name) continue;
+    const s = (o.ship && typeof o.ship === "object" ? o.ship : {}) as Record<string, unknown>;
+    const n = (x: unknown, lo: number, hi: number, fb: number) => { const y = typeof x === "string" ? parseFloat(x.replace(",", ".")) : Number(x); return Number.isFinite(y) && y >= lo && y <= hi ? y : fb; };
+    const daysMin = Math.round(n(s.daysMin, 1, 120, 10));
+    countries[code] = { name, short: str(o.short, 16, name) || name, note: str(o.note, 60), days: str(o.days, 20), show: o.show !== false, custom: true, ship: { perKgUsd: n(s.perKgUsd, 0, 100, 3), daysMin, daysMax: Math.max(daysMin, Math.round(n(s.daysMax, 1, 180, 20))) } };
+    extra++;
   }
   const tabRaw = Array.isArray(r.tabs) ? (r.tabs as unknown[]) : null;
   let tabs: TabCfg[] = DEFAULT_TABS;

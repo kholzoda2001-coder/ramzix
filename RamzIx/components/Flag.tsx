@@ -1,7 +1,7 @@
 import type { CountryCode } from "@/lib/catalog";
 
 /* Парчамҳои соддакардашуда (SVG, бе тасвири беруна) */
-const FLAGS: Record<CountryCode, React.ReactNode> = {
+const FLAGS: Record<string, React.ReactNode> = {
   ae: (
     <svg viewBox="0 0 12 6" preserveAspectRatio="none">
       <rect width="12" height="2" fill="#00732f" />
@@ -44,5 +44,10 @@ const FLAGS: Record<CountryCode, React.ReactNode> = {
 };
 
 export default function Flag({ code, className }: { code: CountryCode; className?: string }) {
-  return <span className={`flag ${className ?? ""}`}>{FLAGS[code]}</span>;
+  // Кишвари нав: парчам аз рамзи 2 ҳарфа (flagcdn), агар набошад — худи рамз
+  const art = FLAGS[code] ?? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={`https://flagcdn.com/w40/${code.toLowerCase()}.png`} alt={code.toUpperCase()} loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+  );
+  return <span className={`flag ${className ?? ""}`}>{art}</span>;
 }

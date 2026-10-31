@@ -1793,3 +1793,4 @@ body { background: #e9e9e9; }
 /* Плеер дар слайд: ҳамеша тамоми слайдро пур мекунад */
 .pd-video.slide { position: relative; }
 .pd-video.slide iframe, .pd-video.slide video, .pd-video.slide .pv-play { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; margin: 0 !important; }
+.ad-pair { display: flex; gap: 8px; } .ad-pair input { flex: 1; min-width: 0; }

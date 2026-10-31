@@ -68,6 +68,12 @@ export default function Site() {
   const setTabs = (list: SiteConfig["tabs"]) => setSite({ ...site, tabs: list });
   const patchTab = (i: number, p: Partial<SiteConfig["tabs"][number]>) => setTabs(site.tabs.map((x, k) => (k === i ? { ...x, ...p } : x)));
   const patchCategory = (i: number, p: Partial<SiteConfig["categories"][number]>) => setSite({ ...site, categories: CATS.map((c, k) => (k === i ? { ...c, ...p } : c)) });
+  const addCountry = (code: string, meta: SiteConfig["countries"][string]) => setSite({ ...site, countries: { ...site.countries, [code]: meta } });
+  const removeCountry = (code: string) => {
+    if (products.some((p) => p.country === code) && !confirm("Дар ин кишвар молҳо ҳастанд. Бо нест кардани кишвар онҳо аз сайт нопадид мешаванд. Идома диҳем?")) return;
+    const { [code]: _gone, ...rest } = site.countries;
+    setSite({ ...site, countries: rest });
+  };
   const patchCountry = (c: CountryCode, p: Partial<SiteConfig["countries"][CountryCode]>) => setSite({ ...site, countries: { ...site.countries, [c]: { ...site.countries[c], ...p } } });
   const banners = site.banners[tab] ?? [];
   const setBanners = (list: BannerCfg[]) => tab && setSite({ ...site, banners: { ...site.banners, [tab]: list } });
@@ -161,12 +167,13 @@ export default function Site() {
       <section className="ad-card">
         <h3>Кишварҳо</h3>
         <p className="ad-hint">Кишвари пинҳоншуда ва ҳамаи молҳояш дар сайт нишон дода намешаванд. Нархи карго барои ҳар кишвар дар «Танзимот» аст. Кишварро барои ҳар мол дар шакли маҳсулот интихоб мекунед.</p>
-        {(Object.keys(site.countries) as CountryCode[]).map((code) => {
+        {Object.keys(site.countries).map((code) => {
           const c = site.countries[code];
           return (
             <div key={code} className="ad-item">
               <div className="ad-row-h">
                 <label className="ad-check"><input type="checkbox" checked={c.show} onChange={(e) => patchCountry(code, { show: e.target.checked })} /> Нишон додан <small>· {products.filter((p) => p.country === code).length} мол</small></label>
+                {c.custom && <button type="button" className="ad-ghost red" onClick={() => removeCountry(code)}>Нест кардан</button>}
               </div>
               <div className="ad-grid2">
                 <label><span>Номи пурра</span><input value={c.name} maxLength={40} onChange={(e) => patchCountry(code, { name: e.target.value })} /></label>
@@ -176,9 +183,16 @@ export default function Site() {
                 <label><span>Мӯҳлати расонидан</span><input value={c.days} maxLength={20} onChange={(e) => patchCountry(code, { days: e.target.value })} /></label>
                 <label><span>Эзоҳ</span><input value={c.note} maxLength={60} onChange={(e) => patchCountry(code, { note: e.target.value })} /></label>
               </div>
+              {c.custom && c.ship && (
+                <div className="ad-grid2">
+                  <label><span>Карго: $ барои 1 кг</span><input inputMode="decimal" value={c.ship.perKgUsd} onChange={(e) => patchCountry(code, { ship: { ...c.ship!, perKgUsd: Number(e.target.value.replace(",", ".")) || 0 } })} /></label>
+                  <label><span>Мӯҳлат: аз … то … рӯз</span><span className="ad-pair"><input inputMode="numeric" value={c.ship.daysMin} onChange={(e) => patchCountry(code, { ship: { ...c.ship!, daysMin: Number(e.target.value) || 1 } })} /><input inputMode="numeric" value={c.ship.daysMax} onChange={(e) => patchCountry(code, { ship: { ...c.ship!, daysMax: Number(e.target.value) || 1 } })} /></span></label>
+                </div>
+              )}
             </div>
           );
         })}
+        <NewCountry taken={Object.keys(site.countries)} onAdd={addCountry} />
       </section>
 
       <section className="ad-card">
@@ -341,5 +355,39 @@ export default function Site() {
         <button className="ad-primary" onClick={save} disabled={busy}>{busy ? "Захира мешавад…" : "Захира кардан"}</button>
       </div>
     </>
+  );
+}
+
+/* Кишвари нав: рамзи 2 ҳарфа (kz, ru, uz, kg, sa…), ном, нархи карго ва мӯҳлат */
+function NewCountry({ taken, onAdd }: { taken: string[]; onAdd: (code: string, meta: SiteConfig["countries"][string]) => void }) {
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
+  const [perKg, setPerKg] = useState("3");
+  const [dMin, setDMin] = useState("10");
+  const [dMax, setDMax] = useState("20");
+  const c = code.trim().toLowerCase();
+  const err = !c ? "" : !/^[a-z]{2}$/.test(c) ? "Рамз бояд 2 ҳарфи лотинӣ бошад (масалан: kz)" : taken.includes(c) ? "Ин кишвар аллакай ҳаст" : "";
+  const ok = /^[a-z]{2}$/.test(c) && !taken.includes(c) && name.trim().length > 0;
+  const add = () => {
+    if (!ok) return;
+    const lo = Math.max(1, Math.round(Number(dMin) || 10));
+    onAdd(c, { name: name.trim(), short: name.trim().slice(0, 16), note: "", days: `${lo}–${Math.max(lo, Math.round(Number(dMax) || 20))} рӯз`, show: true, custom: true, ship: { perKgUsd: Number(perKg.replace(",", ".")) || 3, daysMin: lo, daysMax: Math.max(lo, Math.round(Number(dMax) || 20)) } });
+    setCode(""); setName("");
+  };
+  return (
+    <div className="ad-item">
+      <div className="ad-row-h"><b>Кишвари нав илова кардан</b></div>
+      <div className="ad-grid2">
+        <label><span>Рамзи кишвар (2 ҳарф)</span><input value={code} maxLength={2} placeholder="kz" onChange={(e) => setCode(e.target.value)} /></label>
+        <label><span>Ном</span><input value={name} maxLength={40} placeholder="Қазоқистон" onChange={(e) => setName(e.target.value)} /></label>
+      </div>
+      <div className="ad-grid2">
+        <label><span>Карго: $ барои 1 кг</span><input inputMode="decimal" value={perKg} onChange={(e) => setPerKg(e.target.value)} /></label>
+        <label><span>Мӯҳлат: аз … то … рӯз</span><span className="ad-pair"><input inputMode="numeric" value={dMin} onChange={(e) => setDMin(e.target.value)} /><input inputMode="numeric" value={dMax} onChange={(e) => setDMax(e.target.value)} /></span></label>
+      </div>
+      {err && <p className="ad-err">{err}</p>}
+      <button type="button" className="ad-primary" disabled={!ok} onClick={add}>Илова кардан</button>
+      <p className="ad-hint">Баъд аз илова кардан «Нигоҳ доштан»-ро пахш кунед. Кишвар дар шакли маҳсулот ва дар саҳифаи асосӣ пайдо мешавад.</p>
+    </div>
   );
 }
