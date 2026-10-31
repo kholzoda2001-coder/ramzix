@@ -276,7 +276,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             {(pieces || sale) && (
               <div className="pack-info">
                 {pieces && <span><T>Ҳамагӣ:</T> <b>{fmt(pieces)} {t(sale?.perLabel ?? "")}</b></span>}
-                <span><T>Вазн:</T> <b>{fmtQty(weight)} {t("кг")}</b></span>
+                {weight > 0 && <span><T>Вазн:</T> <b>{fmtQty(weight)} {t("кг")}</b></span>}
                 {pieces && <span>1 {t(sale?.perLabel ?? "")}: <b>{price(unitPrice / sale!.per!)} {label}</b></span>}
               </div>
             )}
@@ -302,7 +302,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(goods)} {label}</b></div>
             <div className="est-row">
               <span>
-                {t("Расонидан · вазн {w} кг", { w: fmtQty(weight) })}
+                {weight > 0 ? t("Расонидан · вазн {w} кг", { w: fmtQty(weight) }) : t("Расонидан")}
                 {shipNote && <small>{shipNote}</small>}
               </span>
               <b>{ship.tjs > 0 ? `${sum(ship.tjs)} ${label}` : t("бо тасдиқ")}</b>
@@ -337,12 +337,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
                       {sale.storage && <tr><td><T>Нигоҳдорӣ</T></td><td>{t(sale.storage)}</td></tr>}
                     </>
                   ) : (
-                    <tr><td><T>Вазн (бо қуттӣ)</T></td><td>{p.weightKg} {t("кг")}</td></tr>
+                    p.weightKg > 0 && <tr><td><T>Вазн (бо қуттӣ)</T></td><td>{p.weightKg} {t("кг")}</td></tr>
                   )}
                   {p.sizes && <tr><td><T>Андозаҳо</T></td><td>{p.sizes.join(", ")}</td></tr>}
                   {/* Маҳсулоти dropship (CJ) кафолати худи мо надорад — ваъда намедиҳем */}
                   {!dropship && <tr><td><T>Кафолат</T></td><td>{sale ? tx("warrantyWholesale") : p.category === "audio" ? tx("warrantyAudio") : tx("warrantyDefault")}</td></tr>}
-                  <tr><td><T>Артикул</T></td><td>{p.slug.toUpperCase().slice(0, 18)}</td></tr>
+                  {p.nameOriginal && <tr><td><T>Модел</T></td><td>{p.nameOriginal}</td></tr>}
                 </tbody>
               </table>
             </div>

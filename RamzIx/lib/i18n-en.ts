@@ -96,6 +96,7 @@ export const EN: Record<string, string> = {
   "Оптом": "Wholesale",
   "оптом": "wholesale",
   "Пардохт бо боварӣ": "Secure payment",
+  "Модел": "Model",
   "Самовар": "Samovars",
   "Термопот": "Thermopots",
   "Чойсоз": "Tea makers",
