@@ -72,6 +72,7 @@ export const EN: Record<string, string> = {
   "Менеҷер нархро мегӯяд": "The manager will tell you the price",
   "Нархро пурсед": "Ask for price",
   "Салом! Нарх лозим аст:": "Hello! I need the price of:",
+  "Протеин": "Protein",
   "Видео": "Video",
   "Видеои модели монанд": "Video of a similar model",
   "{p}% сарфа": "Save {p}%",
