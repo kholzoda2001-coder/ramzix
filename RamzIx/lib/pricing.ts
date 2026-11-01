@@ -76,6 +76,10 @@ export const defaultMode = (country: CountryCode, dest: Dest = "tj") => modesFor
 export const getMode = (country: CountryCode, id?: string, dest: Dest = "tj") =>
   modesFor(country, dest).find((m) => m.id === id) ?? modesFor(country, dest)[0];
 
+/** Нархи махсуси курьер дар Иморот барои як маҳсулот (смн): AED барои якум + AED барои ҳар воҳиди дигар */
+export const shipAeTjs = (rule: { first: number; next: number }, qty: number) =>
+  round2(((rule.first + rule.next * Math.max(0, Math.ceil(qty) - 1)) / RATES.aedPerUsd) * RATES.usdToTjs);
+
 export type Shipping = { tjs: number; basis: "kg" | "m3" | "none"; mode: ShippingMode };
 
 export function shippingCost(country: CountryCode, modeId: string | undefined, kg: number, m3: number, dest: Dest = "tj"): Shipping {
@@ -167,15 +171,20 @@ export function priceOrder(
   }
 
   const groups: PricedGroup[] = [...byCountry.entries()].map(([country, rows]) => {
-    const kg = rows.reduce((s, r) => s + weightOf(r.p, r.qty), 0);
-    const m3 = rows.reduce((s, r) => s + volumeOf(r.p, r.qty), 0);
+    // Маҳсулоти бо нархи махсуси курьер (дар Иморот) ҷудо ҳисоб мешавад, бе вазн
+    const special = dest === "ae" ? rows.filter((r) => r.p.shipAe) : [];
+    const normal = rows.filter((r) => !special.includes(r));
+    const kg = normal.reduce((s, r) => s + weightOf(r.p, r.qty), 0);
+    const m3 = normal.reduce((s, r) => s + volumeOf(r.p, r.qty), 0);
+    let shipping: Shipping = normal.length || !special.length ? shippingCost(country, modes[country], kg, m3, dest) : { tjs: 0, basis: "none", mode: getMode(country, modes[country], dest) };
+    if (special.length) shipping = { ...shipping, tjs: round2(shipping.tjs + shipAeTjs(special[0].p.shipAe!, special.reduce((s, r) => s + r.qty, 0))) };
     return {
       country,
       lines: rows,
       goods: rows.reduce((s, r) => s + r.goods, 0),
       kg,
       m3,
-      shipping: shippingCost(country, modes[country], kg, m3, dest),
+      shipping,
     };
   });
 

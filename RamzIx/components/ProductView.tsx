@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { useDest } from "@/lib/useDest";
-import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shippingCost, tierAt, volumeOf, weightOf } from "@/lib/pricing";
+import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shipAeTjs, shippingCost, tierAt, volumeOf, weightOf } from "@/lib/pricing";
 import { brandSlug } from "@/lib/filters";
 import { SETTINGS } from "@/lib/pricing-config";
 import { useText } from "@/lib/useSite";
@@ -70,7 +70,9 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
   const ship = shippingCost(p.country, modeId, weight, volumeOf(p, qty), dest);
-  const total = round2(goods + ship.tjs);
+  // Нархи махсуси курьер дар Иморот (масалан Monster: 30 AED + 5 AED барои ҳар картони дигар)
+  const shipTjs = dest === "ae" && p.shipAe ? shipAeTjs(p.shipAe, qty) : ship.tjs;
+  const total = round2(goods + shipTjs);
   const bigOrder = qty >= rfqFromOf(p);
   const country = COUNTRIES[p.country];
   const modeList = modesFor(p.country, dest);
@@ -275,7 +277,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 {weight > 0 ? t("Расонидан · вазн {w} кг", { w: fmtQty(weight) }) : t("Расонидан")}
                 {shipNote && <small>{shipNote}</small>}
               </span>
-              <b>{ship.tjs > 0 ? `${sum(ship.tjs)} ${label}` : t("бо тасдиқ")}</b>
+              <b>{shipTjs > 0 ? `${sum(shipTjs)} ${label}` : t("бо тасдиқ")}</b>
             </div>
             <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(total)} {label}</b></div>
             <p className="est-note">
