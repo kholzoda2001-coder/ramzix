@@ -1827,3 +1827,6 @@ body { background: #e9e9e9; }
 .cat-bar { justify-content: flex-end; }
 .qc-row { display: flex; align-items: center; gap: 6px; } .qc-row .quick-cats { flex: 1 1 auto; min-width: 0; } .qc-row .view-sw { flex: 0 0 auto; margin-right: 8px; } .cat-bar { display: none; }
 .qc-row { padding-bottom: 10px; } .qc-row .quick-cats { padding-bottom: 0; } .qc-row .view-sw button { height: 34px; }
+
+.pv-approx { position: absolute; left: 10px; bottom: 10px; z-index: 2; pointer-events: none; background: rgba(0,0,0,.65); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 9px; border-radius: 6px; }
+.pd-video.slide .pv-approx { bottom: 36px; }

@@ -142,7 +142,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             {p.images.map((src, k) => (
               <div className={`g-slide ${src.endsWith(".svg") ? "art" : ""}`} key={src} onClick={() => setZoom(true)}><ProductImage src={src} alt={`${t(p.name)} — ${k + 1}`} eager={k === 0} sizes="(max-width: 480px) 100vw, 480px" /></div>
             ))}
-            {hasVideo && <div className="g-slide g-video" key="video"><ProductVideo slide url={p.video!} name={t(p.name)} /></div>}
+            {hasVideo && <div className="g-slide g-video" key="video"><ProductVideo slide url={p.video!} name={t(p.name)} approx={p.videoApprox} /></div>}
           </div>
           {nSlides > 1 && <span className="g-count">{img + 1}/{nSlides}</span>}
           {hasVideo && img !== videoAt && <button type="button" className="g-vidchip" onClick={() => goImg(videoAt)}>▶ <T>Видео</T></button>}

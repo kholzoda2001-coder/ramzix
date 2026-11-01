@@ -5,7 +5,7 @@ import { parseVideo } from "@/lib/video";
 import { useT } from "./Lang";
 
 /* Видеои маҳсулот. Плеер танҳо баъди пахш бор мешавад, то саҳифа сабук монад. */
-export default function ProductVideo({ url, name, slide }: { url: string; name: string; slide?: boolean }) {
+export default function ProductVideo({ url, name, slide, approx }: { url: string; name: string; slide?: boolean; approx?: boolean }) {
   const { t } = useT();
   const v = parseVideo(url);
   const [on, setOn] = useState(false);
@@ -33,6 +33,7 @@ export default function ProductVideo({ url, name, slide }: { url: string; name: 
           <span className="pv-btn" aria-hidden>▶</span>
         </button>
       )}
+      {approx && <span className="pv-approx">{t("Видеои модели монанд")}</span>}
     </section>
   );
 }
