@@ -23,7 +23,7 @@ export type Order = {
   payments: Payment[];
   note: string;
 };
-export type ProductExtra = { /** Артикул: RX-0001 */ sku?: string; /** Истиноди видео */ video?: string; /** Курьери Иморот: AED барои якум ва барои ҳар воҳиди дигар */ shipAe?: { first: number; next: number }; /** Видео ба модели монанд */ videoApprox?: boolean; /** Тарҷумаи ном ва тавсиф (ru, en) */ i18n?: Product["i18n"]; /** true — нархи оптовӣ надорад */ noWholesale?: boolean; nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
+export type ProductExtra = { /** Артикул: RX-0001 */ sku?: string; /** Истиноди видео */ video?: string; /** Нарх бо дархост (ҳатто агар нарх бошад) */ priceOnRequest?: boolean; /** Курьери Иморот: AED барои якум ва барои ҳар воҳиди дигар */ shipAe?: { first: number; next: number }; /** Видео ба модели монанд */ videoApprox?: boolean; /** Тарҷумаи ном ва тавсиф (ru, en) */ i18n?: Product["i18n"]; /** true — нархи оптовӣ надорад */ noWholesale?: boolean; nameOriginal?: string; source?: string; rating?: number | null; reviews?: number; colors?: Product["colors"]; sale?: Partial<NonNullable<Product["sale"]>> };
 
 /** Маҳсулоти админ: ҳамон сохтори сайт + идора (фаъол/пинҳон) */
 export type AdminProduct = {
@@ -84,6 +84,7 @@ export function toStorefront(p: AdminProduct): Product {
     ...(p.extra?.noWholesale ? { noWholesale: true } : {}),
     ...(p.extra?.sku ? { sku: p.extra.sku } : {}),
     ...(p.extra?.video ? { video: p.extra.video } : {}),
+    ...(!(p.cost > 0) || p.extra?.priceOnRequest ? { onRequest: true } : {}),
     ...(p.extra?.shipAe ? { shipAe: p.extra.shipAe } : {}),
     ...(p.extra?.video && p.extra?.videoApprox ? { videoApprox: true } : {}),
     ...(p.extra?.i18n ? { i18n: p.extra.i18n } : {}),

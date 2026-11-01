@@ -91,6 +91,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
   const waText = `${t("Салом! Маҳсулот:")} ${t(p.name)}${colorName ? `, ${t("ранг")} ${t(colorName)}` : ""}${size ? `, ${t("андоза")} ${size}` : ""}. ${t("Миқдор:")} ${fmtQty(qty)} ${unit}${pieces ? ` (${pieces} ${t(sale?.perLabel ?? "")})` : ""}. ${t("Нархи оптовиро гуфта метавонед?")}`;
 
+  const waAsk = `${t("Салом! Нарх лозим аст:")} ${t(p.name)}${p.sku ? ` (${p.sku})` : ""}`;
+
   const addToCart = () => {
     setMode(p.country, modeId);
     add({ slug: p.slug, qty, size: size ?? undefined, color: colorName ?? undefined }, t("{q} ба сабад илова шуд", { q: `${fmtQty(qty)} ${unit}` }));
@@ -184,6 +186,14 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
           {/* Нарх: як нарх (нархи аслӣ); хизматрасонӣ дар сабад аз рӯи маблағ илова мешавад */}
           <div className="price-box">
+            {p.onRequest ? (
+              <div className="pm-retail">
+                <div className="pm-big"><b><T>Нарх бо дархост</T></b></div>
+                <div className="pm-tiers">
+                  <a href={waLink(waAsk)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={26} /><span><b><T>Нархро дар WhatsApp пурсед</T></b><small><T>Менеҷер нархро мегӯяд</T></small></span><Icon name="chevron" size={18} stroke={2.4} /></a>
+                </div>
+              </div>
+            ) : (<>
             <div className="pm-retail">
               <div className="pm-big">
                 <b>{price(unitPrice)}</b><span>{label} / {unit}</span>
@@ -193,6 +203,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pm-tiers">
               <a href={waLink(waText)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={26} /><span><b><T>Менеҷер дар WhatsApp</T></b><small><T>Нархи махсус барои миқдори калон</T></small></span><Icon name="chevron" size={18} stroke={2.4} /></a>
             </div>
+            </>)}
           </div>
 
           {/* Номи маҳсулот */}
@@ -220,6 +231,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
           )}
 
           {/* Миқдор */}
+          {!p.onRequest && (<>
           <div className="opt">
             <div className="opt-label"><T>Миқдор</T> <span>{t("Ҳадди ақал: {q}", { q: `${fmtQty(minQty)} ${unit}` })}</span></div>
             {sale && (
@@ -258,6 +270,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
           {bigOrder && (
             <div className="big-note"><T>Миқдори калон: нархи оптовиро дархост кунед, менеҷер нархи беҳтарро мегӯяд.</T></div>
           )}
+          </>)}
 
           <h2 className="pd-h"><T>Тавсиф</T></h2>
           {(
@@ -349,11 +362,15 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
       {/* Тугмаҳои поён */}
       <div className="buy-bar">
+        {p.onRequest ? (
+          <a href={waLink(waAsk)} className="bb-wa wide" style={{ flex: 1, justifyContent: "center" }} target="_blank" rel="noreferrer"><Icon name="wa" size={24} /><span><T>Нархро пурсед</T></span></a>
+        ) : (<>
         <a href={waLink(waText)} className="bb-wa wide" aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} /><span>WhatsApp</span></a>
         <button className="bb-add" onClick={addToCart}>
           <span className="bb-l"><Icon name="cart" size={20} /> <T>Ба сабад</T></span>
           <span className="bb-r">{sum(goods)} {label}</span>
         </button>
+        </>)}
       </div>
     </>
   );

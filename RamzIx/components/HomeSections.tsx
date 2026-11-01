@@ -92,7 +92,7 @@ function Mini({ p, tag }: { p: Product; tag?: string }) {
   return (
     <Link href={`/product/${p.slug}`} className="mini" draggable={false}>
       <span className="mini-img"><ProductImage src={p.images[0]} alt={p.name} sizes="96px" /></span>
-      <b>{price(value)} <small>{label}</small></b>
+      {p.onRequest ? <b><small><T>Нарх бо дархост</T></small></b> : <b>{price(value)} <small>{label}</small></b>}
       {tag && <small>{tag}</small>}
     </Link>
   );

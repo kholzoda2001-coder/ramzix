@@ -20,7 +20,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
       <div className="pcard-img">
         <ProductImage src={p.images[0]} alt={t(p.name)} />
-        {!compact && !p.sizes?.length && !p.colors?.length && (
+        {!compact && !p.onRequest && !p.sizes?.length && !p.colors?.length && (
           <button className="pcard-add" aria-label={t("Ба сабад")} onClick={(e) => { e.preventDefault(); e.stopPropagation(); add({ slug: p.slug, qty: min }, t("{q} ба сабад илова шуд", { q: `${fmtQty(min)} ${unit}` })); }}>
             <Icon name="cart" size={19} />
           </button>
@@ -28,9 +28,13 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
       </div>
       <div className="pcard-body">
         <div className="pcard-name">{t(p.name)}</div>
-        <div className="pcard-price">
-          <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
-        </div>
+        {p.onRequest ? (
+          <div className="pcard-price req"><T>Нарх бо дархост</T></div>
+        ) : (
+          <div className="pcard-price">
+            <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
+          </div>
+        )}
       </div>
     </Link>
   );

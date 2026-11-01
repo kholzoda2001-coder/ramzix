@@ -6,7 +6,7 @@ import { listUnitPrice, shownTiers } from "@/lib/pricing";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
-import { useT } from "./Lang";
+import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
 
 /* Сатри каталог барои харидори оптом: се нарх паҳлӯи ҳам ва иловаи зуд ба сабад */
@@ -35,7 +35,7 @@ export default function ProductRow({ p }: { p: Product }) {
           {t("Ҳадди ақал: {q}", { q: qty(min) })}
         </span>
         <div className="prow-prices">
-          {cells.map((c, k) => (
+          {p.onRequest ? <span><b><T>Нарх бо дархост</T></b></span> : cells.map((c, k) => (
             <span key={c.minQty} className={tiers.length || k ? "w" : ""}>
               <b>{price(c.unit)}</b>
               <small>{t("аз {q}", { q: fmtQty(c.minQty) })}</small>

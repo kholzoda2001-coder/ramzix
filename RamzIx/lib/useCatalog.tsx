@@ -20,7 +20,7 @@ export function CatalogProvider({ children, initial = [] }: { children: React.Re
     let alive = true;
     const load = () => fetch("/api/products").then((r) => r.json()).then((d: { products?: AdminProduct[] }) => {
       if (!alive) return;
-      setExtra((d.products ?? []).filter((p) => p.active && p.name && p.cost > 0).map((p) => { const x = toStorefront(p); return { ...x, brand: cleanBrand(x.brand) }; }));
+      setExtra((d.products ?? []).filter((p) => p.active && p.name).map((p) => { const x = toStorefront(p); return { ...x, brand: cleanBrand(x.brand) }; }));
     }).catch(() => {}).finally(() => alive && setReady(true));
     load();
     // Баъди тағйироти admin (дар ҳамин браузер) каталог аз нав гирифта мешавад

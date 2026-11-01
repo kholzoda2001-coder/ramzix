@@ -12,7 +12,7 @@ const KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
 export async function loadStorefront(): Promise<Product[]> {
   if (!dbReady()) return [];
   try {
-    const r = await fetch(`${URL_}/rest/v1/products?select=*&active=eq.true&cost=gt.0&order=created_at.desc&limit=5000`, {
+    const r = await fetch(`${URL_}/rest/v1/products?select=*&active=eq.true&order=created_at.desc&limit=5000`, {
       headers: { apikey: KEY, Authorization: `Bearer ${KEY}` },
       next: { revalidate: 30, tags: ["catalog"] },
     });

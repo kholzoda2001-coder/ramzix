@@ -1832,3 +1832,5 @@ body { background: #e9e9e9; }
 .pd-video.slide .pv-approx { bottom: 36px; }
 
 .pm-fee { margin: 6px 0 0; font-size: 12.5px; color: var(--muted); }
+
+.pcard-price.req { font-size: 13px; font-weight: 700; color: #92400e; background: #fef3c7; border-radius: 6px; padding: 5px 8px; display: inline-block; }
