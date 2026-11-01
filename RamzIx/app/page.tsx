@@ -7,7 +7,7 @@ import Icon from "@/components/Icon";
 import { T } from "@/components/Lang";
 import WaLink from "@/components/WaLink";
 import { HowSteps, PayList, TrustRow, Tx } from "@/components/HomeInfo";
-import { BrandRow, CategoryGrid, FoodRow, DealsPair, ForYouFeed, PromoStrip, TierLadder } from "@/components/HomeSections";
+import { BrandRow, CategoryGrid, FoodRow, DealsPair, ForYouFeed, TierLadder } from "@/components/HomeSections";
 
 export default function Home() {
   return (
@@ -17,8 +17,6 @@ export default function Home() {
       <main className="home">
         <HomeSwitch>
         <HeroSlider />
-
-        <PromoStrip />
 
         <CategoryGrid />
 
