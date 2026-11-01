@@ -45,7 +45,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
           <div className={`pcard-whole ${whole ? "on" : ""}`}>
             {whole
               ? <><span>{t("аз {q}", { q: fmtQty(w1.minQty) })}</span>{w2 && <b>{tier(w2)}</b>}</>
-              : <><span><T>оптом</T></span><b>{tier(w1)}</b></>}
+              : <b>{tier(w1)}</b>}
           </div>
         )}
       </div>
