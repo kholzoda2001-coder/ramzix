@@ -93,8 +93,8 @@ export function PromoStrip() {
   return (
     <div className="promo-sheet">
     <div className="promo-strip">
-      <Link href="/#rfq"><b><Icon name="tag" size={15} /> <T>Тахфифи ҳаҷм</T></b><span>{t("Аз {x}: −{p}%", { x: `${sum(s.from)} ${label}`, p: String(s.off).replace(".", ",") })}</span></Link>
-      <Link href="/brands"><b><Icon name="shield" size={15} /> <T>Брендҳо</T></b><span><T>Мол аз рӯи бренд</T></span></Link>
+      <Link href="/#rfq"><b><Icon name="tag" size={15} /> {t("Аз {x}: −{p}%", { x: `${sum(s.from)} ${label}`, p: String(s.off).replace(".", ",") })}</b></Link>
+      <Link href="/brands"><b><Icon name="shield" size={15} /> <T>Брендҳо</T></b></Link>
     </div>
     </div>
   );

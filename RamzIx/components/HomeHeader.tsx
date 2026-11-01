@@ -55,12 +55,6 @@ export default function HomeHeader() {
           {tabs.map((x) => <button key={x.id} className={x.id === tab ? "on" : ""} aria-pressed={x.id === tab} onClick={() => setHomeTab(x.id)}><T>{x.label}</T></button>)}
         </nav>
       )}
-      {solid && (
-        <Link href="/#rfq" className="hh-promo">
-          <b><Icon name="tag" size={15} /> <T>Тахфифи ҳаҷм</T></b>
-          <span>{t("Аз {x}: −{p}%", { x: `${sum(step.from)} ${label}`, p: String(step.off).replace(".", ",") })}</span>
-        </Link>
-      )}
     </header>
   );
 }

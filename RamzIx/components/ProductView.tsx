@@ -211,10 +211,13 @@ export default function ProductView({ p, related, other }: { p: Product; related
                     </span>
                     <span>
                       <b>{price(x.unit)} {label}</b>
+                      {listPrice - x.unit > 0.005 && (
+                        <small className="off">{t("{p}% сарфа", { p: String(Math.round(((listPrice - x.unit) / listPrice) * 1000) / 10).replace(".", ",") })} · −{price(listPrice - x.unit)} {label}/{unit}</small>
+                      )}
                     </span>
                   </button>
                 ))}
-                <a href={waLink(waText)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={20} /><T>Менеҷер дар WhatsApp</T></a>
+                <a href={waLink(waText)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={26} /><span><b><T>Менеҷер дар WhatsApp</T></b><small><T>Нархи махсус барои миқдори калон</T></small></span><Icon name="chevron" size={18} stroke={2.4} /></a>
               </div>
             )}
           </div>
@@ -403,7 +406,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
       {/* Тугмаҳои поён */}
       <div className="buy-bar">
-        <a href={waLink(waText)} className="bb-wa" aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} /></a>
+        <a href={waLink(waText)} className={`bb-wa ${mode === "whole" ? "wide" : ""}`} aria-label="WhatsApp" target="_blank" rel="noreferrer"><Icon name="wa" size={24} />{mode === "whole" && <span>WhatsApp</span>}</a>
         <button className="bb-add" onClick={addToCart}>
           <span className="bb-l"><Icon name="cart" size={20} /> <T>Ба сабад</T></span>
           <span className="bb-r">{sum(goods)} {label}</span>

@@ -20,12 +20,16 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
   // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
   const [w1, w2] = shownTiers(p);
   const whole = mode === "whole" && !!w1;
+  // Беҷ: нишон медиҳад, ки оптом ҳаст ва чӣ қадар арзонтар аст (нисбат ба нархи чакана)
+  const base = listUnitPrice(p);
+  const off = w1 && base > 0 ? Math.round(((base - w1.unit) / base) * 1000) / 10 : 0;
   const tier = (x: { unit: number; minQty: number }) => t("{p} аз {q}", { p: price(x.unit), q: fmtQty(x.minQty) });
 
   return (
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
       <div className="pcard-img">
         <ProductImage src={p.images[0]} alt={t(p.name)} />
+        {w1 && <span className="pcard-ws"><T>Оптом</T>{off > 0 ? ` −${String(off).replace(".", ",")}%` : ""}</span>}
         {!compact && !p.sizes?.length && !p.colors?.length && (
           <button className="pcard-add" aria-label={t("Ба сабад")} onClick={(e) => { e.preventDefault(); e.stopPropagation(); add({ slug: p.slug, qty: min }, t("{q} ба сабад илова шуд", { q: `${fmtQty(min)} ${unit}` })); }}>
             <Icon name="cart" size={19} />

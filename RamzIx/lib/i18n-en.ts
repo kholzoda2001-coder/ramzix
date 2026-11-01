@@ -61,6 +61,8 @@ export const EN: Record<string, string> = {
   "Категория": "Category",
   "Категорияҳо": "Categories",
   "Видео": "Video",
+  "{p}% сарфа": "Save {p}%",
+  "Нархи махсус барои миқдори калон": "Special price for large orders",
   "Видеоро тамошо кунед": "Watch the video",
   "Кишвар": "Country",
   "Либос": "Clothing",

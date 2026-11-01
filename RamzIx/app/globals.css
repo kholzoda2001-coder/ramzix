@@ -1798,3 +1798,26 @@ body { background: #e9e9e9; }
 /* Тугмаи WhatsApp дар поёни нархҳои оптом */
 .pm-tiers > .pm-wa { margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 12px; background: #25d366; color: #fff; font-weight: 700; font-size: 15px; }
 .pm-tiers > .pm-wa:hover { background: #1fb858; color: #fff; }
+
+/* ===== Такмили UX: беҷи оптом, сарфа, WhatsApp, сарлавҳаи ихчам ===== */
+.pcard-ws { position: absolute; left: 8px; top: 8px; z-index: 2; background: #0f7a3d; color: #fff; font-size: 11px; font-weight: 800; line-height: 1; padding: 5px 7px; border-radius: 4px; letter-spacing: .1px; }
+.pm-tiers > button small.off { color: #0f7a3d; font-weight: 700; font-size: 12px; }
+.pm-tiers > button > span:last-child { gap: 3px; }
+.pm-tiers > .pm-wa { margin-top: 10px; display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 14px; background: #25d366; color: #fff; text-align: left; box-shadow: 0 8px 20px rgba(37,211,102,.35); }
+.pm-tiers > .pm-wa > span { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.pm-tiers > .pm-wa b { font-size: 16px; font-weight: 800; color: #fff; }
+.pm-tiers > .pm-wa small { font-size: 12.5px; color: rgba(255,255,255,.92); }
+.pm-tiers > .pm-wa:hover { background: #1fb858; color: #fff; }
+.bb-wa.wide { width: auto; padding: 0 16px; display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 14px; }
+.promo-strip a { padding: 8px 10px; flex-direction: row; align-items: center; justify-content: center; }
+.promo-strip b { font-size: 13px; }
+.slide { aspect-ratio: 390 / 218; padding-top: 62px; }
+.block { padding: 10px 0 8px; margin-top: 6px; }
+.bb-wa.wide { padding: 0 12px; gap: 6px; font-size: 13px; }
+.bb-add .bb-l, .bb-add .bb-r { white-space: nowrap; }
+.bb-add { padding: 0 12px; font-size: 14px; }
+.bb-r { padding: 5px 8px; font-size: 13px; }
+/* Категорияҳо дар як қатор ва сатри тахфиф дар як хат */
+.cat-slider { grid-template-rows: auto; grid-auto-columns: 78px; justify-content: start; gap: 8px 8px; padding: 0 12px 2px; }
+.promo-strip { grid-template-columns: 1.6fr 1fr; }
+.promo-strip b { white-space: nowrap; font-size: 12.5px; }
