@@ -103,7 +103,8 @@ export function PromoStrip() {
 /** Акси хурд бо нарх барои блокҳо */
 function Mini({ p, tag }: { p: Product; tag?: string }) {
   const { price, label } = useMoney();
-  const value = listUnitPrice(p);
+  const w0 = shownTiers(p)[0];
+  const value = p.wholesaleOnly && !p.noWholesale && w0 ? w0.unit : listUnitPrice(p);
   return (
     <Link href={`/product/${p.slug}`} className="mini" draggable={false}>
       <span className="mini-img"><ProductImage src={p.images[0]} alt={p.name} sizes="96px" /></span>

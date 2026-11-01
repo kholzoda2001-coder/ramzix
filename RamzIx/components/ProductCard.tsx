@@ -13,7 +13,9 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
   const { price, label } = useMoney();
   const { t } = useT();
   const { add } = useCart();
-  const min = p.sale?.min ?? 1;
+  const all0 = shownTiers(p);
+  const wsOnly = !!p.wholesaleOnly && !p.noWholesale && all0.length > 0;
+  const min = wsOnly ? Math.max(p.sale?.min ?? 1, all0[0].minQty) : p.sale?.min ?? 1;
   const unit = t(unitOf(p));
   // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
   const all = shownTiers(p);
@@ -36,13 +38,19 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
           <div className="pcard-price req"><T>Нарх бо дархост</T></div>
         ) : (
           <div className="pcard-price">
-            <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
+            <b>{price(wsOnly ? all0[0].unit : listUnitPrice(p))}</b> <span>{label} / {unit}</span>
           </div>
         )}
-        {w1 && !p.onRequest && (
+        {wsOnly && !p.onRequest ? (
+          <div className="pcard-whole">
+            <span className="ws-tag"><T>оптом</T></span><b>{t("аз {q}", { q: `${fmtQty(min)} ${unit}` })}</b>
+          </div>
+        ) : (
+          w1 && !p.onRequest && (
           <div className="pcard-whole">
             <span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b>
           </div>
+          )
         )}
       </div>
     </Link>

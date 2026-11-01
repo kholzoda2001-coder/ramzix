@@ -32,7 +32,9 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const sale = p.sale;
   const unit = t(unitOf(p));
   const step = sale?.step ?? 1;
-  const minQty = sale?.min ?? 1;
+  // Танҳо оптом: аз миқдори аввалини зинаи оптом сар мешавад (то харидор ба нархи оптом расад)
+  const wsFirst = p.wholesaleOnly && !p.noWholesale ? shownTiers(p)[0] : undefined;
+  const minQty = wsFirst ? Math.max(sale?.min ?? 1, wsFirst.minQty) : sale?.min ?? 1;
   const [qty, setQty] = useState(minQty);
   const [img, setImg] = useState(0);
   const [colorName, setColorName] = useState<string | null>(p.colors?.[0]?.name ?? null);
@@ -70,7 +72,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   // Саҳифаи маҳсулот ҳамеша бо «Чакана» (ба дона) мекушояд; интихоб танҳо барои ҳамин саҳифа аст
   const [savedMode, setSavedMode] = useState<"retail" | "whole">("retail");
   // Моли бе нархи оптовӣ (аз admin) — ҳамеша чакана
-  const mode = p.noWholesale ? "retail" : savedMode;
+  const mode = p.noWholesale ? "retail" : wsFirst ? "whole" : savedMode;
   const goods = round2(unitPrice * qty);
   const pieces = sale?.per ? qty * sale.per : null;
   const weight = round2(weightOf(p, qty));
@@ -197,7 +199,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 </div>
               </div>
             ) : (<>
-            {!p.noWholesale && (
+            {!p.noWholesale && !wsFirst && (
               <div className="pm-tabs" role="tablist" aria-label={t("Тарзи харид")}>
                 <button role="tab" aria-selected={mode === "retail"} className={mode === "retail" ? "on" : ""} onClick={() => setSavedMode("retail")}><T>Чакана</T></button>
                 <button role="tab" aria-selected={mode === "whole"} className={mode === "whole" ? "on" : ""} onClick={() => setSavedMode("whole")}><T>Оптом</T></button>

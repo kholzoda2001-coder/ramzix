@@ -18,29 +18,33 @@ const CURS: Currency[] = ["USD", "AED", "CNY", "TJS"];
 const UNITS = ["дона", "картон", "кг"];
 
 /** extra бо аломати «нархи оптовӣ нест»; агар хол бошад — ҳеҷ чиз нигоҳ дошта намешавад */
-const withWholesale = (extra: AdminProduct["extra"], wholesale: boolean): AdminProduct["extra"] => {
-  const { noWholesale: _drop, ...rest } = extra ?? {};
-  void _drop;
-  const out = wholesale ? rest : { ...rest, noWholesale: true };
+/** Намуди фурӯш: both — дона ва оптом, wholesale — танҳо оптом, retail — танҳо дона */
+type Sell = "both" | "wholesale" | "retail";
+const sellOf = (e: AdminProduct["extra"]): Sell => (e?.noWholesale ? "retail" : e?.wholesaleOnly ? "wholesale" : "both");
+const withSell = (extra: AdminProduct["extra"], sell: Sell): AdminProduct["extra"] => {
+  const { noWholesale: _a, wholesaleOnly: _b, ...rest } = extra ?? {};
+  void _a; void _b;
+  const out = sell === "retail" ? { ...rest, noWholesale: true } : sell === "wholesale" ? { ...rest, wholesaleOnly: true } : rest;
   return Object.keys(out).length ? out : undefined;
 };
+const SELL_LABEL: Record<Sell, string> = { both: "Дона + оптом", wholesale: "Танҳо оптом", retail: "Танҳо дона" };
 
 type Form = {
   id?: string; slug?: string; name: string; subtitle: string; brand: string; category: string; country: CountryCode;
   cost: string; costCurrency: Currency; weight: string; vol: string; images: string[]; description: string; sizes: string;
   unit: string; per: string; perLabel: string; min: string; step: string; markup: string; active: boolean; note: string;
-  /** false — нархи оптовӣ надорад */
-  wholesale: boolean;
+  /** Намуди фурӯш */
+  sell: Sell;
   /** Майдонҳои иловагии маҳсулот (рейтинг, рангҳо…) — ҳангоми таҳрир гум намешаванд */
   extra?: AdminProduct["extra"];
 };
-const blank = (): Form => ({ name: "", subtitle: "", brand: "", category: "home", country: "ae", cost: "", costCurrency: "AED", weight: "", vol: "", images: [], description: "", sizes: "", unit: "дона", per: "", perLabel: "дона", min: "", step: "", markup: String(getDefaultMarkup()), active: true, note: "", wholesale: true });
+const blank = (): Form => ({ name: "", subtitle: "", brand: "", category: "home", country: "ae", cost: "", costCurrency: "AED", weight: "", vol: "", images: [], description: "", sizes: "", unit: "дона", per: "", perLabel: "дона", min: "", step: "", markup: String(getDefaultMarkup()), active: true, note: "", sell: "both" });
 const fromProduct = (p: AdminProduct): Form => ({
   id: p.id, slug: p.slug, name: p.name, subtitle: p.subtitle, brand: p.brand, category: p.category, country: p.country,
   cost: String(p.cost), costCurrency: p.costCurrency, weight: p.weightKg ? String(p.weightKg) : "", vol: p.volumeM3 ? String(p.volumeM3) : "",
   images: p.images, description: p.description, sizes: p.sizes.join(", "), unit: p.unit, per: p.per ? String(p.per) : "", perLabel: p.perLabel || "дона",
   min: p.min ? String(p.min) : "", step: p.step ? String(p.step) : "", markup: String(p.markupPct), active: p.active, note: p.note,
-  wholesale: !p.extra?.noWholesale, extra: p.extra,
+  sell: sellOf(p.extra), extra: p.extra,
 });
 
 /* Акс аз дастгоҳ: хурд карда мешавад, то хотира пур нашавад */
@@ -74,9 +78,10 @@ export default function Products({ admin }: { admin: Admin }) {
     (!q.trim() || `${p.name} ${p.brand}`.toLowerCase().includes(q.toLowerCase())) &&
     (!fCat || p.category === fCat) &&
     (!fCountry || p.country === fCountry) &&
-    (!fState || (fState === "on" ? p.active : fState === "off" ? !p.active : fState === "whole" ? !p.extra?.noWholesale : !!p.extra?.noWholesale))),
+    (!fState || (fState === "on" ? p.active : fState === "off" ? !p.active : fState === "whole" ? sellOf(p.extra) !== "retail" : sellOf(p.extra) === "retail"))),
   [admin.products, q, fCat, fCountry, fState]);
-  const toggleWholesale = (p: AdminProduct) => admin.saveProduct({ ...p, extra: withWholesale(p.extra, !!p.extra?.noWholesale) });
+  const NEXT: Record<Sell, Sell> = { both: "wholesale", wholesale: "retail", retail: "both" };
+  const toggleWholesale = (p: AdminProduct) => admin.saveProduct({ ...p, extra: withSell(p.extra, NEXT[sellOf(p.extra)]) });
 
   const toAdmin = (f: Form): Omit<AdminProduct, "id" | "slug"> => ({
     name: f.name.trim(), subtitle: f.subtitle.trim(), brand: f.brand.trim(), category: f.category, country: f.country,
@@ -84,7 +89,7 @@ export default function Products({ admin }: { admin: Admin }) {
     description: f.description.trim(), sizes: f.sizes.split(",").map((x) => x.trim()).filter(Boolean),
     unit: f.unit, per: f.unit === "картон" ? n(f.per) : 0, perLabel: f.unit === "картон" ? f.perLabel.trim() || "дона" : "",
     min: n(f.min), step: n(f.step), markupPct: n(f.markup), active: f.active, note: f.note.trim(),
-    extra: withWholesale(f.extra, f.wholesale),
+    extra: withSell(f.extra, f.sell),
   });
 
   const save = () => {
@@ -142,7 +147,7 @@ export default function Products({ admin }: { admin: Admin }) {
               </button>
               <div className="ap-act">
                 <button className={p.active ? "on" : ""} onClick={() => admin.toggleProduct(p.id)}>{p.active ? "● Дар сайт" : "○ Пинҳон"}</button>
-                <button className={p.extra?.noWholesale ? "" : "on"} onClick={() => toggleWholesale(p)}>{p.extra?.noWholesale ? "○ Бе оптом" : "● Оптом"}</button>
+                <button className={sellOf(p.extra) === "retail" ? "" : "on"} onClick={() => toggleWholesale(p)} title="Пахш кунед: дона+оптом → танҳо оптом → танҳо дона">{sellOf(p.extra) === "retail" ? "○" : "●"} {SELL_LABEL[sellOf(p.extra)]}</button>
                 {p.active && <Link href={`/product/${p.slug}`} target="_blank">Дидан ↗</Link>}
               </div>
             </div>
@@ -227,7 +232,13 @@ export default function Products({ admin }: { admin: Admin }) {
             </section>
 
             <label className="ad-toggle"><input type="checkbox" checked={form.active} onChange={(e) => set({ active: e.target.checked })} /> <span>Дар сайт нишон дода шавад</span></label>
-            <label className="ad-toggle"><input type="checkbox" checked={form.wholesale} onChange={(e) => set({ wholesale: e.target.checked })} /> <span>Нархи оптовӣ дорад (аз ҳисоби зинаҳои 13% · 8% · 5%). Хомӯш бошад — ҳамеша нархи дона, ба тахфифи сабад ҳисоб намешавад</span></label>
+            <label><span>Намуди фурӯш</span>
+              <select value={form.sell} onChange={(e) => set({ sell: e.target.value as Sell })}>
+                <option value="both">Дона ва оптом (пешфарз): саҳифа бо «Дона» мекушояд, таби «Оптом» ҳам ҳаст</option>
+                <option value="wholesale">Танҳо оптом: нархи дона нест, саҳифа бо нархи оптом мекушояд</option>
+                <option value="retail">Танҳо дона: нархи оптом ва тахфифи сабад нест</option>
+              </select>
+            </label>
             <label><span>Видео (истиноди YouTube, Vimeo ё файли .mp4)</span><input inputMode="url" placeholder="https://www.youtube.com/watch?v=…" value={form.extra?.video ?? ""} onChange={(e) => { const { video: _v, ...rest } = form.extra ?? {}; const v = e.target.value.trim(); set({ extra: v ? { ...rest, video: v } : rest }); }} />{form.extra?.video && !parseVideo(form.extra.video) && <small className="ad-err">Истинод нодуруст аст (бояд https:// бошад)</small>}</label>
             <label><span>Эзоҳи дохилӣ (барои худатон)</span><input value={form.note} onChange={(e) => set({ note: e.target.value })} /></label>
 
