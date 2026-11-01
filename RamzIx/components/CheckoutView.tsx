@@ -69,7 +69,7 @@ export default function CheckoutView() {
       customer: { name: buyer.name, phone: buyer.phone, address: buyer.address },
       items: order.groups.flatMap((g) => g.lines).map((l) => {
         const cost = costPerUnit(l.p) * l.qty;
-        return { id: l.key, name: l.p.name, qty: l.qty, unit: unitOf(l.p), costTotal: Math.round(cost * 100) / 100, markupPct: order.feePct, weightKg: l.p.weightKg || undefined, volumeM3: l.p.volumeM3 || undefined };
+        return { id: l.key, name: l.p.name, qty: l.qty, unit: unitOf(l.p), costTotal: Math.round(cost * 100) / 100, markupPct: cost > 0 ? Math.round((l.goods / cost - 1) * 1000) / 10 : 0, weightKg: l.p.weightKg || undefined, volumeM3: l.p.volumeM3 || undefined };
       }),
       routeKey: first ? ROUTES.find((r) => r.country === first.country)?.key : undefined,
       shippingCharged: Math.round(order.shipping * 100) / 100,
@@ -161,7 +161,7 @@ export default function CheckoutView() {
           ))}
         </div>
         <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(order.listGoods)} {label}</b></div>
-        <div className="est-row"><span><T>Хизматрасонӣ</T><small>{String(order.feePct).replace(".", ",")}%</small></span><b>{sum(order.fee)} {label}</b></div>
+        {order.discount > 0 && <div className="est-row disc"><span><T>Тахфиф</T><small>−{order.discountPct}%</small></span><b>−{sum(order.discount)} {label}</b></div>}
         <div className="est-row"><span><T>Расонидан</T></span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : t("бо тасдиқ")}</b></div>
         <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(order.total)} {label}</b></div>
       </section>
