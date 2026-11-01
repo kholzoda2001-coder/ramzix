@@ -259,33 +259,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="big-note"><T>Миқдори калон: нархи оптовиро дархост кунед, менеҷер нархи беҳтарро мегӯяд.</T></div>
           )}
 
-          {/* Расонидан */}
-          <div className="est">
-            <div className="est-head"><b>{t("Расонидан аз {c}", { c: t(country.short) })}</b><span>{t("барои {q}", { q: `${fmtQty(qty)} ${unit}` })}</span></div>
-            {modeList.length > 1 && (
-              <div className="modes">
-                {modeList.map((m) => (
-                  <button key={m.id} className={m.id === ship.mode.id ? "on" : ""} onClick={() => setModeId(m.id)}>
-                    <b>{t(m.label)}</b>
-                    <small>{t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax })}</small>
-                  </button>
-                ))}
-              </div>
-            )}
-            <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(goods)} {label}</b></div>
-            <div className="est-row">
-              <span>
-                {weight > 0 ? t("Расонидан · вазн {w} кг", { w: fmtQty(weight) }) : t("Расонидан")}
-                {shipNote && <small>{shipNote}</small>}
-              </span>
-              <b>{shipTjs > 0 ? `${sum(shipTjs)} ${label}` : t("бо тасдиқ")}</b>
-            </div>
-            <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(total)} {label}</b></div>
-            <p className="est-note">
-              {ship.mode.assumed && " " + t("Нархи расонидан ҳанӯз тасдиқ нашудааст.")} {t("Нарх {h} соат дуруст аст.", { h: SETTINGS.quoteHours })}
-            </p>
-          </div>
-
           <h2 className="pd-h"><T>Тавсиф</T></h2>
           {(
             <div className="pane">
@@ -338,14 +311,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
                       <td>{t(m.label)}</td>
                       <td>
                         {t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax })}
-                        {m.perKgUsd > 0 && <> · ${m.perKgUsd}/{t("кг")}{m.perM3Usd ? ` ${t("ё")} $${m.perM3Usd}/${t("м³")}` : ""}</>}
                         {m.assumed && ` (${t("тахминӣ")})`}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              <p className="est-note" style={{ marginTop: 10 }}><T>Расонидан аз рӯи вазн ҳисоб мешавад ва аз ҷониби харидор пардохта мешавад. Нарх дар сабад нишон дода мешавад.</T></p>
             </div>
           )}
 
