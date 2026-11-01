@@ -66,6 +66,7 @@ export const EN: Record<string, string> = {
   "Хизматрасонии ҳадди ақал: {a}.": "Lowest fee reached: {a}.",
   "Хизматрасонӣ дар сабад аз рӯи маблағи ҳамаи мол ҳисоб мешавад: бо харид зиёд фоиз камтар мешавад.": "The service fee is calculated in the cart from the total of all items: the larger the order, the lower the percentage.",
   "Аз {q}": "From {q}",
+  "Нарх бе хизматрасонӣ. Дар сабад хизматрасонӣ илова мешавад: {a} (ҳар қадар зиёд харед, камтар).": "Price excludes the service fee. The fee is added in the cart: {a} (the more you order, the lower it gets).",
   "Видео": "Video",
   "Видеои модели монанд": "Video of a similar model",
   "{p}% сарфа": "Save {p}%",

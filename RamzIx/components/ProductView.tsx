@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { useDest } from "@/lib/useDest";
-import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shipAeTjs, shippingCost, tierAt, volumeOf, weightOf } from "@/lib/pricing";
+import { defaultMode, feeLadder, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shipAeTjs, shippingCost, tierAt, volumeOf, weightOf } from "@/lib/pricing";
 import { brandSlug } from "@/lib/filters";
 import { SETTINGS } from "@/lib/pricing-config";
 import { useText } from "@/lib/useSite";
@@ -188,6 +188,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
               <div className="pm-big">
                 <b>{price(unitPrice)}</b><span>{label} / {unit}</span>
               </div>
+              <p className="pm-fee">{t("Нарх бе хизматрасонӣ. Дар сабад хизматрасонӣ илова мешавад: {a} (ҳар қадар зиёд харед, камтар).", { a: feeLadder().map((s) => `${String(s.pct).replace(".", ",")}%`).join(" → ") })}</p>
             </div>
             <div className="pm-tiers">
               <a href={waLink(waText)} className="pm-wa" target="_blank" rel="noreferrer"><Icon name="wa" size={26} /><span><b><T>Менеҷер дар WhatsApp</T></b><small><T>Нархи махсус барои миқдори калон</T></small></span><Icon name="chevron" size={18} stroke={2.4} /></a>
