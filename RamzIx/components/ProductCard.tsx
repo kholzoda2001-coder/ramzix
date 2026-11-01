@@ -29,7 +29,6 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
       <div className="pcard-img">
         <ProductImage src={p.images[0]} alt={t(p.name)} />
-        {w1 && <span className="pcard-ws"><T>Оптом</T>{off > 0 ? ` −${String(off).replace(".", ",")}%` : ""}</span>}
         {!compact && !p.sizes?.length && !p.colors?.length && (
           <button className="pcard-add" aria-label={t("Ба сабад")} onClick={(e) => { e.preventDefault(); e.stopPropagation(); add({ slug: p.slug, qty: min }, t("{q} ба сабад илова шуд", { q: `${fmtQty(min)} ${unit}` })); }}>
             <Icon name="cart" size={19} />
@@ -45,7 +44,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
           <div className={`pcard-whole ${whole ? "on" : ""}`}>
             {whole
               ? <><span>{t("аз {q}", { q: fmtQty(w1.minQty) })}</span>{w2 && <b>{tier(w2)}</b>}</>
-              : <b>{tier(w1)}</b>}
+              : <><span className="ws-tag"><T>оптом</T>{off > 0 ? ` −${String(off).replace(".", ",")}%` : ""}</span><b>{tier(w1)}</b></>}
           </div>
         )}
       </div>
