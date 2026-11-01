@@ -18,11 +18,10 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
   const min = p.sale?.min ?? 1;
   const unit = t(unitOf(p));
   // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
-  const [w1, w2] = shownTiers(p);
+  const all = shownTiers(p);
+  const [w1, w2] = all;
+  const best = all[all.length - 1]; // арзонтарин нархи оптом
   const whole = mode === "whole" && !!w1;
-  // Беҷ: нишон медиҳад, ки оптом ҳаст ва чӣ қадар арзонтар аст (нисбат ба нархи чакана)
-  const base = listUnitPrice(p);
-  const off = w1 && base > 0 ? Math.round(((base - w1.unit) / base) * 1000) / 10 : 0;
   const tier = (x: { unit: number; minQty: number }) => t("{p} аз {q}", { p: price(x.unit), q: fmtQty(x.minQty) });
 
   return (
@@ -44,7 +43,7 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
           <div className={`pcard-whole ${whole ? "on" : ""}`}>
             {whole
               ? <><span>{t("аз {q}", { q: fmtQty(w1.minQty) })}</span>{w2 && <b>{tier(w2)}</b>}</>
-              : <><span className="ws-tag"><T>оптом</T>{off > 0 ? ` −${String(off).replace(".", ",")}%` : ""}</span><b>{tier(w1)}</b></>}
+              : <><span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b></>}
           </div>
         )}
       </div>
