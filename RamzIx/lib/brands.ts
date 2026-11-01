@@ -9,6 +9,7 @@ const BRANDS: Record<string, Info> = {
   eurolux: { name: "Eurolux", bg: "#ffffff", fg: "#111111", mark: "EU", logo: "/brands/eurolux.svg" },
   vermont: { name: "Vermont", bg: "#ffffff", fg: "#9b1c1c", mark: "VT" },
   bergamo: { name: "Bergamo", bg: "#ffffff", fg: "#111111", mark: "BG", logo: "/brands/bergamo.png" },
+  monster: { name: "Monster", bg: "#ffffff", fg: "#111111", mark: "MO", logo: "/brands/monster.png" },
 };
 
 /* Номҳое, ки бренд нестанд */
