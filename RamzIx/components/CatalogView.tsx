@@ -93,25 +93,24 @@ export default function CatalogView() {
           </form>
           <Link href="/cart" className="ic-round" aria-label={t("Сабад")}><Icon name="cart" size={21} /><CartBadge /></Link>
         </div>
-        <div className="quick-cats">
-          <button className={!filters.category.length ? "on" : ""} onClick={() => go({ ...filters, category: [] })}><T>Ҳама</T></button>
-          {quickCats.map((c) => (
-            <button key={c.id} className={filters.category.includes(c.id) ? "on" : ""} onClick={() => go({ ...filters, category: filters.category.includes(c.id) ? [] : [c.id] })}>
-              {t(c.name)}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      <main className="cat-main">
-        <h1 className="sr-only">{title}</h1>
-        <div className="cat-bar">
+        <div className="qc-row">
+          <div className="quick-cats">
+            <button className={!filters.category.length ? "on" : ""} onClick={() => go({ ...filters, category: [] })}><T>Ҳама</T></button>
+            {quickCats.map((c) => (
+              <button key={c.id} className={filters.category.includes(c.id) ? "on" : ""} onClick={() => go({ ...filters, category: filters.category.includes(c.id) ? [] : [c.id] })}>
+                {t(c.name)}
+              </button>
+            ))}
+          </div>
           <div className="view-sw" role="group" aria-label={t("Намуд")}>
             <button aria-pressed={!isList} aria-label={t("Шабака")} className={!isList ? "on" : ""} onClick={() => setView("grid")}><Icon name="grid" size={18} /></button>
             <button aria-pressed={isList} aria-label={t("Рӯйхат")} className={isList ? "on" : ""} onClick={() => setView("list")}><Icon name="list" size={18} /></button>
           </div>
         </div>
+      </header>
 
+      <main className="cat-main">
+        <h1 className="sr-only">{title}</h1>
         <div className="toolbar">
           <button className="tb-filter" onClick={() => setSheet(true)}>
             <Icon name="filter" size={16} /> {t("Филтрҳо")}{nActive > 0 ? ` · ${nActive}` : ""}
