@@ -25,7 +25,6 @@ import FilterSheet from "./FilterSheet";
 import { T, useT } from "./Lang";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
-import ModeSwitch from "./PriceMode";
 import ProductRow from "./ProductRow";
 
 const PAGE = 36;
@@ -107,7 +106,6 @@ export default function CatalogView() {
       <main className="cat-main">
         <h1 className="sr-only">{title}</h1>
         <div className="cat-bar">
-          <ModeSwitch light />
           <div className="view-sw" role="group" aria-label={t("Намуд")}>
             <button aria-pressed={!isList} aria-label={t("Шабака")} className={!isList ? "on" : ""} onClick={() => setView("grid")}><Icon name="grid" size={18} /></button>
             <button aria-pressed={isList} aria-label={t("Рӯйхат")} className={isList ? "on" : ""} onClick={() => setView("list")}><Icon name="list" size={18} /></button>

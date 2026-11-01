@@ -13,7 +13,7 @@ import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import { useMoney } from "./Currency";
 import { discountLadder, listUnitPrice, shownTiers } from "@/lib/pricing";
-import { setPriceMode, usePriceMode } from "./PriceMode";
+import { setPriceMode } from "./PriceMode";
 import ProductImage from "./ProductImage";
 import ProductCard from "./ProductCard";
 import ProductFeed from "./ProductFeed";
@@ -103,9 +103,7 @@ export function PromoStrip() {
 /** Акси хурд бо нарх барои блокҳо */
 function Mini({ p, tag }: { p: Product; tag?: string }) {
   const { price, label } = useMoney();
-  const mode = usePriceMode();
-  const w = shownTiers(p)[0];
-  const value = mode === "whole" && w ? w.unit : listUnitPrice(p);
+  const value = listUnitPrice(p);
   return (
     <Link href={`/product/${p.slug}`} className="mini" draggable={false}>
       <span className="mini-img"><ProductImage src={p.images[0]} alt={p.name} sizes="96px" /></span>

@@ -1824,3 +1824,4 @@ body { background: #e9e9e9; }
 .pcard-whole:not(.on) { justify-content: flex-start; }
 .pcard-whole .ws-tag { color: #0f7a3d; font-weight: 800; white-space: nowrap; }
 .pcard-whole:not(.on) { justify-content: space-between; }
+.cat-bar { justify-content: flex-end; }

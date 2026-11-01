@@ -7,22 +7,18 @@ import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
-import { usePriceMode } from "./PriceMode";
 import ProductImage from "./ProductImage";
 
 export default function ProductCard({ p, compact }: { p: Product; compact?: boolean }) {
   const { price, label } = useMoney();
   const { t } = useT();
-  const mode = usePriceMode();
   const { add } = useCart();
   const min = p.sale?.min ?? 1;
   const unit = t(unitOf(p));
   // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
   const all = shownTiers(p);
-  const [w1, w2] = all;
+  const [w1] = all;
   const best = all[all.length - 1]; // арзонтарин нархи оптом
-  const whole = mode === "whole" && !!w1;
-  const tier = (x: { unit: number; minQty: number }) => t("{p} аз {q}", { p: price(x.unit), q: fmtQty(x.minQty) });
 
   return (
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
@@ -37,13 +33,11 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
       <div className="pcard-body">
         <div className="pcard-name">{t(p.name)}</div>
         <div className="pcard-price">
-          <b>{price(whole ? w1.unit : listUnitPrice(p))}</b> <span>{label} / {unit}</span>
+          <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
         </div>
         {w1 && (
-          <div className={`pcard-whole ${whole ? "on" : ""}`}>
-            {whole
-              ? <><span>{t("аз {q}", { q: fmtQty(w1.minQty) })}</span>{w2 && <b>{tier(w2)}</b>}</>
-              : <><span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b></>}
+          <div className="pcard-whole">
+            <span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b>
           </div>
         )}
       </div>
