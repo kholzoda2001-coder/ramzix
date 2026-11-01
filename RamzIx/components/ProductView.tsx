@@ -8,7 +8,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { useDest } from "@/lib/useDest";
 import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf } from "@/lib/pricing";
-import { setPriceMode, usePriceMode } from "./PriceMode";
 import { brandSlug } from "@/lib/filters";
 import { SETTINGS } from "@/lib/pricing-config";
 import { useText } from "@/lib/useSite";
@@ -68,7 +67,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const tier = tierAt(tiers, qty);
   const unitPrice = tier.unit;
   const [w1, w2, w3] = shownTiers(p);
-  const savedMode = usePriceMode();
+  // Саҳифаи маҳсулот ҳамеша бо «Чакана» (ба дона) мекушояд; интихоб танҳо барои ҳамин саҳифа аст
+  const [savedMode, setSavedMode] = useState<"retail" | "whole">("retail");
   // Моли бе нархи оптовӣ (аз admin) — ҳамеша чакана
   const mode = p.noWholesale ? "retail" : savedMode;
   const goods = round2(unitPrice * qty);
@@ -189,8 +189,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <div className="price-box">
             {!p.noWholesale && (
               <div className="pm-tabs" role="tablist" aria-label={t("Тарзи харид")}>
-                <button role="tab" aria-selected={mode === "retail"} className={mode === "retail" ? "on" : ""} onClick={() => setPriceMode("retail")}><T>Чакана</T></button>
-                <button role="tab" aria-selected={mode === "whole"} className={mode === "whole" ? "on" : ""} onClick={() => setPriceMode("whole")}><T>Оптом</T></button>
+                <button role="tab" aria-selected={mode === "retail"} className={mode === "retail" ? "on" : ""} onClick={() => setSavedMode("retail")}><T>Чакана</T></button>
+                <button role="tab" aria-selected={mode === "whole"} className={mode === "whole" ? "on" : ""} onClick={() => setSavedMode("whole")}><T>Оптом</T></button>
               </div>
             )}
 
