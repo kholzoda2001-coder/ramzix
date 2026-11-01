@@ -15,8 +15,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin", "cyrillic", "cyrillic-ext"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: "RamzIx — маҳсулоти оптовӣ аз Дубай, Чин ва Туркия",
-  description: "Таъмини мағозаҳо ва фурӯшандагон бо маҳсулот аз Аморат, Чин, Туркия ва Тоҷикистон. Нархи оптовӣ аз 4 дона.",
+  title: "RamzIx — техникаи хона бо нархи оптов",
+  description: "Фурӯши оптовии маҳсулот барои мағозаҳо: Тоҷикистон, UAE ва тамоми ҷаҳон.",
 };
 
 export const viewport: Viewport = {

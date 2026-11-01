@@ -1,31 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { CATEGORIES, COUNTRIES, type CountryCode } from "@/lib/catalog";
-import { brandSlug, categoryCount, getBrands } from "@/lib/filters";
+import { useMemo, useState } from "react";
+import { CATEGORIES } from "@/lib/catalog";
+import { brandSlug, categoryCount, getBrands, getTypes, typeName } from "@/lib/filters";
+import { isWsOnly, listUnitPrice, shownTiers } from "@/lib/pricing";
 import { useCatalog } from "@/lib/useCatalog";
+import { useSite } from "@/lib/useSite";
+import { useMoney } from "./Currency";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
+import WaLink from "./WaLink";
 
-/* Саҳифаи «Категорияҳо»: рӯйхат дар чап, дар рост бахшҳои ҳамон категория аз маълумоти воқеии каталог */
+/* Саҳифаи «Категорияҳо»: варақаҳои категория, филтри бренд ва шабакаи навъҳои мол (аз номи маҳсулот) */
 export default function CategoriesView() {
   const { products } = useCatalog();
+  const { wholesaleMode } = useSite();
+  const { price, label } = useMoney();
   const { t } = useT();
   const cats = CATEGORIES.filter((c) => c.id !== "all" && categoryCount(c.id, products) > 0);
   const [picked, setPicked] = useState<string | null>(null);
+  const [brand, setBrand] = useState("");
   const id = picked ?? cats[0]?.id;
-  const list = products.filter((p) => p.category === id).sort((a, b) => b.reviews - a.reviews);
-  const countries = (Object.keys(COUNTRIES) as CountryCode[]).flatMap((c) => {
-    const p = list.find((x) => x.country === c);
-    return p ? [{ c, p }] : [];
-  });
-  const brands = getBrands(list).flatMap((b) => {
-    const p = list.find((x) => x.brand === b.name);
-    return p ? [{ b, p }] : [];
-  });
-  const all = `/catalog?category=${id}`;
+  const inCat = useMemo(() => products.filter((p) => p.category === id), [products, id]);
+  const brands = getBrands(inCat);
+  const list = brand ? inCat.filter((p) => p.brand === brand) : inCat;
+  const types = useMemo(() => getTypes(list), [list]);
+  const qs = `category=${id}${brand ? `&brand=${brandSlug(brand)}` : ""}`;
+  const pick = (c: string) => { setPicked(c); setBrand(""); };
+  const unitOf = (p: (typeof list)[number]) => (isWsOnly(p, wholesaleMode) && shownTiers(p)[0]?.unit) || listUnitPrice(p);
 
   return (
     <>
@@ -35,51 +39,46 @@ export default function CategoriesView() {
           <button className="search-go" aria-label={t("Ҷустуҷӯ")}><Icon name="search" size={18} stroke={2.4} /></button>
         </div>
       </form>
-      <div className="c2">
-        <nav className="c2-rail" aria-label={t("Категорияҳо")}>
-          {cats.map((c) => (
-            <button key={c.id} className={c.id === id ? "on" : ""} aria-pressed={c.id === id} onClick={() => setPicked(c.id)}>{t(c.name)}</button>
-          ))}
-        </nav>
-        <div className="c2-pane">
-          <div className="c2-grid">
-            <Link href={all} className="c2-tile">
-              <span className="c2-img all"><Icon name="grid" size={28} stroke={1.6} /></span>
-              <span>{t("Ҳама ({n})", { n: list.length })}</span>
-            </Link>
-          </div>
 
-          {countries.length > 0 && <h2><T>Аз рӯи кишвар</T></h2>}
-          <div className="c2-grid">
-            {countries.map(({ c, p }) => (
-              <Link key={c} href={`${all}&country=${c}`} className="c2-tile">
-                <span className="c2-img"><ProductImage src={p.images[0]} alt="" sizes="96px" /></span>
-                <span><T>{COUNTRIES[c].short}</T></span>
-              </Link>
-            ))}
-          </div>
+      <nav className="c3-tabs" aria-label={t("Категорияҳо")}>
+        {cats.map((c) => (
+          <button key={c.id} className={c.id === id ? "on" : ""} aria-pressed={c.id === id} onClick={() => pick(c.id)}>
+            {t(c.name)} <small>{categoryCount(c.id, products)}</small>
+          </button>
+        ))}
+      </nav>
 
-          {brands.length > 0 && <h2><T>Брендҳо</T></h2>}
-          <div className="c2-grid">
-            {brands.map(({ b, p }) => (
-              <Link key={b.slug} href={`${all}&brand=${brandSlug(b.name)}`} className="c2-tile">
-                <span className="c2-img"><ProductImage src={p.images[0]} alt="" sizes="96px" /></span>
-                <span>{b.name}</span>
-              </Link>
-            ))}
-          </div>
-
-          <h2><T>Маҳсулоти машҳур</T></h2>
-          <div className="c2-grid">
-            {list.slice(0, 9).map((p) => (
-              <Link key={p.slug} href={`/product/${p.slug}`} className="c2-tile">
-                <span className="c2-img"><ProductImage src={p.images[0]} alt="" sizes="96px" /></span>
-                <span className="clip">{t(p.name)}</span>
-              </Link>
-            ))}
-          </div>
+      {brands.length > 1 && (
+        <div className="th-filter c3-brands">
+          <button className={brand ? "" : "on"} onClick={() => setBrand("")}><T>Ҳама</T></button>
+          {brands.map((b) => <button key={b.slug} className={b.name === brand ? "on" : ""} onClick={() => setBrand(b.name)}>{b.name}</button>)}
         </div>
+      )}
+
+      <div className="c3-grid">
+        {types.map((x, k) => {
+          const units = x.list.filter((p) => !p.onRequest).map(unitOf);
+          return (
+            <Link key={x.key} href={`/catalog?${qs}&q=${encodeURIComponent(x.key)}`} className="c3-card">
+              <span className="c3-img"><ProductImage src={x.cover} alt="" eager={k < 10} sizes="(min-width: 1000px) 200px, 45vw" /></span>
+              <b>{typeName(x.list[0], t(x.list[0].name))}</b>
+              <small>{t("{n} модел", { n: x.list.length })}</small>
+              {units.length > 0 && <em>{t("аз {x}", { x: `${price(Math.min(...units))} ${label}` })}</em>}
+            </Link>
+          );
+        })}
       </div>
+
+      <Link href={`/catalog?${qs}`} className="more-btn"><T>Ҳамаи маҳсулот</T> <span>{list.length}</span></Link>
+
+      <section className="c3-ask">
+        <h2><T>Мол наёфтед?</T></h2>
+        <p><T>Ному модел ё аксро фиристед, менеҷер меҷӯяд ва нарх мегӯяд.</T></p>
+        <div>
+          <Link href="/request"><Icon name="doc" size={18} /> <T>Дархост</T></Link>
+          <WaLink text="Салом! Як мол меҷӯям." className="wa"><Icon name="wa" size={18} /> WhatsApp</WaLink>
+        </div>
+      </section>
     </>
   );
 }

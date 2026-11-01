@@ -16,7 +16,7 @@ import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import ProductImage from "./ProductImage";
 import ContactFields from "./ContactFields";
-import { useText } from "@/lib/useSite";
+import { useSite, useText } from "@/lib/useSite";
 
 type Errors = Partial<Record<"name" | "phone" | "address", boolean>>;
 type Done = { code: string; link: string };
@@ -29,6 +29,7 @@ export default function CheckoutView() {
   const { profile, ready: profileReady } = useProfile();
   const { lines, modes, ready, clear } = useCart();
   const dest = useDest();
+  const { wholesaleMode } = useSite();
   const order = useMemo(() => priceOrder(lines, modes, getProduct, dest), [lines, modes, getProduct, dest]);
 
   const [form, setForm] = useState<Buyer>({ name: "", phone: "", address: "" });
@@ -60,7 +61,7 @@ export default function CheckoutView() {
     const buyer: Buyer = { ...form, name: form.name.trim(), phone: local.trim(), address: form.address.trim() };
     const id = addOrder({ count: lines.length, totalTjs: order.total, lines: lines.map(({ slug, qty, size, color }) => ({ slug, qty, size, color })) });
     const code = orderCode(id);
-    const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label }));
+    const link = waLink(buildOrderMessage(order, buyer, code, { t, price, sum, label, wholesaleMode }));
     saveProfile({ ...profile, country: dest, name: buyer.name, phone: buyer.phone, address: buyer.address });
     // Дархост ба рӯйхати фармоишҳои админ ҳам меравад (то пайвастани сервер — дар ҳамин дастгоҳ)
     const first = order.groups[0];
@@ -160,8 +161,8 @@ export default function CheckoutView() {
             </div>
           ))}
         </div>
-        <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(order.listGoods)} {label}</b></div>
-        {order.discount > 0 && <div className="est-row disc"><span><T>Тахфиф</T><small>−{order.discountPct}%</small></span><b>−{sum(order.discount)} {label}</b></div>}
+        <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(wholesaleMode ? order.goods : order.listGoods)} {label}</b></div>
+        {!wholesaleMode && order.discount > 0 && <div className="est-row disc"><span><T>Тахфиф</T><small>−{order.discountPct}%</small></span><b>−{sum(order.discount)} {label}</b></div>}
         <div className="est-row"><span><T>Расонидан</T></span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : t("бо тасдиқ")}</b></div>
         <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(order.total)} {label}</b></div>
       </section>

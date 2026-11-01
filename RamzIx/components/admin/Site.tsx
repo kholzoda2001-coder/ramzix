@@ -335,6 +335,15 @@ export default function Site() {
       </section>
 
       <section className="ad-card">
+        <h3>Намуди фурӯш</h3>
+        <p className="ad-hint">«Танҳо оптов»: ҳамаи маҳсулот аз зинаи аввали оптом оғоз мешаванд (нархи чакана нишон дода намешавад). Маҳсулоти «Танҳо чакана» истисно мемонад.</p>
+        <div className="ad-chips wrap">
+          <button className={site.wholesaleMode ? "on" : ""} onClick={() => setSite({ ...site, wholesaleMode: true })}>Танҳо оптов</button>
+          <button className={site.wholesaleMode ? "" : "on"} onClick={() => setSite({ ...site, wholesaleMode: false })}>Оптов + чакана</button>
+        </div>
+      </section>
+
+      <section className="ad-card">
         <h3>Брендҳои ҷаҳонӣ</h3>
         <p className="ad-hint">Брендҳои ғайриинтихобшуда дар сайт нишон дода намешаванд (брендҳое, ки мол доранд, ҳамеша нишон дода мешаванд).</p>
         <div className="ad-chips wrap">

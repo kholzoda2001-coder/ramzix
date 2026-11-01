@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useSyncExternalStore } from "react";
 import { CATEGORIES, type Product } from "@/lib/catalog";
-import { listUnitPrice } from "@/lib/pricing";
+import { isWsOnly, listUnitPrice, shownTiers } from "@/lib/pricing";
 import { useCatalog } from "@/lib/useCatalog";
 import { useSite } from "@/lib/useSite";
 import { BannerSlide, Slider } from "./Banners";
@@ -113,6 +113,7 @@ function WholesaleHome() {
 function CategoryHome({ id }: { id: string }) {
   const { products } = useCatalog();
   const { price, label } = useMoney();
+  const { wholesaleMode } = useSite();
   const { t } = useT();
   const list = useMemo(() => products.filter((p) => p.category === id).sort((a, b) => b.reviews - a.reviews || (b.rating ?? 0) - (a.rating ?? 0)), [products, id]);
   const cat = CATEGORIES.find((c) => c.id === id);
@@ -148,7 +149,7 @@ function CategoryHome({ id }: { id: string }) {
           {list.slice(0, 6).map((p) => (
             <Link key={p.slug} href={`/product/${p.slug}`} className="col-item" draggable={false}>
               <span className="col-img"><ProductImage src={p.images[0]} alt={t(p.name)} sizes="96px" /></span>
-              <b>{price(listUnitPrice(p))} {label}</b>
+              <b>{price(isWsOnly(p, wholesaleMode) && shownTiers(p)[0] ? shownTiers(p)[0].unit : listUnitPrice(p))} {label}</b>
             </Link>
           ))}
         </div>

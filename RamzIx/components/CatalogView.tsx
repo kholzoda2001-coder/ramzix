@@ -7,6 +7,9 @@ import { CATEGORIES, COUNTRIES } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
 import {
   EMPTY_FILTERS,
+  getBrands,
+  getTypes,
+  typeName,
   SORTS,
   activeCount,
   brandName,
@@ -25,7 +28,7 @@ import FilterSheet from "./FilterSheet";
 import { T, useT } from "./Lang";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
-import ProductRow from "./ProductRow";
+import TradeRow, { TradeCartBar, TradeHead } from "./TradeRow";
 
 const PAGE = 36;
 
@@ -59,6 +62,11 @@ export default function CatalogView() {
 
   useEffect(() => setQ(filters.q), [filters.q]);
   useEffect(() => setShown(PAGE), [key]);
+
+  // Навъ ва бренд аз ҳамон категорияи интихобшуда: ин рӯйхатҳо аз ҷустуҷӯ вобаста нестанд
+  const scope = useMemo(() => (filters.category.length ? products.filter((p) => filters.category.includes(p.category)) : products), [products, filters.category]);
+  const types = useMemo(() => getTypes(filters.brand.length ? filterProducts(scope, { ...EMPTY_FILTERS, brand: filters.brand }) : scope), [scope, filters.brand]);
+  const brandList = getBrands(scope);
 
   const quickCats = CATEGORIES.filter((c) => c.id !== "all" && products.some((p) => p.category === c.id));
   const removeFrom = <K extends "category" | "brand" | "country" | "unit">(k: K, v: string) =>
@@ -113,8 +121,16 @@ export default function CatalogView() {
         <h1 className="sr-only">{title}</h1>
         <div className="toolbar">
           <button className="tb-filter" onClick={() => setSheet(true)}>
-            <Icon name="filter" size={16} /> {t("Филтрҳо")}{nActive > 0 ? ` · ${nActive}` : ""}
+            <Icon name="filter" size={16} /> <span className="tb-ft">{t("Филтрҳо")}</span>{nActive > 0 ? ` ${nActive}` : ""}
           </button>
+          <label className="tb-sort">
+            {filters.brand.length === 1 ? brandName(filters.brand[0], products) : t("Бренд")}
+            <Icon name="down" size={14} />
+            <select value={filters.brand[0] ?? ""} onChange={(e) => go({ ...filters, brand: e.target.value ? [e.target.value] : [] })} aria-label={t("Бренд")}>
+              <option value="">{t("Ҳамаи брендҳо")}</option>
+              {brandList.map((b) => <option key={b.slug} value={b.slug}>{b.name}</option>)}
+            </select>
+          </label>
           <label className="tb-sort">
             <Icon name="sort" size={16} />
             {t(SORTS.find((x) => x.id === filters.sort)?.label ?? "")}
@@ -123,6 +139,14 @@ export default function CatalogView() {
             </select>
           </label>
           <span className="tb-count">{t("{n} маҳсулот", { n: list.length })}</span>
+        </div>
+
+        <div className="th-filter cv-types">
+          {types.map((x) => (
+            <button key={x.key} className={filters.q === x.key ? "on" : ""} onClick={() => go({ ...filters, q: filters.q === x.key ? "" : x.key })}>
+              {typeName(x.list[0], t(x.list[0].name))} <small>{x.list.length}</small>
+            </button>
+          ))}
         </div>
 
         {chips.length > 0 && (
@@ -137,7 +161,7 @@ export default function CatalogView() {
         {list.length > 0 ? (
           <>
             {isList
-              ? <div className="prows">{list.slice(0, shown).map((p) => <ProductRow key={p.slug} p={p} />)}</div>
+              ? <div className="tr-list"><TradeHead />{list.slice(0, shown).map((p, k) => <TradeRow key={p.slug} p={p} eager={k < 12} />)}</div>
               : <div className="grid2">{list.slice(0, shown).map((p) => <ProductCard key={p.slug} p={p} />)}</div>}
             {list.length > shown && (
               <button className="more-btn" onClick={() => setShown(shown + PAGE)}>
@@ -154,6 +178,7 @@ export default function CatalogView() {
             <Link href="/request" style={{ marginTop: 12, fontWeight: 700, textDecoration: "underline" }}><T>Мол наёфтед? Дархост диҳед</T></Link>
           </div>
         )}
+        <TradeCartBar />
       </main>
 
       <FilterSheet open={sheet} initial={filters} onClose={() => setSheet(false)} onApply={(f) => { go({ ...f, q: filters.q }); setSheet(false); }} />

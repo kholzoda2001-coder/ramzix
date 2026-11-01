@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useT } from "@/components/Lang";
 import { applyCatalogMeta } from "./catalog";
+import { isWsOnly } from "./pricing";
 import { DEFAULT_SITE, DEFAULT_TEXTS, mergeSite, type SiteConfig } from "./site-config";
 
 /* Мундариҷаи сайт: `initial` аз сервер меояд, баъд дар клиент нав мешавад (ва баъди захира дар admin) */
@@ -19,6 +20,12 @@ export function SiteProvider({ children, initial }: { children: React.ReactNode;
     return () => window.removeEventListener("ramzix-site-change", load);
   }, []);
   return <Ctx.Provider value={site}>{children}</Ctx.Provider>;
+}
+
+/** Оё маҳсулот танҳо аз нархи оптом оғоз мешавад (худи маҳсулот ё тамоми сайт «танҳо оптов» аст) */
+export function useWsOnly(p: { wholesaleOnly?: boolean; noWholesale?: boolean }) {
+  const { wholesaleMode } = useSite();
+  return isWsOnly(p, wholesaleMode);
 }
 
 /** Матни таҳриршаванда (аз admin) бо тарҷума: `const tx = useText(); tx("pickup")` */

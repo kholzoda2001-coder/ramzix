@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { fmtQty, unitOf, type Product } from "@/lib/catalog";
-import { listUnitPrice, shownTiers } from "@/lib/pricing";
+import { listUnitPrice, minQtyOf, shownTiers } from "@/lib/pricing";
+import { useSite } from "@/lib/useSite";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
@@ -15,7 +16,7 @@ export default function ProductRow({ p }: { p: Product }) {
   const { t } = useT();
   const { add } = useCart();
   const unit = t(unitOf(p));
-  const min = p.sale?.min ?? 1;
+  const min = minQtyOf(p, useSite().wholesaleMode);
   const qty = (q: number) => `${fmtQty(q)} ${unit}`;
   // Танҳо нархҳои оптом (нархи асосӣ дар таби «Чакана» аст); агар зина набошад, нархи асосӣ мемонад
   const tiers = shownTiers(p);

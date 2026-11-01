@@ -28,6 +28,13 @@ const FLAGS: Record<string, React.ReactNode> = {
       <path fill="#fff" d="m17.2 10 3.9-1.3-2.4 3.3V8l2.4 3.3z" />
     </svg>
   ),
+  intl: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="1.6" strokeLinecap="round">
+      <circle cx="12" cy="12" r="9" fill="#e2e8f0" />
+      <ellipse cx="12" cy="12" rx="4" ry="9" />
+      <path d="M3 12h18M4.5 7.5h15M4.5 16.5h15" />
+    </svg>
+  ),
   tj: (
     <svg viewBox="0 0 28 14" preserveAspectRatio="none">
       <rect width="28" height="4" fill="#cc0000" />

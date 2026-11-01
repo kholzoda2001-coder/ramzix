@@ -1,10 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { ShipCountry } from "./phone";
 
 /* Профил ва таърихи фармоишҳо — ҳоло дар худи дастгоҳ нигоҳ дошта мешавад (то пайвастани сервер) */
 
-export type Profile = { name: string; phone: string; shop: string; country: "tj" | "ae"; address: string };
+export type Profile = { name: string; phone: string; shop: string; country: ShipCountry; address: string };
 export type OrderLine = { slug: string; qty: number; size?: string; color?: string };
 export type Order = { id: number; date: string; count: number; totalTjs: number; lines: OrderLine[] };
 type Store = { profile: Profile; orders: Order[] };
@@ -28,7 +29,7 @@ export function readStore(): Store {
       : [];
     // Маълумоти кӯҳна: шаҳр ба суроғаи пурра ҳамроҳ мешавад
     const address = [str(p.city), str(p.address)].filter(Boolean).join(", ");
-    return { profile: { name: str(p.name), phone: str(p.phone), shop: str(p.shop), country: p.country === "ae" ? "ae" : "tj", address }, orders };
+    return { profile: { name: str(p.name), phone: str(p.phone), shop: str(p.shop), country: p.country === "ae" || p.country === "intl" ? p.country : "tj", address }, orders };
   } catch {
     return { profile: EMPTY_PROFILE, orders: [] };
   }

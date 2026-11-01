@@ -1,5 +1,5 @@
 import { CATEGORIES, COUNTRIES, unitOf, type CountryCode, type Product } from "./catalog";
-import { listUnitPrice } from "./pricing";
+import { listUnitPrice, minQtyOf } from "./pricing";
 
 /* ---------- бренд ---------- */
 
@@ -44,12 +44,13 @@ export function categoryCover(id: string, list: Product[] = []): string | null {
 
 /* ---------- филтрҳо ---------- */
 
-export type Sort = "default" | "price-asc" | "price-desc" | "popular" | "rating";
+export type Sort = "default" | "price-asc" | "price-desc" | "popular" | "rating" | "min-asc";
 
 export const SORTS: { id: Sort; label: string }[] = [
   { id: "default", label: "Пешфарз" },
   { id: "price-asc", label: "Аввал арзонтар" },
   { id: "price-desc", label: "Аввал гаронтар" },
+  { id: "min-asc", label: "Ҳадди ақали камтар" },
   { id: "popular", label: "Серталаб" },
   { id: "rating", label: "Баҳои баланд" },
 ];
@@ -144,6 +145,7 @@ export function sortProducts(items: Product[], sort: Sort): Product[] {
   switch (sort) {
     case "price-asc": return out.sort((a, b) => basePrice(a) - basePrice(b));
     case "price-desc": return out.sort((a, b) => basePrice(b) - basePrice(a));
+    case "min-asc": return out.sort((a, b) => minQtyOf(a, true) - minQtyOf(b, true));
     case "popular": return out.sort((a, b) => b.reviews - a.reviews);
     case "rating": return out.sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0) || b.reviews - a.reviews);
     default: return out;
@@ -152,3 +154,20 @@ export function sortProducts(items: Product[], sort: Sort): Product[] {
 
 export const categoryName = (id: string) => CATEGORIES.find((c) => c.id === id)?.name ?? id;
 export const brandName = (slug: string, list: Product[] = []) => getBrands(list).find((b) => b.slug === slug)?.name ?? slug;
+
+/** Номи навъ аз номи маҳсулот (бо ҳар забон): «Чопер Eurolux FC2541LGB» → «Чопер» */
+export const typeName = (p: Product, name: string) => (p.brand ? name.split(` ${p.brand}`)[0] : name);
+
+/** Навъҳои мол аз номи маҳсулот: «Чопер Eurolux FC2541LGB» → «Чопер»; аввал навъҳои серталаб */
+export function getTypes(list: Product[]) {
+  const map = new Map<string, Product[]>();
+  for (const p of list) {
+    const key = typeName(p, p.name);
+    map.set(key, [...(map.get(key) ?? []), p]);
+  }
+  return [...map].map(([key, items]) => ({
+    key,
+    list: items,
+    cover: ([...items].sort((a, b) => b.reviews - a.reviews).find((p) => p.images[0] && !p.images[0].endsWith("placeholder.svg")) ?? items[0]).images[0],
+  })).sort((a, b) => b.list.length - a.list.length);
+}

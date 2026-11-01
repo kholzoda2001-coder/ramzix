@@ -75,14 +75,26 @@ export const tierAt = (tiers: QtyTier[], qty: number) => [...tiers].reverse().fi
 /** Зинаҳои оптовие, ки дар корт ва рӯйхат нишон дода мешаванд (аз SHOWN_WHOLESALE_PCTS) */
 export const shownTiers = (p: Product) => qtyTiers(p).filter((t) => SHOWN_WHOLESALE_PCTS.includes(t.pct));
 
+/** Маҳсулот танҳо бо нархи оптом фурӯхта мешавад (худи маҳсулот ё тамоми сайт) */
+export const isWsOnly = (p: Pick<Product, "wholesaleOnly" | "noWholesale">, wholesaleMode: boolean) => !p.noWholesale && (!!p.wholesaleOnly || wholesaleMode);
+
+/** Ҳадди ақали фармоиш: дар фурӯши оптом — миқдори зинаи аввал (дар саҳифа, каталог ва сабад як хел) */
+export function minQtyOf(p: Product, wholesaleMode: boolean) {
+  const first = isWsOnly(p, wholesaleMode) ? shownTiers(p)[0] : undefined;
+  return first ? Math.max(p.sale?.min ?? 1, first.minQty) : p.sale?.min ?? 1;
+}
+
+/** Дар сайти танҳо-оптов нархи чакана нест: фоиди зина нисбат ба зинаи аввали оптом ҳисоб мешавад */
+export const wsSave = (unit: number, firstUnit: number) => (firstUnit > 0 ? Math.round((1 - unit / firstUnit) * 1000) / 10 : 0);
+
 /* ---------- вазн, ҳаҷм, расонидан ---------- */
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
 export const weightOf = (p: Product, qty: number) => p.weightKg * qty;
 export const volumeOf = (p: Product, qty: number) => (p.volumeM3 ?? 0) * qty;
 
-/** Харидор дар куҷост: Тоҷикистон ё Иморот */
-export type Dest = "tj" | "ae";
+/** Харидор дар куҷост: Тоҷикистон, Иморот ё дигар кишвар (нарх аз менеҷер) */
+export type Dest = "tj" | "ae" | "intl";
 const isLocal = (m: ShippingMode) => m.id === "local";
 
 /* Мувақатан: интихоби намуди расонидан (ҳаво/замин) хомӯш аст — танҳо як намуд кор мекунад.
@@ -97,12 +109,13 @@ const shipOf = (country: CountryCode): ShippingMode[] => {
 export const modesFor = (country: CountryCode, dest: Dest = "tj"): ShippingMode[] => {
   const all = shipOf(country);
   const main = all.filter((m) => !isLocal(m)).slice(0, 1);
-  if (dest !== "ae") return main.length ? main : all.slice(0, 1);
-  if (country === "ae") {
+  if (dest === "tj") return main.length ? main : all.slice(0, 1);
+  if (dest === "ae" && country === "ae") {
     const local = SHIPPING.ae.filter(isLocal);
     if (local.length) return local.slice(0, 1);
   }
   const base = main[0] ?? all[0];
+  if (dest === "intl") return [{ ...base, id: "quote", label: "Интиқоли байналмилалӣ", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, daysMin: 0, daysMax: 0, assumed: false, note: "Менеҷер нарх ва мӯҳлатро мегӯяд" }];
   return [{ ...base, id: "quote", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, assumed: true, note: "Менеҷер нархро тасдиқ мекунад" }];
 };
 export const defaultMode = (country: CountryCode, dest: Dest = "tj") => modesFor(country, dest)[0].id;

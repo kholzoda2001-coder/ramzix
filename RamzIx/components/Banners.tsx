@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import type { Product } from "@/lib/catalog";
-import { listUnitPrice } from "@/lib/pricing";
+import { isWsOnly, listUnitPrice, shownTiers } from "@/lib/pricing";
+import { useSite } from "@/lib/useSite";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
 import { useT } from "./Lang";
@@ -52,7 +53,9 @@ export function BannerSlide({ title, sub, href, from, to, list, fill = [], eager
   const { price, label } = useMoney();
   // Аввал акси асосии молҳои худи ин бахш; агар кам бошанд, аз молҳои дигари ҳамон категория пур мешавад
   const pics = [...new Set([...list, ...fill].map((p) => p.images[0]).filter(Boolean))].slice(0, 3);
-  const from_ = Math.min(...(list.length ? list : fill).map(listUnitPrice));
+  const { wholesaleMode } = useSite();
+  // Моли «нарх бо дархост» ба ҳисоб намеравад, вагарна «аз 0» менависад
+  const from_ = Math.min(...(list.length ? list : fill).filter((p) => !p.onRequest).map((p) => (isWsOnly(p, wholesaleMode) && shownTiers(p)[0]?.unit) || listUnitPrice(p)));
   return (
     <div className="slide tb" data-ghost={t(title)} style={{ "--a": from, "--b": to } as React.CSSProperties}>
       <Link href={href} className="tb-pics" aria-label={t(title)} draggable={false}>

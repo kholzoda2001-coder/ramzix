@@ -168,7 +168,7 @@ export default function RequestView() {
         </div>
         <label className={`ck-field ${errors.title ? "bad" : ""}`}>
           <span>{t("Номи мол")}<i>*</i></span>
-          <input maxLength={120} placeholder={t("Масалан: куртаи зимистона, сиёҳ")} value={title} onChange={(e) => { setTitle(e.target.value); clear("title"); }} />
+          <input maxLength={120} placeholder={t("Масалан: блендер Bergamo, 50 дона")} value={title} onChange={(e) => { setTitle(e.target.value); clear("title"); }} />
           {errors.title && <em><T>Ин майдонро дуруст пур кунед</T></em>}
         </label>
       </section>

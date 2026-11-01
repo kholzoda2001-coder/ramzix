@@ -7,10 +7,10 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { useDest } from "@/lib/useDest";
-import { defaultMode, listUnitPrice, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf } from "@/lib/pricing";
+import { defaultMode, listUnitPrice, minQtyOf, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf, wsSave } from "@/lib/pricing";
 import { brandSlug } from "@/lib/filters";
 import { SETTINGS } from "@/lib/pricing-config";
-import { useText } from "@/lib/useSite";
+import { useSite, useText, useWsOnly } from "@/lib/useSite";
 import { CartBadge, useCart } from "./Cart";
 import Icon from "./Icon";
 import ProductCard from "./ProductCard";
@@ -33,8 +33,9 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const unit = t(unitOf(p));
   const step = sale?.step ?? 1;
   // Танҳо оптом: аз миқдори аввалини зинаи оптом сар мешавад (то харидор ба нархи оптом расад)
-  const wsFirst = p.wholesaleOnly && !p.noWholesale ? shownTiers(p)[0] : undefined;
-  const minQty = wsFirst ? Math.max(sale?.min ?? 1, wsFirst.minQty) : sale?.min ?? 1;
+  const wsOnly = useWsOnly(p);
+  const wsFirst = wsOnly ? shownTiers(p)[0] : undefined;
+  const minQty = minQtyOf(p, useSite().wholesaleMode);
   const [qty, setQty] = useState(minQty);
   const [img, setImg] = useState(0);
   const [colorName, setColorName] = useState<string | null>(p.colors?.[0]?.name ?? null);
@@ -64,6 +65,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
 
   const dropship = p.source === "cjdropshipping";
   const listPrice = listUnitPrice(p);
+  // Сарфа: дар танҳо-оптов аз зинаи аввал, вагарна аз нархи чакана
+  const refPrice = wsFirst?.unit ?? listPrice;
   // Нарх аз миқдор: ҳамон зинаҳои сабад, барои ҳамин маҳсулот
   const tiers = useMemo(() => qtyTiers(p), [p]);
   const tier = tierAt(tiers, qty);
@@ -83,7 +86,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
   const modeList = modesFor(p.country, dest);
   // Мӯҳлати расонидан як бор нишон дода мешавад: дар тугмаи интихоб (агар якчанд намуд бошад), вагарна дар сатр
   const shipNote = [
-    modeList.length === 1 ? `${t(ship.mode.label)}, ${t("{a}–{b} рӯз", { a: ship.mode.daysMin, b: ship.mode.daysMax })}` : null,
+    modeList.length === 1 && ship.mode.daysMax > 0 ? `${t(ship.mode.label)}, ${t("{a}–{b} рӯз", { a: ship.mode.daysMin, b: ship.mode.daysMax })}` : null,
     ship.basis === "m3" ? t("аз рӯи ҳаҷм") : null,
   ].filter(Boolean).join(", ");
   const points = useMemo(() => splitDescription(t(p.description ?? "")), [p.description, t]);
@@ -160,6 +163,18 @@ export default function ProductView({ p, related, other }: { p: Product; related
         </div>
 
         <div className="pd-body">
+          {/* Номи маҳсулот */}
+          {p.brand && <Link href={`/catalog?brand=${brandSlug(p.brand)}`} className="pd-brand"><span>{p.brand}</span><Icon name="chevron" size={14} stroke={2.4} /></Link>}
+          <h1 className="pd-title">{t(p.name)}</h1>
+          {p.sku && <p className="pd-sku">{t("Артикул")}: <b>{p.sku}</b></p>}
+          {p.subtitle && <p className="pd-sub">{t(p.subtitle)}</p>}
+          {p.rating && (
+            <div className="pd-rating">
+              <span className="stars">{[1, 2, 3, 4, 5].map((s) => <Icon key={s} name="star" size={14} className={s <= Math.round(p.rating!) ? "" : "dim"} />)}</span>
+              <b>{p.rating}</b><span>({t("{n} баррасӣ", { n: p.reviews })})</span>
+            </div>
+          )}
+
           {/* Рангҳо (вариатсия) */}
           {p.colors && p.colors.length > 0 && (
             <div className="colors">
@@ -223,8 +238,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
                     </span>
                     <span>
                       <b>{price(x.unit)} {label}</b>
-                      {listPrice - x.unit > 0.005 && (
-                        <small className="off">{t("{p}% сарфа", { p: String(Math.round(((listPrice - x.unit) / listPrice) * 1000) / 10).replace(".", ",") })} · −{price(listPrice - x.unit)} {label}/{unit}</small>
+                      {refPrice - x.unit > 0.005 && (
+                        <small className="off">{t("{p}% сарфа", { p: String(wsSave(x.unit, refPrice)).replace(".", ",") })} · −{price(refPrice - x.unit)} {label}/{unit}</small>
                       )}
                     </span>
                   </button>
@@ -234,18 +249,6 @@ export default function ProductView({ p, related, other }: { p: Product; related
             )}
             </>)}
           </div>
-
-          {/* Номи маҳсулот */}
-          {p.brand && <Link href={`/catalog?brand=${brandSlug(p.brand)}`} className="pd-brand"><span>{p.brand}</span><Icon name="chevron" size={14} stroke={2.4} /></Link>}
-          <h1 className="pd-title">{t(p.name)}</h1>
-          {p.sku && <p className="pd-sku">{t("Артикул")}: <b>{p.sku}</b></p>}
-          {p.subtitle && <p className="pd-sub">{t(p.subtitle)}</p>}
-          {p.rating && (
-            <div className="pd-rating">
-              <span className="stars">{[1, 2, 3, 4, 5].map((s) => <Icon key={s} name="star" size={14} className={s <= Math.round(p.rating!) ? "" : "dim"} />)}</span>
-              <b>{p.rating}</b><span>({t("{n} баррасӣ", { n: p.reviews })})</span>
-            </div>
-          )}
 
           {/* Андоза */}
           {p.sizes && (
@@ -336,9 +339,8 @@ export default function ProductView({ p, related, other }: { p: Product; related
           <h2 className="pd-h"><T>Шартҳои оптовӣ</T></h2>
           {(
             <div className="pane terms">
-              <div><Icon name="box" size={20} /><span><b><T>Ҳадди ақал</T></b>{sale ? t("Аз {q}. Нарх бо {u} ҳисоб мешавад", { q: `${fmtQty(minQty)} ${unit}`, u: unit }) : t("Чакана аз 1 дона, нархи оптовӣ аз {q}", { q: `${fmtQty(w1?.minQty ?? minQty)} ${unit}` })}</span></div>
+              <div><Icon name="box" size={20} /><span><b><T>Ҳадди ақал</T></b>{sale || wsFirst ? t("Аз {q}. Нарх бо {u} ҳисоб мешавад", { q: `${fmtQty(minQty)} ${unit}`, u: unit }) : t("Чакана аз 1 дона, нархи оптовӣ аз {q}", { q: `${fmtQty(w1?.minQty ?? minQty)} ${unit}` })}</span></div>
               <div><Icon name="doc" size={20} /><span><b>{tx("termsDocsTitle")}</b>{tx("termsDocsText")}</span></div>
-              <div><Icon name="card" size={20} /><span><b>{tx("termsDeferTitle")}</b></span></div>
               <div><Icon name="tag" size={20} /><span><b>{tx("termsRfqTitle")}</b>{tx("termsRfqText")}</span></div>
             </div>
           )}
@@ -352,7 +354,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
                     <tr key={m.id}>
                       <td>{t(m.label)}</td>
                       <td>
-                        {t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax })}
+                        {m.daysMax > 0 ? t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax }) : t(m.note ?? "")}
                         {m.assumed && ` (${t("тахминӣ")})`}
                       </td>
                     </tr>
@@ -363,7 +365,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
           )}
 
           {/* Фурӯшанда */}
-          <div className="seller">
+          {!wsOnly && <div className="seller">
             <BrandLogo name={p.brand ?? "RamzIx"} small />
             <span className="seller-txt">
               <b>{p.brand ?? "RamzIx"} · {t(country.short)}</b>
@@ -372,7 +374,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
                 : <small><Icon name="shield" size={13} /> {tx("sellerTrust")}</small>}
             </span>
             <a href={waLink(waText)} className="seller-btn"><T>Пурсиш</T></a>
-          </div>
+          </div>}
         </div>
 
         {related.length > 0 && (
@@ -381,7 +383,7 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="hscroll">{related.map((x) => <ProductCard key={x.slug} p={x} compact />)}</div>
           </section>
         )}
-        {other.length > 0 && (
+        {!wsOnly && other.length > 0 && (
           <section className="block">
             <div className="sec-head"><h2><T>Шояд ба шумо писанд ояд</T></h2></div>
             <div className="grid2">{other.map((x) => <ProductCard key={x.slug} p={x} />)}</div>

@@ -12,7 +12,7 @@ import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
 import ContactFields from "./ContactFields";
-import { joinPhone, splitPhone } from "@/lib/phone";
+import { joinPhone, nameOf, splitPhone } from "@/lib/phone";
 import { T, useT } from "./Lang";
 import { setDest } from "@/lib/useDest";
 
@@ -83,7 +83,7 @@ export default function ProfileView() {
         <section className="pf-card pf-info">
           {profile.shop && <div><Icon name="store" size={18} /><span>{profile.shop}</span></div>}
           {profile.phone && <div><Icon name="phone" size={18} /><span>{profile.phone}</span></div>}
-          {profile.address && <div><Icon name="pin" size={18} /><span>{t(profile.country === "ae" ? "Иморот" : "Тоҷикистон")}, {profile.address}</span></div>}
+          {profile.address && <div><Icon name="pin" size={18} /><span>{t(nameOf(profile.country))}, {profile.address}</span></div>}
         </section>
       )}
 

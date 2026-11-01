@@ -8,7 +8,8 @@ import { useEffect, useMemo } from "react";
 import { COUNTRIES, fmtQty, unitOf } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
 import { useDest } from "@/lib/useDest";
-import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
+import { discountLadder, minQtyOf, modesFor, priceOrder, rfqFromOf, wsSave } from "@/lib/pricing";
+import { useSite } from "@/lib/useSite";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -24,6 +25,7 @@ export default function CartView() {
   const router = useRouter();
   const { lines, modes, ready, setQty, remove, setMode, clear } = useCart();
   const dest = useDest();
+  const { wholesaleMode } = useSite();
   const order = useMemo(() => priceOrder(lines, modes, getProduct, dest), [lines, modes, getProduct, dest]);
 
   // Маҳсулоте, ки дигар дар каталог нест, аз сабад хориҷ мешавад (нишонаи сабад ҳам дуруст мешавад)
@@ -31,6 +33,12 @@ export default function CartView() {
     if (!ready || !catReady) return;
     lines.filter((l) => !getProduct(l.slug)).forEach((l) => remove(lineKey(l)));
   }, [ready, catReady, lines, remove, getProduct]);
+
+  // Сатрҳои кӯҳна, ки аз ҳадди ақали оптом камтаранд, то ҳадди ақал бардошта мешаванд
+  useEffect(() => {
+    if (!ready || !catReady) return;
+    lines.forEach((l) => { const p = getProduct(l.slug); const min = p ? minQtyOf(p, wholesaleMode) : 0; if (l.qty < min) setQty(lineKey(l), min); });
+  }, [ready, catReady, lines, getProduct, setQty, wholesaleMode]);
 
   // Тавсияҳо: аввал аз ҳамон категорияҳо, моли дар сабадбуда нишон дода намешавад
   const recs = useMemo(() => {
@@ -63,7 +71,10 @@ export default function CartView() {
     );
   }
 
-  const ladder = discountLadder();
+  const allSteps = discountLadder();
+  // Танҳо оптов: зинаи чакана нест, фоиз аз нархи зинаи аввал ҳисоб мешавад
+  const ladder = wholesaleMode ? allSteps.slice(1) : allSteps;
+  const stepOff = (off: number) => (wholesaleMode ? wsSave(100 - off, 100 - ladder[0].off) : off);
   const reached = ladder.reduce((r, st, i) => (order.listAmount >= st.from ? i : r), 0);
   // Дарозии хати пурраи нардбон: байни нуқтаҳои зинаҳо (ҳар як зина як ҳисса)
   const lo = ladder[reached].from;
@@ -81,12 +92,12 @@ export default function CartView() {
             <div className="cg-head">
               <Flag code={g.country} className="cg-flag" />
               <b>{g.country === "tj" ? t("Тоҷикистон") : t("Аз {c}", { c: t(country.short) })}</b>
-              <span>{t("{n} маҳсулот · {kg} кг", { n: g.lines.length, kg: fmtQty(round2(g.kg)) })}</span>
+              <span>{g.kg > 0 ? t("{n} маҳсулот · {kg} кг", { n: g.lines.length, kg: fmtQty(round2(g.kg)) }) : t("{n} маҳсулот", { n: g.lines.length })}</span>
             </div>
 
             {g.lines.map((l) => {
               const step = l.p.sale?.step ?? 1;
-              const min = l.p.sale?.min ?? 1;
+              const min = minQtyOf(l.p, wholesaleMode);
               const unit = t(unitOf(l.p));
               const set = (v: number) => setQty(l.key, Math.max(min, round2(Math.round(v / step) * step)));
               const rfq = l.qty >= rfqFromOf(l.p);
@@ -97,7 +108,7 @@ export default function CartView() {
                     <Link href={`/product/${l.p.slug}`} className="cl-name">{t(l.p.name)}</Link>
                     {(l.size || l.color) && <div className="cl-var">{[l.color && `${t("Ранг")}: ${t(l.color)}`, l.size && `${t("Андоза")}: ${l.size}`].filter(Boolean).join(" · ")}</div>}
                     <div className="cl-price">
-                      {l.unit < l.listUnit - 0.05 && <span className="cl-old">{price(l.listUnit)}</span>}<b>{price(l.unit)}</b> {label} / {unit}
+                      {!wholesaleMode && l.unit < l.listUnit - 0.05 && <span className="cl-old">{price(l.listUnit)}</span>}<b>{price(l.unit)}</b> {label} / {unit}
                       {l.p.sale?.per && <small> · {l.p.sale.per} {t(l.p.sale.perLabel ?? "")}</small>}
                     </div>
                     <div className="cl-ctrl">
@@ -129,10 +140,10 @@ export default function CartView() {
               )}
               <div className="est-row">
                 <span>
-                  {t(g.shipping.mode.label)}, {fmtQty(round2(g.kg))} {t("кг")}
+                  {t(g.shipping.mode.label)}{g.kg > 0 ? `, ${fmtQty(round2(g.kg))} ${t("кг")}` : ""}
                   <small>
                     {[
-                      modeList.length === 1 ? t("{a}–{b} рӯз", { a: g.shipping.mode.daysMin, b: g.shipping.mode.daysMax }) : null,
+                      modeList.length === 1 && g.shipping.mode.daysMax > 0 ? t("{a}–{b} рӯз", { a: g.shipping.mode.daysMin, b: g.shipping.mode.daysMax }) : null,
                       g.shipping.basis === "m3" ? t("аз рӯи ҳаҷм") : null,
                       g.shipping.mode.assumed ? t("нарх тахминӣ") : null,
                       g.shipping.mode.note ? t(g.shipping.mode.note) : null,
@@ -149,34 +160,36 @@ export default function CartView() {
       {/* Тахфиф ҳангоми зиёд харидан */}
       <div className="disc-card">
         <div className="disc-head">
-          <Icon name="bolt" size={17} /><b><T>Тахфиф ҳангоми зиёд харидан</T></b>
-          {order.discountPct > 0 && <span className="disc-now">−{order.discountPct}%</span>}
+          <Icon name="bolt" size={17} /><b>{t(wholesaleMode ? "Сабад калонтар — нарх арзонтар" : "Тахфиф ҳангоми зиёд харидан")}</b>
+          {stepOff(order.discountPct) > 0 && <span className="disc-now">−{stepOff(order.discountPct)}%</span>}
         </div>
         <div className="ladder">
           <i className="fill" style={{ width: `${fillPct}%` }} />
           {ladder.map((st, i) => (
             <div key={st.from} className={`st ${i <= reached ? "on" : ""}`}>
               <span className="dot">{i <= reached && <Icon name="check" size={12} stroke={3.2} />}</span>
-              <b>{st.off > 0 ? `−${st.off}%` : t("Асосӣ")}</b>
+              <b>{stepOff(st.off) > 0 ? `−${stepOff(st.off)}%` : t(wholesaleMode ? "Оптом" : "Асосӣ")}</b>
               <small>{st.from > 0 ? t("аз {x}", { x: sum(st.from) }) : t("то {x}", { x: sum(ladder[1].from) })}</small>
             </div>
           ))}
         </div>
         <p className="disc-hint">
           {order.next ? (
-            <>{t("Боз {a} харед (бо нархи асосӣ): тахфиф {b} мешавад.", { a: `${sum(order.next.need)} ${label}`, b: `−${order.next.off}%` })}</>
+            wholesaleMode
+              ? <>{t("Боз {a} харед: нархи ҳамаи мол арзонтар мешавад.", { a: `${sum(Math.max(0, order.next.from * (1 - order.next.off / 100) - order.goods))} ${label}` })}</>
+              : <>{t("Боз {a} харед (бо нархи асосӣ): тахфиф {b} мешавад.", { a: `${sum(order.next.need)} ${label}`, b: `−${order.next.off}%` })}</>
           ) : (
-            <>{t("Шумо тахфифи ҳадди аксарро гирифтед: {a}.", { a: `−${order.discountPct}%` })}</>
+            <>{wholesaleMode ? t("Шумо беҳтарин нархро гирифтед.") : t("Шумо тахфифи ҳадди аксарро гирифтед: {a}.", { a: `−${order.discountPct}%` })}</>
           )}
         </p>
       </div>
 
       <div className="sum-card">
-        <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(order.listGoods)} {label}</b></div>
-        <div className="est-row disc">
+        <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(wholesaleMode ? order.goods : order.listGoods)} {label}</b></div>
+        {!wholesaleMode && <div className="est-row disc">
           <span><T>Тахфиф</T>{order.discountPct > 0 && <small>{t("−{p}% аз нархи асосӣ", { p: order.discountPct })}</small>}</span>
           <b>{order.discount > 0 ? `−${sum(order.discount)} ${label}` : "—"}</b>
-        </div>
+        </div>}
         <div className="est-row"><span><T>Расонидан</T></span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : t("бо тасдиқ")}</b></div>
         <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(order.total)} {label}</b></div>
       </div>

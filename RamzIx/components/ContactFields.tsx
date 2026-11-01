@@ -31,7 +31,7 @@ export default function ContactFields({ value, onChange, errors = {}, required, 
             inputMode="tel"
             autoComplete="tel"
             className="ck-plain"
-            placeholder="000 000 00 00"
+            placeholder={value.country === "intl" ? "+49 123 456 7890" : "000 000 00 00"}
             value={value.local}
             maxLength={20}
             onChange={(e) => onChange({ ...value, local: e.target.value.replace(/[^\d+\s()-]/g, "") })}
@@ -43,7 +43,7 @@ export default function ContactFields({ value, onChange, errors = {}, required, 
             type="tel"
             inputMode="numeric"
             autoComplete="tel-national"
-            placeholder={"9".repeat(digitsOf(value.country)).replace(/(\d{3})(?=\d)/g, "$1 ").replace(/9/g, "0")}
+            placeholder={value.country === "intl" ? "90 123 45 67" : "9".repeat(digitsOf(value.country)).replace(/(\d{3})(?=\d)/g, "$1 ").replace(/9/g, "0")}
             value={value.local}
             onChange={(e) => onChange({ ...value, local: localDigits(e.target.value, value.country) })}
           />

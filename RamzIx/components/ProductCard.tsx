@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { fmtQty, unitOf, type Product } from "@/lib/catalog";
-import { listUnitPrice, shownTiers } from "@/lib/pricing";
+import { listUnitPrice, minQtyOf, shownTiers } from "@/lib/pricing";
+import { useSite, useWsOnly } from "@/lib/useSite";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
@@ -13,9 +14,8 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
   const { price, label } = useMoney();
   const { t } = useT();
   const { add } = useCart();
-  const all0 = shownTiers(p);
-  const wsOnly = !!p.wholesaleOnly && !p.noWholesale && all0.length > 0;
-  const min = wsOnly ? Math.max(p.sale?.min ?? 1, all0[0].minQty) : p.sale?.min ?? 1;
+  const wsOnly = useWsOnly(p) && shownTiers(p).length > 0;
+  const min = minQtyOf(p, useSite().wholesaleMode);
   const unit = t(unitOf(p));
   // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
   const all = shownTiers(p);
@@ -34,18 +34,21 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
       </div>
       <div className="pcard-body">
         <div className="pcard-name">{t(p.name)}</div>
-        {p.onRequest ? (
+        {wsOnly && !p.onRequest ? (
+          <>
+            <div className="pc-tiers">
+              {all.map((c, k) => <span key={c.minQty} className={k === 0 ? "on" : ""}><b>{price(c.unit)}</b><small>{fmtQty(c.minQty)}+</small></span>)}
+            </div>
+            <div className="pc-cur">{label} / {unit} · {t("аз рӯи миқдор")}</div>
+          </>
+        ) : p.onRequest ? (
           <div className="pcard-price req"><T>Нарх бо дархост</T></div>
         ) : (
           <div className="pcard-price">
-            <b>{price(wsOnly ? all0[0].unit : listUnitPrice(p))}</b> <span>{label} / {unit}</span>
+            <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
           </div>
         )}
-        {wsOnly && !p.onRequest ? (
-          <div className="pcard-whole">
-            <span className="ws-tag"><T>оптом</T></span><b>{t("аз {q}", { q: `${fmtQty(min)} ${unit}` })}</b>
-          </div>
-        ) : (
+        {!wsOnly && (
           w1 && !p.onRequest && (
           <div className="pcard-whole">
             <span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b>

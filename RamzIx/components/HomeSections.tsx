@@ -6,17 +6,18 @@ import { CATEGORIES, COUNTRIES, fmtQty, shownCountries, unitOf, type Product } f
 import { brandLogo, FEATURED_BRANDS } from "@/lib/brands";
 import { type Brand, brandSlug, categoryCover, EMPTY_FILTERS, filterProducts, getBrands } from "@/lib/filters";
 import { useCatalog } from "@/lib/useCatalog";
-import { useSite } from "@/lib/useSite";
+import { useSite, useWsOnly } from "@/lib/useSite";
 import BrandLogo from "./BrandLogo";
 import Flag from "./Flag";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import { useMoney } from "./Currency";
-import { discountLadder, listUnitPrice, shownTiers } from "@/lib/pricing";
+import { discountLadder, listUnitPrice, shownTiers, wsSave } from "@/lib/pricing";
 import { setPriceMode } from "./PriceMode";
 import ProductImage from "./ProductImage";
 import ProductCard from "./ProductCard";
 import ProductFeed from "./ProductFeed";
+import { BrandTile } from "./TradeHome";
 import useDragScroll from "./useDragScroll";
 
 /* Маҳсулотро аз кишварҳои гуногун омехта мекунад, то лента якранг набошад */
@@ -90,10 +91,11 @@ export function PromoStrip() {
   const { sum, label } = useMoney();
   const { t } = useT();
   const s = discountLadder()[1];
+  const { wholesaleMode } = useSite();
   return (
     <div className="promo-sheet">
     <div className="promo-strip">
-      <Link href="/#rfq"><b><Icon name="tag" size={15} /> {t("Аз {x}: −{p}%", { x: `${sum(s.from)} ${label}`, p: String(s.off).replace(".", ",") })}</b></Link>
+      <Link href="/#rfq"><b><Icon name="tag" size={15} /> {wholesaleMode ? t("Фармоиш аз {x}", { x: `${sum(s.from)} ${label}` }) : t("Аз {x}: −{p}%", { x: `${sum(s.from)} ${label}`, p: String(s.off).replace(".", ",") })}</b></Link>
       <Link href="/brands"><b><Icon name="shield" size={15} /> <T>Брендҳо</T></b></Link>
     </div>
     </div>
@@ -104,7 +106,7 @@ export function PromoStrip() {
 function Mini({ p, tag }: { p: Product; tag?: string }) {
   const { price, label } = useMoney();
   const w0 = shownTiers(p)[0];
-  const value = p.wholesaleOnly && !p.noWholesale && w0 ? w0.unit : listUnitPrice(p);
+  const value = useWsOnly(p) && w0 ? w0.unit : listUnitPrice(p);
   return (
     <Link href={`/product/${p.slug}`} className="mini" draggable={false}>
       <span className="mini-img"><ProductImage src={p.images[0]} alt={p.name} sizes="96px" /></span>
@@ -120,7 +122,8 @@ export function DealsPair() {
   const { t } = useT();
   const bulk = products.filter((p) => p.sale).sort((a, b) => (shownTiers(b)[0]?.off ?? 0) - (shownTiers(a)[0]?.off ?? 0)).slice(0, 4);
   const top = [...products].filter((p) => !p.sale).sort((a, b) => b.reviews - a.reviews || (b.rating ?? 0) - (a.rating ?? 0)).slice(0, 4);
-  const off = (p: Product) => { const w = shownTiers(p)[0]; return w ? t("−{p}% аз {q}", { p: String(w.off).replace(".", ","), q: `${fmtQty(w.minQty)} ${t(unitOf(p))}` }) : undefined; };
+  const { wholesaleMode } = useSite();
+  const off = (p: Product) => { const w = shownTiers(p)[0]; const q = w && `${fmtQty(w.minQty)} ${t(unitOf(p))}`; return w ? (wholesaleMode ? t("аз {q}", { q }) : t("−{p}% аз {q}", { p: String(w.off).replace(".", ","), q })) : undefined; };
   return (
     <>
       {bulk.length > 0 && (
@@ -144,13 +147,17 @@ export function DealsPair() {
 export function TierLadder() {
   const { sum, label } = useMoney();
   const { t } = useT();
-  const ladder = discountLadder();
+  const { wholesaleMode } = useSite();
+  const all = discountLadder();
+  // Танҳо оптов: зинаи чакана нест, фоиз аз нархи зинаи аввал ҳисоб мешавад
+  const ladder = wholesaleMode ? all.slice(1) : all;
+  const pct = (off: number) => (wholesaleMode ? wsSave(100 - off, 100 - ladder[0].off) : off);
   return (
     <div className="tc-steps ladder" role="list">
       {ladder.map((s, k) => (
         <div key={s.from} role="listitem" className={k === ladder.length - 1 ? "best" : ""}>
-          <b>{s.off > 0 ? `−${String(s.off).replace(".", ",")}%` : "0%"}</b>
-          <small>{k === 0 ? t("то {x}", { x: sum(ladder[1].from) }) : t("аз {x}", { x: sum(s.from) })}</small>
+          <b>{pct(s.off) > 0 ? `−${String(pct(s.off)).replace(".", ",")}%` : wholesaleMode ? t("Оптом") : "0%"}</b>
+          <small>{k === 0 && !wholesaleMode ? t("то {x}", { x: sum(ladder[1].from) }) : t("аз {x}", { x: sum(s.from) })}</small>
         </div>
       ))}
       <span className="ladder-cur">{label}</span>
@@ -242,14 +249,6 @@ export function BrandsBody() {
   const { products } = useCatalog();
   const brands = useAllBrands(products);
   return (
-    <div className="brand-grid">
-      {brands.map((b) => (
-        <Link key={b.slug} href={`/catalog?brand=${b.slug}`} className="brand-card">
-          <span className="brand-round"><BrandLogo name={b.name} /></span>
-          <b>{b.name}</b>
-          {b.count === 0 && <small className="brand-soon"><T>Ба наздикӣ</T></small>}
-        </Link>
-      ))}
-    </div>
+    <div className="th-brands bp-list">{brands.map((b) => <BrandTile key={b.slug} b={b} />)}</div>
   );
 }
