@@ -8,7 +8,7 @@ import { useEffect, useMemo } from "react";
 import { COUNTRIES, fmtQty, unitOf } from "@/lib/catalog";
 import { useCatalog } from "@/lib/useCatalog";
 import { useDest } from "@/lib/useDest";
-import { discountLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
+import { feeLadder, modesFor, priceOrder, rfqFromOf } from "@/lib/pricing";
 import { lineKey, useCart } from "./Cart";
 import Flag from "./Flag";
 import Icon from "./Icon";
@@ -63,7 +63,7 @@ export default function CartView() {
     );
   }
 
-  const ladder = discountLadder();
+  const ladder = feeLadder();
   const reached = ladder.reduce((r, st, i) => (order.listAmount >= st.from ? i : r), 0);
   // Дарозии хати пурраи нардбон: байни нуқтаҳои зинаҳо (ҳар як зина як ҳисса)
   const lo = ladder[reached].from;
@@ -146,36 +146,36 @@ export default function CartView() {
         );
       })}
 
-      {/* Тахфиф ҳангоми зиёд харидан */}
+      {/* Хизматрасонӣ: бо зиёд шудани маблағ фоиз кам мешавад */}
       <div className="disc-card">
         <div className="disc-head">
-          <Icon name="bolt" size={17} /><b><T>Тахфиф ҳангоми зиёд харидан</T></b>
-          {order.discountPct > 0 && <span className="disc-now">−{order.discountPct}%</span>}
+          <Icon name="bolt" size={17} /><b><T>Хизматрасонӣ</T></b>
+          <span className="disc-now">{String(order.feePct).replace(".", ",")}%</span>
         </div>
         <div className="ladder">
           <i className="fill" style={{ width: `${fillPct}%` }} />
           {ladder.map((st, i) => (
             <div key={st.from} className={`st ${i <= reached ? "on" : ""}`}>
               <span className="dot">{i <= reached && <Icon name="check" size={12} stroke={3.2} />}</span>
-              <b>{st.off > 0 ? `−${st.off}%` : t("Асосӣ")}</b>
+              <b>{String(st.pct).replace(".", ",")}%</b>
               <small>{st.from > 0 ? t("аз {x}", { x: sum(st.from) }) : t("то {x}", { x: sum(ladder[1].from) })}</small>
             </div>
           ))}
         </div>
         <p className="disc-hint">
           {order.next ? (
-            <>{t("Боз {a} харед (бо нархи асосӣ): тахфиф {b} мешавад.", { a: `${sum(order.next.need)} ${label}`, b: `−${order.next.off}%` })}</>
+            <>{t("Боз {a} харед: хизматрасонӣ {b} мешавад.", { a: `${sum(order.next.need)} ${label}`, b: `${String(order.next.pct).replace(".", ",")}%` })}</>
           ) : (
-            <>{t("Шумо тахфифи ҳадди аксарро гирифтед: {a}.", { a: `−${order.discountPct}%` })}</>
+            <>{t("Хизматрасонии ҳадди ақал: {a}.", { a: `${String(order.feePct).replace(".", ",")}%` })}</>
           )}
         </p>
       </div>
 
       <div className="sum-card">
         <div className="est-row"><span><T>Нархи мол</T></span><b>{sum(order.listGoods)} {label}</b></div>
-        <div className="est-row disc">
-          <span><T>Тахфиф</T>{order.discountPct > 0 && <small>{t("−{p}% аз нархи асосӣ", { p: order.discountPct })}</small>}</span>
-          <b>{order.discount > 0 ? `−${sum(order.discount)} ${label}` : "—"}</b>
+        <div className="est-row">
+          <span><T>Хизматрасонӣ</T><small>{String(order.feePct).replace(".", ",")}%</small></span>
+          <b>{sum(order.fee)} {label}</b>
         </div>
         <div className="est-row"><span><T>Расонидан</T></span><b>{order.shipping > 0 ? `${sum(order.shipping)} ${label}` : t("бо тасдиқ")}</b></div>
         <div className="est-total"><span><T>Ҷамъ</T></span><b>{sum(order.total)} {label}</b></div>

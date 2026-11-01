@@ -1,7 +1,6 @@
 import { COUNTRIES, type CountryCode, type Product } from "./catalog";
 import {
   MARKUP_TIERS,
-  SHOWN_WHOLESALE_PCTS,
   SETTINGS,
   SHIPPING,
   TO_USD,
@@ -16,64 +15,32 @@ export const rfqFromOf = (p: Product) => p.sale?.rfqFrom ?? SETTINGS.rfqFrom;
 /** Нархи харид барои 1 воҳид (смн) */
 export const costPerUnit = (p: Product) => p.cost * TO_USD[p.costCurrency] * RATES.usdToTjs;
 
-const basePct = () => MARKUP_TIERS[0].pct;
+/** Нархи мол барои 1 воҳид = нархи аслӣ (бе фоида ва бе зина). Хизматрасонӣ дар сабад ҷудо илова мешавад. */
+export const listUnitPrice = (p: Product) => costPerUnit(p);
 
-/** Нархи асосии нишондодашаванда барои 1 воҳид: нархи харид + фоида барои фармоиши хурд */
-export const listUnitPrice = (p: Product) => costPerUnit(p) * (1 + basePct() / 100);
-
-/** Фоида барои маблағи фармоиш (бо нархи асосӣ) */
+/** Фоизи хизматрасонӣ барои маблағи мол (смн): <$2 000 — 13%, <$5 000 — 10%, баъд 8% */
 export const markupPct = (listAmount: number) => {
   let pct = MARKUP_TIERS[0].pct;
   for (const t of MARKUP_TIERS) if (listAmount >= t.from) pct = t.pct;
   return pct;
 };
 
-/** Арзонӣ нисбат ба нархи асосӣ, фоиз (масалан 8% фоида → 4.4%) */
-export const discountFor = (pct: number) => Math.round((1 - (1 + pct / 100) / (1 + basePct() / 100)) * 1000) / 10;
-
-/** Нархҳои оптовии дар саҳифаи маҳсулот нишондодашаванда */
-export function wholesalePrices(p: Product) {
-  if (p.noWholesale) return [];
-  return SHOWN_WHOLESALE_PCTS.flatMap((pct) => {
-    const tier = MARKUP_TIERS.find((t) => t.pct === pct);
-    if (!tier) return [];
-    return [{ pct, from: tier.from, unit: costPerUnit(p) * (1 + pct / 100), off: discountFor(pct) }];
-  });
-}
-
-/** Зинаҳои тахфиф барои сабад: аз чӣ қадар маблағ чанд фоиз арзонтар */
-export const discountLadder = () => MARKUP_TIERS.map((t) => ({ from: t.from, off: discountFor(t.pct) }));
+/** Зинаҳои хизматрасонӣ: аз чӣ қадар маблағ чанд фоиз */
+export const feeLadder = () => MARKUP_TIERS.map((t) => ({ from: t.from, pct: t.pct }));
 
 export type QtyTier = { from: number; pct: number; minQty: number; unit: number; off: number };
 
-/**
-  Зинаҳои нарх барои як маҳсулот бо миқдор: «аз N дона — нархи X».
-  Қоида ҳамон қоидаи сабад аст (тахфиф аз маблағи фармоиш бо нархи асосӣ), фақат ба миқдори ҳамин маҳсулот
-  табдил дода шудааст. Агар дар сабад моли дигар ҳам бошад, тахфиф барвақттар сар мешавад.
-*/
+/** Нарх барои як маҳсулот ҳамеша як аст (нархи аслӣ): як зина бе тахфиф */
 export function qtyTiers(p: Product): QtyTier[] {
-  const list = listUnitPrice(p);
-  const cost = costPerUnit(p);
   const min = p.sale?.min ?? 1;
-  const step = p.sale?.step ?? 1;
-  const out: QtyTier[] = [];
-  // Моли бе нархи оптовӣ (аз admin): танҳо зинаи аввал — нархи дона
-  for (const t of p.noWholesale ? MARKUP_TIERS.slice(0, 1) : MARKUP_TIERS) {
-    const need = list > 0 ? t.from / list : 0;
-    const minQty = Math.max(min, Math.round(Math.ceil(need / step - 1e-9) * step * 100) / 100);
-    const tier = { from: t.from, pct: t.pct, minQty, unit: cost * (1 + t.pct / 100), off: discountFor(t.pct) };
-    // Агар ду зина ба як миқдор афтанд, арзонтарашро нигоҳ медорем
-    if (out.length && out[out.length - 1].minQty >= minQty) out[out.length - 1] = tier;
-    else out.push(tier);
-  }
-  return out;
+  return [{ from: 0, pct: 0, minQty: min, unit: costPerUnit(p), off: 0 }];
 }
 
 /** Зинае, ки ба ин миқдор мувофиқ аст */
 export const tierAt = (tiers: QtyTier[], qty: number) => [...tiers].reverse().find((t) => qty >= t.minQty) ?? tiers[0];
 
 /** Зинаҳои оптовие, ки дар корт ва рӯйхат нишон дода мешаванд (аз SHOWN_WHOLESALE_PCTS) */
-export const shownTiers = (p: Product) => qtyTiers(p).filter((t) => SHOWN_WHOLESALE_PCTS.includes(t.pct));
+export const shownTiers = (_p: Product): QtyTier[] => [];
 
 /* ---------- вазн, ҳаҷм, расонидан ---------- */
 
@@ -152,19 +119,19 @@ export type PricedGroup = {
 
 export type PricedOrder = {
   groups: PricedGroup[];
-  /** маблағи мол бо нархи асосӣ */
+  /** маблағи мол бо нархи аслӣ */
   listGoods: number;
-  /** тахфиф, смн ва фоиз */
-  discount: number;
-  discountPct: number;
-  /** маблағи мол бо тахфиф */
+  /** хизматрасонӣ: маблағ (смн) ва фоиз */
+  fee: number;
+  feePct: number;
+  /** маблағи мол */
   goods: number;
   shipping: number;
   total: number;
   /** маблағи фармоиш бо нархи асосӣ, барои ҳисоби зинаҳо */
   listAmount: number;
-  /** зинаи навбатӣ: чӣ қадар боқӣ мондааст ва тахфифи он */
-  next: { need: number; off: number; from: number } | null;
+  /** зинаи навбатии хизматрасонӣ: чӣ қадар боқӣ мондааст ва фоизи нав */
+  next: { need: number; pct: number; from: number } | null;
 };
 
 export function priceOrder(
@@ -178,14 +145,14 @@ export function priceOrder(
     return p ? [{ p, qty: l.qty, size: l.size, color: l.color, cost: costPerUnit(p) }] : [];
   });
 
-  // Тахфиф аз маблағи фармоиш бо нархи асосӣ муайян мешавад; моли бе нархи оптовӣ ба ин ҳисоб намеравад
-  const listAmount = found.reduce((s, l) => s + (l.p.noWholesale ? 0 : l.cost * (1 + basePct() / 100) * l.qty), 0);
+  // Хизматрасонӣ аз маблағи умумии мол (бо нархи аслӣ) муайян мешавад
+  const listAmount = found.reduce((s, l) => s + l.cost * l.qty, 0);
   const pct = markupPct(listAmount);
 
   const byCountry = new Map<CountryCode, PricedLine[]>();
   for (const l of found) {
-    const listUnit = l.cost * (1 + basePct() / 100);
-    const unit = l.p.noWholesale ? listUnit : l.cost * (1 + pct / 100);
+    const listUnit = l.cost;
+    const unit = l.cost;
     const row: PricedLine = {
       key: `${l.p.slug}|${l.size ?? ""}|${l.color ?? ""}`,
       size: l.size,
@@ -222,19 +189,20 @@ export function priceOrder(
     listAmount > 0 && nextTier
       ? {
           need: Math.ceil((nextTier.from - listAmount) / 10) * 10,
-          off: discountFor(nextTier.pct),
+          pct: nextTier.pct,
           from: nextTier.from,
         }
       : null;
+  const fee = round2((goods * pct) / 100);
 
   return {
     groups,
     listGoods,
-    discount: Math.max(0, round2(listGoods - goods)),
-    discountPct: discountFor(pct),
+    fee,
+    feePct: pct,
     goods,
     shipping,
-    total: round2(goods + shipping),
+    total: round2(goods + fee + shipping),
     listAmount,
     next,
   };

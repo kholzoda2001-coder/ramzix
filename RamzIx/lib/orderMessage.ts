@@ -31,7 +31,7 @@ export function buildOrderMessage(order: ReturnType<typeof priceOrder>, buyer: B
   }
   rows.push(
     `${t("Нархи мол")}: ${sum(order.listGoods)} ${label}`,
-    ...(order.discount > 0 ? [`${t("Тахфиф")} (−${order.discountPct}%): −${sum(order.discount)} ${label}`] : []),
+    `${t("Хизматрасонӣ")} (${String(order.feePct).replace(".", ",")}%): ${sum(order.fee)} ${label}`,
     `${t("Расонидан")}: ${sum(order.shipping)} ${label}`,
     `${t("Ҷамъ")}: ${sum(order.total)} ${label}`,
   );

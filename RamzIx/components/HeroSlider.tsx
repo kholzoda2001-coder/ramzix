@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { COUNTRIES } from "@/lib/catalog";
-import { discountLadder } from "@/lib/pricing";
 import { SHIPPING } from "@/lib/pricing-config";
 import type { HeroCfg } from "@/lib/site-config";
 import { useCatalog } from "@/lib/useCatalog";
@@ -20,9 +19,8 @@ export default function HeroSlider() {
 
   // Нархи карго ва тахфиф аз танзимоти зинда: дар баннер ҳамеша қимати ҳозира нишон дода мешавад
   const cargo = (["cn", "ae"] as const).map((c) => { const m = SHIPPING[c][0]; return { name: COUNTRIES[c].short, kg: m.perKgUsd, a: m.daysMin, b: m.daysMax }; });
-  const maxOff = String(discountLadder().at(-1)?.off ?? 0).replace(".", ",");
 
-  const slides = hero.filter((h) => h.active).flatMap((h) => {
+  const slides = hero.filter((h) => h.active && h.kind !== "discount").flatMap((h) => {
     if (h.kind === "category") {
       const list = products.filter((p) => p.category === h.category);
       return list.length ? [{ h, list }] : [];
@@ -33,18 +31,6 @@ export default function HeroSlider() {
   const parts = (title: string) => title.split("*").map((s, i) => (i % 2 ? <span key={i}><em>{t(s.trim())}</em>{" "}</span> : <span key={i}>{t(s.trim())}{" "}</span>));
 
   const render = ({ h, list }: { h: HeroCfg; list: typeof products }) => {
-    if (h.kind === "discount") {
-      return (
-        <div key={h.id} className="slide slide-big">
-          <span className="sb-tag">{t(h.tag)}</span>
-          <span className="sb-up"><T>то</T></span>
-          <b className="sb-num">{maxOff}<i>%</i></b>
-          <span className="sb-sub">{t(h.sub)}</span>
-          <Link href={h.href || "/#rfq"} className="sb-btn"><T>Харид</T></Link>
-          <Image src="/hero-earbuds.webp" alt="" width={780} height={480} className="sb-photo" />
-        </div>
-      );
-    }
     if (h.kind === "global") {
       return (
         <div key={h.id} className="slide slide-global">

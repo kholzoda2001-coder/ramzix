@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { fmtQty, unitOf, type Product } from "@/lib/catalog";
-import { listUnitPrice, shownTiers } from "@/lib/pricing";
+import { listUnitPrice } from "@/lib/pricing";
 import { useCart } from "./Cart";
 import { useMoney } from "./Currency";
 import Icon from "./Icon";
@@ -15,10 +15,6 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
   const { add } = useCart();
   const min = p.sale?.min ?? 1;
   const unit = t(unitOf(p));
-  // Зинаҳои оптом: «нарх аз N» (қиматтар аввал)
-  const all = shownTiers(p);
-  const [w1] = all;
-  const best = all[all.length - 1]; // арзонтарин нархи оптом
 
   return (
     <Link href={`/product/${p.slug}`} className={`pcard ${compact ? "compact" : ""}`}>
@@ -35,11 +31,6 @@ export default function ProductCard({ p, compact }: { p: Product; compact?: bool
         <div className="pcard-price">
           <b>{price(listUnitPrice(p))}</b> <span>{label} / {unit}</span>
         </div>
-        {w1 && (
-          <div className="pcard-whole">
-            <span className="ws-tag"><T>оптом</T></span><b>{price(best.unit)} {label}</b>
-          </div>
-        )}
       </div>
     </Link>
   );

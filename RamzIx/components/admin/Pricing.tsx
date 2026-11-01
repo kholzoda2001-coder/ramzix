@@ -27,7 +27,6 @@ export default function Pricing() {
   const up = (p: Partial<PricingConfig>) => setCfg({ ...cfg, ...p });
 
   const setMode = (c: CountryKey, i: number, p: Partial<ShippingMode>) => up({ shipping: { ...cfg.shipping, [c]: cfg.shipping[c].map((m, k) => (k === i ? { ...m, ...p } : m)) } });
-  const pcts = [...new Set(cfg.markupTiers.map((t) => t.pct))];
 
   const save = async () => {
     setBusy(true);
@@ -61,27 +60,18 @@ export default function Pricing() {
       </section>
 
       <section className="ad-card">
-        <h3>Зинаҳои фоида (аз маблағи сабад)</h3>
-        <p className="ad-hint">Аз «Аз» сомонӣ сар карда фоидаи шумо ҳамин фоиз болои нархи харид аст. Зинаи якум ҳамеша аз 0 сар мешавад ва нархи асосии корт аст. Ҳар қадар сабад калон, фоида камтар.</p>
+        <h3>Хизматрасонӣ (аз маблағи сабад)</h3>
+        <p className="ad-hint">Нархи мол ҳамеша нархи аслӣ аст. Дар сабад хизматрасонӣ ҳамин фоиз болои маблағи мол илова мешавад. Зинаи якум аз 0 сар мешавад; ҳар қадар сабад калон, фоиз камтар. Ҳадди «Аз» бо сомонӣ аст (≈ доллар дар зери майдон).</p>
         {cfg.markupTiers.map((t, i) => (
           <div key={i} className="ad-grid2 ad-tier">
-            <Num label="Аз (смн)" hint={t.from > 0 ? `≈ ${Math.round(t.from / (cfg.usdToTjs || 1)).toLocaleString("ru-RU")} $` : "Нархи асосӣ (дона)"} value={t.from} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, from: i === 0 ? 0 : n } : x)) })} />
+            <Num label="Аз (смн)" hint={t.from > 0 ? `≈ ${Math.round(t.from / (cfg.usdToTjs || 1)).toLocaleString("ru-RU")} $` : "Аз сифр"} value={t.from} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, from: i === 0 ? 0 : n } : x)) })} />
             <div className="ad-row-h" style={{ alignItems: "end" }}>
-              <Num label="Фоида, %" value={t.pct} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, pct: n } : x)) })} />
+              <Num label="Хизматрасонӣ, %" value={t.pct} onChange={(n) => up({ markupTiers: cfg.markupTiers.map((x, k) => (k === i ? { ...x, pct: n } : x)) })} />
               {i > 0 && <button className="ad-mv red" onClick={() => up({ markupTiers: cfg.markupTiers.filter((_, k) => k !== i) })} aria-label="Нест кардан">✕</button>}
             </div>
           </div>
         ))}
-        <button className="ad-add" onClick={() => up({ markupTiers: [...cfg.markupTiers, { from: (cfg.markupTiers.at(-1)?.from ?? 0) + 10000, pct: Math.max(1, (cfg.markupTiers.at(-1)?.pct ?? 5) - 1) }] })}>+ Зинаи нав</button>
-        <div>
-          <p className="ad-hint">Кадом зинаҳо дар саҳифаи маҳсулот ҳамчун «нархи оптовӣ» нишон дода мешаванд:</p>
-          <div className="ad-chips wrap">
-            {pcts.filter((p) => p !== cfg.markupTiers[0]?.pct).map((p) => {
-              const on = cfg.shownWholesalePcts.includes(p);
-              return <button key={p} className={on ? "on" : ""} onClick={() => up({ shownWholesalePcts: on ? cfg.shownWholesalePcts.filter((x) => x !== p) : [...cfg.shownWholesalePcts, p] })}>{p}%</button>;
-            })}
-          </div>
-        </div>
+        <button className="ad-add" onClick={() => up({ markupTiers: [...cfg.markupTiers, { from: (cfg.markupTiers.at(-1)?.from ?? 0) + 10000, pct: Math.max(1, (cfg.markupTiers.at(-1)?.pct ?? 8) - 1) }] })}>+ Зинаи нав</button>
       </section>
 
       <section className="ad-card">

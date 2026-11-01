@@ -63,14 +63,13 @@ export const DEFAULT_PRICING: PricingConfig = {
   sarPerUsd: 3.75,
   cnyPerUsd: 7.14, // тахминӣ: бо қурби воқеӣ иваз кунед
   ratesDate: "27.10.2026",
+  // Хизматрасонӣ (фоиз болои маблағи мол): <$2 000 — 13%, $2 000–5 000 — 10%, аз $5 000 — 8% (ҳадҳо дар смн бо қурби 9,224)
   markupTiers: [
-    { from: 0, pct: 20 }, // нархи асосӣ (дона)
-    // Ҳадҳо бо доллар гирд: 300 $, 1 000 $, 5 000 $ (бо қурби 9,224). Қурб иваз шавад, инҳоро низ иваз кунед.
-    { from: 2767.2, pct: 13 }, // 300 $: оптом сар мешавад
-    { from: 9224, pct: 8 }, // 1 000 $
-    { from: 46120, pct: 5 }, // 5 000 $
+    { from: 0, pct: 13 },
+    { from: 18448, pct: 10 }, // $2 000
+    { from: 46120, pct: 8 }, // $5 000 ва болотар
   ],
-  shownWholesalePcts: [13, 8, 5],
+  shownWholesalePcts: [],
   rfqFrom: 100,
   quoteHours: 24,
   whatsapp: "971508385259",
@@ -155,7 +154,7 @@ export function mergePricing(raw: unknown): PricingConfig {
   const pcts = Array.isArray(r.shownWholesalePcts) ? (r.shownWholesalePcts as unknown[]).map((x) => num(x, 0, 500, -1)).filter((x) => x >= 0 && markupTiers.some((t) => t.pct === x)) : [];
   return {
     usdToTjs: num(r.usdToTjs, 0.01, 1000, D.usdToTjs), aedPerUsd: num(r.aedPerUsd, 0.01, 1000, D.aedPerUsd), sarPerUsd: num(r.sarPerUsd, 0.01, 1000, D.sarPerUsd), cnyPerUsd: num(r.cnyPerUsd, 0.01, 1000, D.cnyPerUsd),
-    ratesDate: text(r.ratesDate, 20, D.ratesDate), markupTiers, shownWholesalePcts: pcts.length ? pcts : D.shownWholesalePcts.filter((x) => markupTiers.some((t) => t.pct === x)),
+    ratesDate: text(r.ratesDate, 20, D.ratesDate), markupTiers, shownWholesalePcts: [],
     rfqFrom: num(r.rfqFrom, 1, 1e7, D.rfqFrom), quoteHours: num(r.quoteHours, 1, 720, D.quoteHours), whatsapp: text(r.whatsapp, 20, D.whatsapp).replace(/\D/g, "") || D.whatsapp, shipping,
   };
 }

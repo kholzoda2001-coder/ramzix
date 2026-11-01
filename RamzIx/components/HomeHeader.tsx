@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { discountLadder } from "@/lib/pricing";
 import Icon from "./Icon";
 import { CartBadge } from "./Cart";
 import { useMoney } from "./Currency";
@@ -21,7 +20,6 @@ export default function HomeHeader() {
   const { sum, label } = useMoney();
   const [menu, setMenu] = useState(false);
   const [solid, setSolid] = useState(false);
-  const step = discountLadder()[1];
   const tab = useHomeTab();
   const tabs = useSite().tabs.filter((x) => x.show);
 

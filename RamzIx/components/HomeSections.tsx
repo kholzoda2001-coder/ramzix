@@ -12,7 +12,7 @@ import Flag from "./Flag";
 import Icon from "./Icon";
 import { T, useT } from "./Lang";
 import { useMoney } from "./Currency";
-import { discountLadder, listUnitPrice, shownTiers } from "@/lib/pricing";
+import { feeLadder, listUnitPrice } from "@/lib/pricing";
 import { setPriceMode } from "./PriceMode";
 import ProductImage from "./ProductImage";
 import ProductCard from "./ProductCard";
@@ -85,21 +85,6 @@ export function CategoryGrid() {
   );
 }
 
-/** Сатри тахфиф дар зери баннер: остонаи навбатии нарх ва брендҳо */
-export function PromoStrip() {
-  const { sum, label } = useMoney();
-  const { t } = useT();
-  const s = discountLadder()[1];
-  return (
-    <div className="promo-sheet">
-    <div className="promo-strip">
-      <Link href="/#rfq"><b><Icon name="tag" size={15} /> {t("Аз {x}: −{p}%", { x: `${sum(s.from)} ${label}`, p: String(s.off).replace(".", ",") })}</b></Link>
-      <Link href="/brands"><b><Icon name="shield" size={15} /> <T>Брендҳо</T></b></Link>
-    </div>
-    </div>
-  );
-}
-
 /** Акси хурд бо нарх барои блокҳо */
 function Mini({ p, tag }: { p: Product; tag?: string }) {
   const { price, label } = useMoney();
@@ -117,22 +102,13 @@ function Mini({ p, tag }: { p: Product; tag?: string }) {
 export function DealsPair() {
   const { products } = useCatalog();
   const { t } = useT();
-  const bulk = products.filter((p) => p.sale).sort((a, b) => (shownTiers(b)[0]?.off ?? 0) - (shownTiers(a)[0]?.off ?? 0)).slice(0, 4);
   const top = [...products].filter((p) => !p.sale).sort((a, b) => b.reviews - a.reviews || (b.rating ?? 0) - (a.rating ?? 0)).slice(0, 4);
-  const off = (p: Product) => { const w = shownTiers(p)[0]; return w ? t("−{p}% аз {q}", { p: String(w.off).replace(".", ","), q: `${fmtQty(w.minQty)} ${t(unitOf(p))}` }) : undefined; };
   return (
     <>
-      {bulk.length > 0 && (
-        <section className="block deal-block">
-          <div className="sec-head"><h2><T>Нархи оптом</T></h2><Link href="/catalog" onClick={() => setPriceMode("whole")}><T>Ҳама</T> <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
-          <p className="deal-sub"><T>Картон ва кило: ҳар қадар зиёд, арзонтар</T></p>
-          <div className="mini-row">{bulk.map((p) => <Mini key={p.slug} p={p} tag={off(p)} />)}</div>
-        </section>
-      )}
       {top.length > 0 && (
         <section className="block deal-block">
           <div className="sec-head"><h2><T>Маҳсулоти машҳур</T></h2><Link href="/catalog"><T>Ҳама</T> <Icon name="chevron" size={14} stroke={2.4} /></Link></div>
-          <div className="mini-row">{top.map((p) => <Mini key={p.slug} p={p} tag={off(p)} />)}</div>
+          <div className="mini-row">{top.map((p) => <Mini key={p.slug} p={p} />)}</div>
         </section>
       )}
     </>
@@ -143,12 +119,12 @@ export function DealsPair() {
 export function TierLadder() {
   const { sum, label } = useMoney();
   const { t } = useT();
-  const ladder = discountLadder();
+  const ladder = feeLadder();
   return (
     <div className="tc-steps ladder" role="list">
       {ladder.map((s, k) => (
         <div key={s.from} role="listitem" className={k === ladder.length - 1 ? "best" : ""}>
-          <b>{s.off > 0 ? `−${String(s.off).replace(".", ",")}%` : "0%"}</b>
+          <b>{String(s.pct).replace(".", ",")}%</b>
           <small>{k === 0 ? t("то {x}", { x: sum(ladder[1].from) }) : t("аз {x}", { x: sum(s.from) })}</small>
         </div>
       ))}
