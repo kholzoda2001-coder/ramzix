@@ -5,7 +5,7 @@ import { useMemo, useRef, useState } from "react";
 import { brandLogo } from "@/lib/brands";
 import { CATEGORIES, fmtQty, unitOf, type Product } from "@/lib/catalog";
 import { type Brand, categoryCover, EMPTY_FILTERS, filterProducts, getBrands } from "@/lib/filters";
-import { discountLadder, listUnitPrice, modesFor, shownTiers, wsSave } from "@/lib/pricing";
+import { discountLadder, infoModes, listUnitPrice, shownTiers, wsSave } from "@/lib/pricing";
 import { useCatalog } from "@/lib/useCatalog";
 import { useSite } from "@/lib/useSite";
 import { useMoney } from "./Currency";
@@ -202,7 +202,8 @@ export function TradeTiers() {
 /** Расонидан аз рӯи кишвари харидор: мӯҳлатҳо аз танзимоти нарх */
 export function TradeShip() {
   const { t } = useT();
-  const days = (dest: "tj" | "ae") => { const m = modesFor("ae", dest)[0]; return `${t(m.label)}, ${t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax })}`; };
+  // Ҳар роҳ бо нарх барои 1 кг ва мӯҳлат; нархи ниҳоӣ бо менеҷер
+  const days = (dest: "tj" | "ae") => infoModes("ae", dest).map((m) => `${t(m.label)}: ${m.perKgUsd > 0 && dest === "tj" ? `$${String(m.perKgUsd).replace(".", ",")}/${t("кг")}, ` : ""}${t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax })}`).join(" · ");
   const rows = [
     { code: "tj", name: "Тоҷикистон", text: days("tj") },
     { code: "ae", name: "Иморот", text: days("ae") },
@@ -211,6 +212,7 @@ export function TradeShip() {
   return (
     <section className="block th-sec th-ship">
       <div className="sec-head"><h2><T>Расонидан</T></h2></div>
+      <p className="th-ship-note"><T>Нархи ниҳоии расонидан бо менеҷер муайян мешавад</T></p>
       <div>
         {rows.map((r) => <span key={r.code}><Flag code={r.code} className="th-flag" /><b><T>{r.name}</T></b><small>{r.text}</small></span>)}
       </div>

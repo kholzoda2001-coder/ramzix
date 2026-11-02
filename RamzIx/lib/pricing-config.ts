@@ -76,8 +76,8 @@ export const DEFAULT_PRICING: PricingConfig = {
   whatsapp: "971508385259",
   shipping: {
     ae: [
-      { id: "cargo", label: "Мошин (карго)", perKgUsd: 1.5, daysMin: 30, daysMax: 40 },
-      { id: "avia", label: "Ҳаво (авиа)", perKgUsd: 6, daysMin: 3, daysMax: 7 },
+      { id: "cargo", label: "Мошин (карго)", perKgUsd: 1.2, daysMin: 30, daysMax: 40 },
+      { id: "avia", label: "Ҳаво (авиа)", perKgUsd: 6, daysMin: 4, daysMax: 7 },
       // Харидор дар Иморот: курьер дар дохили Иморот (OTO). 25 AED то 5 кг, баъд 2 AED барои ҳар кг. Бо қурби 3,6725
       LOCAL_UAE,
     ],

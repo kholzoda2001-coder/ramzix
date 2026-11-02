@@ -118,6 +118,11 @@ export const modesFor = (country: CountryCode, dest: Dest = "tj"): ShippingMode[
   if (dest === "intl") return [{ ...base, id: "quote", label: "Интиқоли байналмилалӣ", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, daysMin: 0, daysMax: 0, assumed: false, note: "Менеҷер нарх ва мӯҳлатро мегӯяд" }];
   return [{ ...base, id: "quote", perKgUsd: 0, perM3Usd: undefined, flatUsd: undefined, flatKg: undefined, assumed: true, note: "Менеҷер нархро тасдиқ мекунад" }];
 };
+/** Ҳамаи роҳҳои расонидан барои нишон додан (карго ва авиа); ҳисоби сабад аз роҳи аввал аст */
+export const infoModes = (country: CountryCode, dest: Dest = "tj"): ShippingMode[] => {
+  const all = shipOf(country).filter((m) => !isLocal(m));
+  return dest === "tj" && all.length ? all : modesFor(country, dest);
+};
 export const defaultMode = (country: CountryCode, dest: Dest = "tj") => modesFor(country, dest)[0].id;
 export const getMode = (country: CountryCode, id?: string, dest: Dest = "tj") =>
   modesFor(country, dest).find((m) => m.id === id) ?? modesFor(country, dest)[0];

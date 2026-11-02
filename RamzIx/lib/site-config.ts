@@ -84,7 +84,7 @@ export const TEXT_FIELDS: { key: string; label: string; group: string; def: stri
   { key: "trust1Title", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 1: сарлавҳа", def: "Пардохт" },
   { key: "trust1Text", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 1: матн", def: "Интиқоли бонкӣ, нақд, Alif / DC" },
   { key: "trust2Title", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 2: сарлавҳа", def: "Худ гирифтан" },
-  { key: "trust2Text", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 2: матн", def: "Душанбе ва Дубай" },
+  { key: "trust2Text", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 2: матн", def: "Анбори Душанбе" },
   { key: "trust3Title", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 3: сарлавҳа", def: "Фактура" },
   { key: "trust3Text", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 3: матн", def: "Фактура ва ҳуҷҷатҳои гумрукӣ" },
   { key: "trust4Title", group: "Саҳифаи асосӣ: ваъдаҳо", label: "Ваъда 4: сарлавҳа", def: "Менеҷери шахсӣ" },
@@ -99,8 +99,8 @@ export const TEXT_FIELDS: { key: string; label: string; group: string; def: stri
   { key: "step4Text", group: "Саҳифаи асосӣ: «Чӣ тавр кор мекунем»", label: "Қадам 4: матн", def: "Тоҷикистон, UAE ва ҷаҳон" },
   { key: "tierTitle", group: "Саҳифаи асосӣ: нархи оптовӣ", label: "Сарлавҳаи блоки нархи оптовӣ", def: "Сабад калонтар — нарх арзонтар" },
   { key: "tierText", group: "Саҳифаи асосӣ: нархи оптовӣ", label: "Матни блоки нархи оптовӣ", def: "Тахфиф худ ба худ дар сабад ҳисоб мешавад, барои ҳамаи мол. Барои фармоиши калон нархи махсусро дар WhatsApp пурсед.", long: true },
-  { key: "footer", group: "Саҳифаи асосӣ: поёни сайт", label: "Сатри поёни сайт", def: "© 2026 RamzIx · Душанбе · Дубай" },
-  { key: "payments", group: "Пардохт", label: "Усулҳои пардохт дар поёни сайт (бо вергул)", def: "Интиқоли бонкӣ, Нақд, Alif, DC Pay, Visa / MC", long: true },
+  { key: "footer", group: "Саҳифаи асосӣ: поёни сайт", label: "Сатри поёни сайт", def: "© 2026 RamzIx · Душанбе, Тоҷикистон" },
+  { key: "payments", group: "Пардохт", label: "Усулҳои пардохт дар поёни сайт (бо вергул)", def: "Интиқоли бонкӣ, Нақд, Alif, DC Pay", long: true },
   { key: "checkoutNote", group: "Пардохт", label: "Эзоҳ дар саҳифаи фармоиш", def: "Пардохт онлайн нест: менеҷер бо шумо тамос мегирад, фармоиш ва нархи расонидан (Тоҷикистон, UAE ё дигар кишвар) -ро тасдиқ мекунад ва тарзи пардохтро (бонк, нақд, Alif, DC) мегӯяд. Баъди пардохт маҳсулот равон карда мешавад.", long: true },
 ];
 export const DEFAULT_TEXTS: Record<string, string> = Object.fromEntries(TEXT_FIELDS.map((f) => [f.key, f.def]));
@@ -118,7 +118,7 @@ export const DEFAULT_SITE: SiteConfig = {
   categories: DEFAULT_CATEGORIES,
   countries: DEFAULT_COUNTRIES,
   hero: [
-    H("h1", "custom", { tag: "Танҳо оптов", title: "Маҳсулот бо нархи оптов *аз Дубай ва Чин*", sub: "Тоҷикистон · UAE · тамоми ҷаҳон", href: "/catalog", from: "#1f3a5f", to: "#0d1b2e" }),
+    H("h1", "custom", { tag: "Танҳо оптов", title: "Маҳсулот бо нархи оптов *аз Дубай*", sub: "Тоҷикистон · UAE · тамоми ҷаҳон", href: "/catalog", from: "#1f3a5f", to: "#0d1b2e" }),
     H("h2", "global", { tag: "Расонидан ба тамоми ҷаҳон", title: "Техникаи хона *Eurolux, Bergamo, Vermont* барои мағозаи шумо", sub: "Ба Тоҷикистон, UAE ва дигар кишварҳо. Нархи расониданро менеҷер тасдиқ мекунад.", href: "/catalog" }),
     H("h3", "category", { category: "women", title: "Либоси занона", sub: "Курта, либос, свитер", from: "#b0305f", to: "#5e1238" }),
     H("h4", "category", { category: "shoes", title: "Пояфзол", sub: "Кроссовка, туфли, мӯза", from: "#c2410c", to: "#6e2006" }),

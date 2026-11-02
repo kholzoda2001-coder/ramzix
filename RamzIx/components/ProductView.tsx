@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { COUNTRIES, fmt, fmtQty, unitOf, waLink, type Product } from "@/lib/catalog";
 import { useDest } from "@/lib/useDest";
-import { defaultMode, listUnitPrice, minQtyOf, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf, wsSave } from "@/lib/pricing";
+import { defaultMode, infoModes, listUnitPrice, minQtyOf, modesFor, qtyTiers, rfqFromOf, shippingCost, shownTiers, tierAt, volumeOf, weightOf, wsSave } from "@/lib/pricing";
 import { brandSlug } from "@/lib/filters";
 import { SETTINGS } from "@/lib/pricing-config";
 import { useSite, useText, useWsOnly } from "@/lib/useSite";
@@ -19,6 +19,7 @@ import useDragScroll from "./useDragScroll";
 import Lightbox from "./Lightbox";
 import BrandLogo from "./BrandLogo";
 import ProductVideo from "./ProductVideo";
+import { NextTier, ProfitCalc, ShareToClient } from "./ProductTools";
 import { parseVideo } from "@/lib/video";
 
 const round2 = (n: number) => Math.round(n * 100) / 100;
@@ -299,6 +300,10 @@ export default function ProductView({ p, related, other }: { p: Product; related
             )}
           </div>
 
+          <NextTier p={p} qty={qty} unit={unit} onPick={setQ} />
+          <ProfitCalc goods={goods} qty={qty} unit={unit} />
+          <ShareToClient p={p} />
+
           {bigOrder && (
             <div className="big-note"><T>Миқдори калон: нархи оптовиро дархост кунед, менеҷер нархи беҳтарро мегӯяд.</T></div>
           )}
@@ -350,12 +355,12 @@ export default function ProductView({ p, related, other }: { p: Product; related
             <div className="pane">
               <table className="spec">
                 <tbody>
-                  {modeList.map((m) => (
+                  {infoModes(p.country, dest).map((m) => (
                     <tr key={m.id}>
                       <td>{t(m.label)}</td>
                       <td>
+                        {m.perKgUsd > 0 && `$${String(m.perKgUsd).replace(".", ",")}/${t("кг")} · `}
                         {m.daysMax > 0 ? t("{a}–{b} рӯз", { a: m.daysMin, b: m.daysMax }) : t(m.note ?? "")}
-                        {m.assumed && ` (${t("тахминӣ")})`}
                       </td>
                     </tr>
                   ))}

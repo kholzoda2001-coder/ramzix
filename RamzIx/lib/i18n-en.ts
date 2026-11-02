@@ -524,5 +524,17 @@ export const EN: Record<string, string> = {
   "То нархи беҳтар: {a}": "To the next price: {a}",
   "Ҳадди ақали камтар": "Lowest minimum first",
   "Ҳамаи брендҳо": "All brands",
-  "аз рӯи миқдор": "by quantity"
+  "аз рӯи миқдор": "by quantity",
+  "Боз {n}: нарх {u} мешавад": "{n} more: price becomes {u}",
+  "Гузаштан": "Apply",
+  "Фоидаи шумо": "Your profit",
+  "Шумо 1 {u} ба чанд мефурӯшед?": "Your selling price per 1 {u}?",
+  "Фурӯш": "Sales",
+  "Фоида": "Profit",
+  "Барои {q} {u}, бе расонидан": "For {q} {u}, before delivery",
+  "Нархи худро нависед, фоида фавран ҳисоб мешавад": "Enter your price to see the profit",
+  "Ба мизоҷатон фиристед": "Send to your customers",
+  "Акс ва тавсиф, бе нархи оптом": "Photo and description, no wholesale price",
+  "аз Дубай": "from Dubai",
+  "Нархи ниҳоии расонидан бо менеҷер муайян мешавад": "The final delivery price is agreed with the manager"
 };
