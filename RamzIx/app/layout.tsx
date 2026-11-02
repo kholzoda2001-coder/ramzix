@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { CartProvider } from "@/components/Cart";
 import { CurrencyProvider } from "@/components/Currency";
+import DeskBar from "@/components/DeskBar";
 import { LangProvider } from "@/components/Lang";
 import { loadStorefront } from "@/lib/server/catalog";
 import { loadPricing } from "@/lib/server/pricing";
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <SiteProvider initial={site}>
               <CatalogProvider initial={products}>
                 <CartProvider>
+                  <DeskBar />
                   <div className="app">{children}</div>
                 </CartProvider>
               </CatalogProvider>
