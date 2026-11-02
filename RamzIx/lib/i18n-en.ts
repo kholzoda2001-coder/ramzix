@@ -557,5 +557,6 @@ export const EN: Record<string, string> = {
   "Масалан: Душанбе": "For example: Dushanbe",
   "Рақами WhatsApp": "WhatsApp number",
   "Фиристодани {n} мол": "Send {n} products",
-  "Мо молро меёбем ва то {h} соат бо нарх ба рақами {p} ҷавоб медиҳем.": "We'll find the product and reply with a price to {p} within {h} hours."
+  "Мо молро меёбем ва то {h} соат бо нарх ба рақами {p} ҷавоб медиҳем.": "We'll find the product and reply with a price to {p} within {h} hours.",
+  "Ёфтан": "Search"
 };
